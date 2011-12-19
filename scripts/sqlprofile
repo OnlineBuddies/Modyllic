@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
+ *
+ * @package OLB::SQL
+ * @author bturner@online-buddies.com
+ */
+
+@include_once dirname(realpath(__FILE__))."/../lib/OLB/SQL.php";
+if ( ! class_exists('SQL',FALSE) ) {
+    require_once "OLB/SQL.php";
+}
+
+require_once '/opt/php/xhprof/xhprof_lib/utils/xhprof_lib.php';
+require_once '/opt/php/xhprof/xhprof_lib/utils/xhprof_runs.php';
+        
+$load = SQL_Commandline::args( "create", "spec", $argv );
+
+$ignore = array('call_user_func', 'call_user_func_array');
+
+xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY, $ignore);
+
+$schema = SQL_Commandline::schema($load['spec']);
+
+$xhprof_data = xhprof_disable();
+$xhprof_runs = new XHProfRuns_Default();
+$run_id = $xhprof_runs->save_run($xhprof_data, "schemaload");
+$profiler_url = sprintf('http://localhost/~bturner/xhprof/xhprof_html/index.php?run=%s&source=%s', $run_id, "schemaload");
+echo "$profiler_url\n";

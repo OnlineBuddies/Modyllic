@@ -1,0 +1,118 @@
+Warnings and errors:
+   Creating a column with the same name as an existing alias
+   A view and a table that share a name
+
+Changing a proc argument list sets the ->from attribute, producing a weird
+looking result.
+
+To be able to handle Manhunt:
+    And maybe the schema change events proposal
+
+Add ability to run diff in "incomplete" mode, which won't drop missing
+tables or procs.  This lets you update a subset of the schema very
+quickly, which will be handy in development if the schema is split up
+into multiple files.
+   --partial is alias for --no-drop-tables --no-drop-procs
+   Also has: --no-drop-cols
+   And --no-drop is an alias for --no-drop-tables --no-drop-procs and --no-drop-cols
+   Have --no-slow which will avoid any schema changes likely to be
+   slow-- I think this is changing columns and adding indexes.
+   Have --no-procs and --no-tables options to skip generating proc and
+   table changes.
+
+Make tools accept a DSN instead of host+dbname (maybe) 
+
+Write the quote tests again
+
+Optionally push static tables into static PHP classes? Maybe...
+
+
+Important refactoring concerns:
+    Change the way columns are added-- don't check for matching indexes,
+       instead add all indexes blindly and consolidate duplicates after.
+
+Important completeness concerns:
+    Support ASC/DESC index flags
+
+Generator features/cleanup:
+    Make generator fold expansion of UNIQUE columns back into UNIQUE column attr.
+    Make generator fold expansion of SERIAL columns back into SERIAL.
+
+Wishlist Items:
+    Column order only changes, maybe
+
+
+Description of schema change events proposal:
+   These are conceptually similar to DDL triggers, but these are of course,
+   only run by sqldiff or migrate and not on general changes to the
+   database.  They also insist on greater filtering then, for instance,
+   Oracle's DDL triggers.
+
+   TRIGGER {BEFORE|AFTER} {CREATE|DROP} kind { table | proc | table.{column|index} }
+   BEGIN
+     -- SQL
+   END
+
+   kind is {TABLE | COLUMN | INDEX | PROC | FUNC | PROCEDURE | FUNCTION}
+          PROC, FUNC and FUNCTION are all aliases for PROCEDURE
+
+
+For example:
+
+   DELIMITER ||
+   CREATE TABLE foo ( id INT SERIAL PRIMARY KEY, bar INT, baz CHAR(20) )
+   ||
+
+Later the schema is changed to:
+
+   DELIMITER ||
+   CREATE TABLE foo ( id INT SERIAL PRIMARY KEY, baz CHAR(20) )
+   ||
+   CREATE TABLE bar ( id INT SERIAL PRIMARY KEY, bar INT )
+   ||
+   TRIGGER BEFORE DROP COLUMN foo.bar
+   BEGIN
+       CREATE TEMPORARY TABLE bar_backup AS SELECT id,bar FROM foo;
+   END
+   ||
+   TRIGGER AFTER ADD TABLE bar
+   BEGIN
+       INSERT INTO bar SELECT id,bar FROM bar_backup;
+   END
+   ||
+
+And the migrate script would generate:
+
+   DELIMITER ||
+   DROP PROCEDURE IF EXISTS migrate_before()
+   ||
+   CREATE PROCEDURE migrate_before()
+   MODIFIES SQL
+   BEGIN
+       CREATE TEMPORARY TABLE bar_backup AS SELECT id,bar FROM foo;
+   END
+   ||
+   DROP PROCEDURE IF EXISTS migrate_after()
+   ||
+   CREATE PROCEDURE migrate_after()
+   MODIFIES SQL
+   BEGIN
+       INSERT INTO bar SELECT id,bar FROM bar_backup;
+   END
+   ||
+   CALL migrate_before()
+   ||
+   CREATE TABLE bar (
+       id INT SERIAL,
+       bar INT,
+       PRIMARY KEY (id)
+   ) ENGINE=InnoDB AUTO_INCREMENT=1 CHARACTER SET=utf8
+   ||
+   ALTER TABLE foo DROP bar
+   ||
+   CALL migrate_after()
+   ||
+   DROP PROCEDURE migrate_before
+   ||
+   DROP PROCEDURE migrate_after
+   ||

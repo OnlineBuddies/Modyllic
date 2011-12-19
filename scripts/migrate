@@ -1,0 +1,92 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
+ *
+ * @package OLB::SQL
+ * @author bturner@online-buddies.com
+ */
+
+@include_once dirname(realpath(__FILE__))."/../lib/OLB/SQL.php";
+if ( ! class_exists('SQL',FALSE) ) {
+    require_once "OLB/SQL.php";
+}
+
+$load = SQL_Commandline::args( "migrate", "oldspec newspec", $argv, array("--create") );
+
+if ( $load['oldspec']['kind'] != 'from_db' ) {
+    print "migrate can only be used when your oldspec is a database.\n";
+    exit(1);
+}
+
+list( $host, $dbname, $user, $pass ) = $load['oldspec']['args'];
+
+$base_dsn = "mysql:";
+if ( isset($host) ) {
+    $base_dsn .= "host=$host;";
+}
+$dsn = $base_dsn . "dbname=$dbname";
+try {
+    $dbh = new PDO( $dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
+}
+catch (Exception $e) {
+    if ( strpos( $e->getMessage(), "Unknown database" ) !== FALSE ) {
+        if ( $load['--create'] ) {
+            $dbh = new PDO( $base_dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
+            $dbh->exec("CREATE DATABASE ".SQL::quote_ident($dbname));
+        }
+        else {
+            print $e->getMessage()."\n";
+            exit(1);
+        }
+    }
+    else {
+        throw $e;
+    }
+}
+
+print "-- Loading database $dbname...";
+$from = SQL_Commandline::schema($load['oldspec']);
+print " done.\n";
+
+print "-- Loading updated schema...";
+$to   = SQL_Commandline::schema($load['newspec']);
+print " done.\n";
+
+print "-- Comparing...";
+$diff = new SQL_Diff( $from, $to );
+print " done.\n";
+
+if ( ! $diff->changeset->has_changes() ) {
+    print "-- No changes detected.\n";
+    exit(0);
+}
+
+$dbh->exec("USE ".SQL::quote_ident($dbname));
+$generator = new SQL_Generator_SQL();
+foreach ( $generator->sql_header() as $sql ) {
+    $dbh->exec( $sql );
+}
+$generator->alter($diff);
+$cmds = count($generator->sql_commands());
+try {
+    $ii = 0;
+    foreach ($generator->sql_commands() as $cmd) {
+        ++ $ii;
+        status("-- Loading SQL...",$ii,$cmds);
+        $dbh->exec($cmd);
+    }
+}
+catch (PDOException $e) {
+    print "\r                        \r";
+    print $e->getMessage()."\n";
+    print "Full context of command:\n";
+    print $cmd."\n";
+    exit(1);
+}
+print "\r                        \r-- Database updated.\n";
+
+function status($message,$sofar,$total) {
+    $percent = round( ($sofar * 100) / $total );
+    print "\r$message $percent%";
+}

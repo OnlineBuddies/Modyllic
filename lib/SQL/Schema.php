@@ -1,0 +1,621 @@
+<?php
+/**
+ * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
+ *
+ * @package OLB::SQL
+ * @author bturner@online-buddies.com
+ */
+
+require_once dirname(__FILE__)."/Types.php";
+
+/**
+ * A base class for various schema objects.  Handles generic things like
+ * providing previous values for the diff engine.  In a perfect world this
+ * would be a runtime trait applied by the diff engine.
+ */
+class SQL_Diffable {
+    public $from;
+}
+
+/**
+ * A collection of SQL entities comprising a complete schema
+ */
+class SQL_Schema extends SQL_Diffable {
+    public $tables = array();
+    public $routines = array();
+    public $views = array();
+    public $events = array();
+    const DEFAULT_NAME = "database";
+    public $name = self::DEFAULT_NAME;
+    const DEFAULT_CHARSET = "utf8";
+    public $charset = self::DEFAULT_CHARSET;
+    const DEFAULT_COLLATE = "utf8_general_ci";
+    public $collate = self::DEFAULT_COLLATE;
+    public $docs = "";
+    private $finalized = FALSE;
+    public $sqlmeta_exists = FALSE;
+    
+    function merge( $schema ) {
+        if ( $this->name == self::DEFAULT_NAME ) {
+            $this->name = $schema->name;
+        }
+        if ( $this->charset == self::DEFAULT_CHARSET ) {
+            $this->charset = $schema->charset;
+        }
+        if ( $this->collate == self::DEFAULT_COLLATE ) {
+            $this->collate = $schema->collate;
+        }
+        if ( $this->docs == "" ) {
+            $this->docs = $schema->docs;
+        }
+        foreach ($schema->tables as &$table) {
+            $this->add_table($table);
+        }
+        foreach ($schema->routines as &$routine) {
+            $this->add_routine($routine);
+        }
+        foreach ($schema->views as &$view) {
+            $this->add_view($view);
+        }
+        foreach ($schema->events as &$event) {
+            $this->add_event($event);
+        }
+    }
+    
+    /**
+     * @param SQL_Table $table
+     */
+    function add_table( $table ) {
+        if ( $this->finalized ) {
+            throw new Exception("Can't make changes to the schema after it's finalized");
+        }
+        $this->tables[$table->name] = $table;
+        return $table;
+    }
+        
+    /**
+     * @param SQL_Routine $routine
+     */
+    function add_routine( $routine ) {
+        if ( $this->finalized ) {
+            throw new Exception("Can't make changes to the schema after it's finalized");
+        }
+        $this->routines[$routine->name] = $routine;
+        return $routine;
+    }
+    
+    /**
+     * @param SQL_Event $event
+     */
+    function add_event( $event ) {
+        if ( $this->finalized ) {
+            throw new Exception("Can't make changes to the schema after it's finalized");
+        }
+        $this->events[$event->name] = $event;
+        return $event;
+    }
+    
+    /**
+     * @param SQL_View $view
+     */
+    function add_view( $view ) {
+        if ( $this->finalized ) {
+            throw new Exception("Can't make changes to the schema after it's finalized");
+        }
+        $this->views[$view->name] = $view;
+        return $view;
+    }
+    
+    function unquote_sql_str($sql) {
+        $tok = new SQL_Tokenizer( $sql );
+        return $tok->next()->unquote();
+    }
+    
+    /**
+     * Generates a meta table entry that wasn't in the schema
+     */
+    function finalize() {
+        if ( $this->finalized ) {
+            return;
+        }
+        # If we already have an SQLMETA table then this is a load directly
+        # from a database (or a dump from a database).  We'll want to 
+        # convert that back into our usual metadata.
+        if ( isset($this->tables['SQLMETA']) and isset($this->tables['SQLMETA']->data) ) {
+            $this->sqlmeta_exists = TRUE;
+            foreach ($this->tables['SQLMETA']->data as &$row) {
+                $kind = $this->unquote_sql_str($row['kind']);
+                $which = $this->unquote_sql_str($row['which']);
+                $meta = json_decode($this->unquote_sql_str($row['value']), true);
+                $obj = null;
+                switch ($kind) {
+                    case 'TABLE':
+                        if ( isset($this->tables[$which]) ) {
+                            $obj = $this->tables[$which];
+                        }
+                        break;
+                    case 'COLUMN':
+                        list($table,$col) = explode(".",$which);
+                        if ( isset($this->tables[$table]) and isset($this->tables[$table]->columns[$col]) ) {
+                            $obj = $this->tables[$table]->columns[$col];
+                        }
+                        break;
+                    case 'INDEX':
+                        list($table,$index) = explode(".",$which);
+                        if ( isset($this->tables[$table]) and isset($this->tables[$table]->indexes[$index]) ) {
+                            $obj = $this->tables[$table]->indexes[$index];
+                        }
+                        break;
+                    case 'ROUTINE':
+                        if ( isset($this->routines[$which]) ) {
+                            $obj = $this->routines[$which];
+                        }
+                        break;
+                    default:
+                        throw new Exception("Unknown kind of metadata $kind found in SQLMETA");
+                        break;
+                }
+                if ( isset($obj) ) {
+                    foreach ($meta as $metakey=>&$metavalue) {
+                        $obj->$metakey = $metavalue;
+                    }
+                }
+            }
+            # We then clear the SQLMETA table we read in and regenerate it
+            # below.  This allows us to merge SQLMETA rows with table
+            # definitions.
+            $schema->sqlmeta_exists = true;
+            unset($this->tables['SQLMETA']);
+        }
+        $this->finalized = TRUE;
+    }
+
+    /**
+     * @param SQL_Schema $other
+     */
+    function schemaDefEqualTo( $other ) {
+        if ( $this->charset != $other->charset ) { return FALSE; }
+        if ( $this->collate != $other->collate ) { return FALSE; }
+        return TRUE;
+    }
+    
+    function equalTo( $other ) {
+        if ( ! $this->schemaDefEqualTo($other) ) { return FALSE; }
+        if ( count($this->tables) != count($other->tables) ) { return FALSE; }
+        if ( count($this->routines) != count($other->routines) ) { return FALSE; }
+        if ( count($this->events) != count($other->events) ) { return FALSE; }
+        if ( count($this->views) != count($other->views) ) { return FALSE; }
+        foreach ($this->tables as $key=>&$table) {
+            if ( ! $table->equalTo( $other->tables[$key] ) ) { return FALSE; }
+        }
+        foreach ($this->routines as $key=>&$routine) {
+            if ( ! $routine->equalTo( $other->routines[$key] ) ) { return FALSE; }
+        }
+        foreach ($this->events as $key=>&$event) {
+            if ( ! $event->equalTo( $other->events[$key] ) ) { return FALSE; }
+        }
+        foreach ($this->views as $key=>&$view) {
+            if ( ! $view->equalTo( $other->views[$key] ) ) { return FALSE; }
+        }
+        return TRUE;
+    }
+}
+
+class SQL_View extends SQL_Diffable {
+    public $name;
+    public $def;
+    /**
+     * @param string $name
+     */
+    function __construct($name) {
+        $this->name = $name;
+    }
+    function equalTo( $other ) {
+        if ( $this->def != $other->def ) { return FALSE; }
+        return TRUE;
+    }
+}
+
+/**
+ * A collection of columns, indexes and other information comprising a table
+ */
+class SQL_Table extends SQL_Diffable {
+    public $name;
+    public $columns = array();
+    public $indexes = array();
+    const STATIC_DEFAULT = FALSE;
+    public $static = self::STATIC_DEFAULT;
+    public $data = array();
+    public $last_column;
+    public $last_index;
+    public $engine = 'InnoDB';
+    public $charset = 'utf8';
+    public $collate = 'utf8_general_ci';
+    public $docs = "";
+    /**
+     * @param string $name
+     */
+    function __construct($name) {
+        $this->name = $name;
+    }
+
+
+    /**
+     * @param SQL_Column $column
+     */
+    function add_column($column) {
+        if ( isset($this->last_column) ) {
+            $column->after = $this->last_column->name;
+        }
+        $this->last_column = $column;
+        $this->columns[$column->name] = $column;
+        return $column;
+    }
+    /**
+     * @param SQL_Index $index
+     */
+    function add_index($index) {
+        $name = $index->getName();
+        if ( isset($this->indexes[$name]) ) {
+            throw new Exception("In table ".$this->name."- duplicate key name ".$name);
+        }
+        $this->indexes[$name] = $index;
+        $this->last_index = $index;
+        return $index;
+    }
+    
+    /**
+     * @param string $prefix Get's an index name
+     * @returns string
+     */
+    function gen_index_name( $prefix, $always_num=FALSE ) {
+        $num = 1;
+        $name = $prefix . ($always_num? "_$num": "");
+        while ( isset($this->indexes[$name]) or isset($this->indexes['~'.$name]) ) {
+            $name = $prefix . "_" . ++$num;
+        }
+        return $name;
+    }
+    
+    /**
+     * @param SQL_Table $other
+     * @returns bool True if $other is equivalent to $this
+     */
+    function equalTo( $other ) {
+        if ( $this->name != $other->name ) { return FALSE; }
+        if ( $this->engine != $other->engine ) { return FALSE; }
+        if ( $this->charset != $other->charset ) { return FALSE; }
+        if ( $this->static != $other->static ) { return FALSE; }
+        if ( count($this->columns) != count($other->columns) ) { return FALSE; }
+        if ( count($this->indexes) != count($other->indexes) ) { return FALSE; }
+        foreach ( $this->columns as $key=>&$value ) {
+            if ( ! $value->equalTo( $other->columns[$key] ) ) { return FALSE; }
+        }
+        foreach ( $this->indexes as $key=>&$value ) {
+            if ( ! $value->equalTo( $other->columns[$key] ) ) { return FALSE; }
+        }
+        return TRUE;
+    }
+    
+    /**
+     * Clears the data associated with this table.  Also initializes it,
+     * allowing data to be inserted into it.
+     */
+    function clear_data() {
+        $this->data = array();
+        $this->static = TRUE;
+    }
+
+    /**
+     * Add a row of data to this table
+     * @throws Exception when data is not yet initialized.
+     */
+    function add_row( $row ) {
+        if ( ! $this->static and $this->name != "SQLMETA" ) {
+            throw new Exception("Cannot add data to ".$this->name.
+                ", not initialized for schema supplied data-- call TRUNCATE first.");
+        }
+        foreach ($row as $col_name=>&$value) {
+            if ( ! isset($this->columns[$col_name]) ) {
+                throw "INSERT references $col_name in ".$this->name." but $col_name doesn't exist";
+            }
+            $col = $this->columns[$col_name];
+            $norm_value = $col->type->normalize($value);
+            $row[$col_name] = $norm_value;
+        }
+        $this->data[] = $row;
+    }
+    
+    /**
+     * Get the primary key.  If there is no primary key then we require all
+     * columns to uniquely identify a row.
+     * @returns array
+     */
+    function primary_key() {
+        foreach ($this->indexes as &$index) {
+            if ( $index->primary) {
+                return $index->columns;
+                break;
+            }
+        }
+        $pk = array();
+        foreach ($this->columns as $name=>&$col) {
+            $pk[] = $name;
+        }
+        return $pk;
+    }
+    
+    /**
+     * For a given row, return the key/value pairs needed to match it, based
+     * on the primary key for this table.
+     * @returns array
+     */
+    function match_row($row) {
+        $where = array();
+        foreach ($this->primary_key() as $key) {
+             $where[$key] = @$row[$key];
+        }
+        return $where;
+    }
+    
+}
+
+/**
+ * A collection of attributes describing a column in a table
+ */
+class SQL_Column extends SQL_Diffable {
+    public $name;
+    public $aliases = array();
+    public $previously;
+    public $type;
+    public $null = TRUE;
+    public $default = "NULL";
+    public $auto_increment = FALSE;
+    public $on_update;
+    public $docs = "";
+    public $after;
+
+    /**
+     * @param string $name
+     */
+    function __construct($name) {
+        $this->name = $name;
+    }
+
+
+    /**
+     * @param SQL_Column $other
+     * @returns bool True if $other is equivalent to $this
+     */
+    function equalTo($other) {
+        if ( $this->name != $other->name ) { return FALSE; }
+        if ( ! $this->type->equalTo( $other->type ) ) { return FALSE; }
+        if ( $this->null != $other->null ) { return FALSE; }
+        if ( $this->default != $other->default ) { return FALSE; }
+        if ( $this->auto_increment != $other->auto_increment ) { return FALSE; }
+        if ( $this->on_update != $other->on_update ) { return FALSE; }
+        if ( $this->aliases != $other->aliases ) { return FALSE; }
+        return TRUE;
+    }
+}
+
+/**
+ * A collection of attributes describing an index on a table
+ */
+class SQL_Index extends SQL_Diffable {
+    public $name  = "";
+    public $docs = "";
+    public $spatial = FALSE;
+    public $primary = FALSE;
+    public $fulltext = FALSE;
+    public $unique   = FALSE;
+    public $using;
+    public $columns  = array();
+
+    /**
+     * @param string $name
+     */
+    function __construct($name="") {
+        $this->name = $name;
+    }
+
+    function getName() {
+        return $this->name;
+    }
+    
+    /**
+     * @param SQL_Index $other
+     * @returns bool True if $other is equivalent to $this
+     */
+    function equalTo($other) {
+        if ( get_class($other) != get_class($this) )   { return FALSE; }
+        if ( $this->columns != $other->columns ) { return FALSE; }
+        if ( $this->primary != $other->primary ) { return FALSE; }
+        if ( $this->fulltext != $other->fulltext ) { return FALSE; }
+        if ( $this->unique != $other->unique ) { return FALSE; }
+        if ( $this->using != $other->using ) { return FALSE; }
+        if ( $this->spatial != $other->spatial ) { return FALSE; }
+        return TRUE;
+    }
+}
+
+class SQL_Index_Foreign extends SQL_Index {
+    public $cname = "";
+    const WEAK_DEFAULT = FALSE;
+    public $weak     = self::WEAK_DEFAULT;
+    public $references = array();
+    /**
+     * @param string $name
+     */
+    function __construct($name="") {
+        parent::__construct($name);
+        $this->references['table'] = "";
+        $this->references['columns'] = array();
+        $this->references['on_delete'] = "";
+        $this->references['on_update'] = "";
+    }
+    
+    function getName() {
+        return "~".$this->cname;
+    }
+    
+    function equalTo($other) {
+        if ( ! parent::equalTo($other) )               { return FALSE; }
+        if ( $this->references != $other->references ) { return FALSE; }
+        if ( $this->weak != $other->weak )             { return FALSE; }
+        return TRUE;
+    }
+}
+
+class SQL_CodeBody extends SQL_Diffable {
+    public $body = "BEGIN\nEND";
+    /**
+     * @returns string Strips any comments from the body of the routine--
+     * this allows the body to be compared to the one in the database,
+     * which never has comments.
+     */
+    function _body_no_comments() {
+        $stripped = $this->body;
+        # Strip C style comments
+        $stripped = preg_replace('{/[*].*?[*]/}s', '', $stripped);
+        # Strip shell and SQL style comments
+        $stripped = preg_replace('/(#|--).*/', '', $stripped);
+        # Strip leading and trailing whitespace
+        $stripped = preg_replace('/^[ \t]+|[ \t]+$/m', '', $stripped);
+        # Collapse repeated newlines
+        $stripped = preg_replace('/\n+/', "\n", $stripped);
+        return $stripped;
+    }
+    
+    function equalTo($other) {
+        if ( get_class($other) != get_class($this) )   { return FALSE; }
+        if ( $this->_body_no_comments() != $other->_body_no_comments() ) { return FALSE; }
+        return TRUE;
+    }
+    
+}
+
+/**
+ * A collection of attributes describing an event
+ */
+class SQL_Event extends SQL_CodeBody {
+    public $name;
+    public $schedule;
+    public $preserve = FALSE;
+    public $status;
+    public $docs = "";
+
+    /**
+     * @param string $name
+     */
+    function __construct($name) {
+        $this->name = $name;
+    }
+    
+    function equalTo($other) {
+        if ( ! parent::equalTo($other) ) { return FALSE; }
+        if ( $this->schedule != $other->schedule ) { return FALSE; }
+        if ( $this->preserve != $other->preserve ) { return FALSE; }
+        if ( $this->status != $other->status ) { return FALSE; }
+        return TRUE;
+    }
+}
+
+/**
+ * A collection of attributes describing a stored routine
+ */
+class SQL_Routine extends SQL_CodeBody {
+    public $name;
+    public $args = array();
+    const ARGS_TYPE_DEFAULT = "LIST";
+    public $args_type = self::ARGS_TYPE_DEFAULT;
+    const DETERMINISTIC_DEFAULT = FALSE;
+    public $deterministic = self::DETERMINISTIC_DEFAULT;
+    const ACCESS_DEFAULT = "CONTAINS SQL";
+    public $access = self::ACCESS_DEFAULT;
+    public $returns;
+    const TXNS_NONE = 0;
+    const TXNS_CALL = 1;
+    const TXNS_HAS  = 2;
+    const TXNS_DEFAULT = self::TXNS_NONE;
+    public $txns = self::TXNS_DEFAULT;
+    public $docs = '';
+    
+    /**
+     * @param string $name
+     */
+    function __construct($name) {
+        $this->name = $name;
+    }
+
+    /**
+     * @param SQL_Routine $other
+     * @returns bool True if $other is equivalent to $this
+     */
+    function equalTo($other) {
+        if ( ! parent::equalTo($other) ) { return FALSE; }
+        if ( $this->deterministic != $other->deterministic ) { return FALSE; }
+        if ( $this->access        != $other->access )        { return FALSE; }
+        if ( $this->args_type     != $other->args_type )     { return FALSE; }
+        if ( $this->txns          != $other->txns )          { return FALSE; }
+        $thisargc = count($this->args);
+        $otherargc = count($other->args);
+        if ( $thisargc != $otherargc ) { return FALSE; }
+        for ( $ii=0; $ii<$thisargc; ++$ii ) {
+            if ( ! $this->args[$ii]->equalTo( $other->args[$ii] ) ) { return FALSE; }
+        }
+        return TRUE;
+    }
+}
+
+/**
+ * A stored procedure, which is exactly like the base routine class
+ */
+class SQL_Proc extends SQL_Routine {
+    const RETURNS_TYPE_DEFAULT = "NONE";
+    public $returns = array("type"=>self::RETURNS_TYPE_DEFAULT);
+    function equalTo($other) {
+        if ( ! parent::equalTo( $other ) ) { return FALSE; }
+        if ( $this->returns != $other->returns ) { return FALSE; }
+        return TRUE;
+    }
+}
+
+/**
+ * A collection of attributes describing a stored function
+ */
+class SQL_Func extends SQL_Routine {
+    function equalTo($other) {
+        if ( ! parent::equalTo( $other ) ) { return FALSE; }
+        if ( ! $this->returns->equalTo( $other->returns ) ) { return FALSE; }
+        return TRUE;
+    }
+}
+
+/**
+ * A collection of attributes describing an argument to a stored procedure
+ * or function.
+ */
+class SQL_Arg extends SQL_Diffable {
+    public $name;
+    public $type;
+    public $dir = "IN";
+    public $docs = "";
+    function toSql() {
+        $sql = "";
+        if ( $dir != "IN" ) {
+            $sql .= "$dir ";
+        }
+        $sql .= SQL::quote_ident($name)." ";
+        $sql .= $type->toSql();
+        return $sql;
+    }
+    function equalTo($other) {
+        if ( $this->name != $other->name ) { return FALSE; }
+        if ( $this->dir != $other->dir ) { return FALSE; }
+        if ( ! $this->type->equalTo($other->type) ) { return FALSE; }
+        return TRUE;
+    }
+}
+
+
