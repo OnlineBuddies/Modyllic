@@ -8,7 +8,7 @@
  */
 
 require_once dirname(__FILE__)."/../build/test.php";
-require_once "OLB/SQL.php";
+require_once "SQL.php";
 
 $t = new mh_test(19);
 

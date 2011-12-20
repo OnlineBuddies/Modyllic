@@ -7,10 +7,8 @@
  * @author bturner@online-buddies.com
  */
 
-@include dirname(__FILE__)."/../build/test.php"; // Under OLBSL
-@include dirname(__FILE__)."/../../bootstrap/unit.php"; // In MHBangV4
-include_once "OLB/SQL.php";
-@include_once SF_ROOT."/OLB/SQL.php";
+require_once dirname(__FILE__)."/../build/test.php";
+require_once "SQL.php";
 
 $num_tests = array(
    "Positive Integer"  => array( "sql"=>    "50",          "value"=>    "50"          ),
