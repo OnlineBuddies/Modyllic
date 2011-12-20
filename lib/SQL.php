@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
  *
