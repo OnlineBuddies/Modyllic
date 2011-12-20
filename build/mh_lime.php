@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Extensions to Lime that we use
  *
