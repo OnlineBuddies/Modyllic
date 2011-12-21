@@ -7,7 +7,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/tests.php";
+require_once dirname(__FILE__)."/../testlib/testmore.php";
 
 plan(20);
 

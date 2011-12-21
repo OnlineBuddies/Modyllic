@@ -7,7 +7,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/tests.php";
+require_once dirname(__FILE__)."/../testlib/testmore.php";
 
 
 $num_tests = array(
@@ -43,7 +43,7 @@ $comment_tests = array(
     "SQL Commetns"     => array( "sql"=>"-- this is a test",    "value"=>"this is a test" ),
     );
 
-plan( count($num_tests)*2 + count($str_tests)*3 + count($ident_tests)*4 + count($comment_tests)*2 + 12 );
+plan( count($num_tests)*2 + count($str_tests)*3 + count($ident_tests)*4 + count($comment_tests)*2 + 13 );
 
 require_ok("SQL.php");
 
