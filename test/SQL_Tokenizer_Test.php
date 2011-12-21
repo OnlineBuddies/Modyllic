@@ -7,8 +7,8 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/../build/test.php";
-require_once "SQL.php";
+require_once dirname(__FILE__)."/tests.php";
+
 
 $num_tests = array(
    "Positive Integer"  => array( "sql"=>    "50",          "value"=>    "50"          ),
@@ -43,79 +43,81 @@ $comment_tests = array(
     "SQL Commetns"     => array( "sql"=>"-- this is a test",    "value"=>"this is a test" ),
     );
 
-$t = new mh_test( count($num_tests)*2 + count($str_tests)*3 + count($ident_tests)*4 + count($comment_tests)*2 + 12 );
+plan( count($num_tests)*2 + count($str_tests)*3 + count($ident_tests)*4 + count($comment_tests)*2 + 12 );
+
+require_ok("SQL.php");
 
 foreach ( $num_tests as $name=>$test ) {
     $tok = new SQL_Tokenizer($test['sql']);
     $token = $tok->next();
-    $t->is_true( $token instanceOf SQL_Token_Num, "$name is a Num token" );
-    $t->is( $token->value(), $test['value'], "$name has the right value" );
+    ok( $token instanceOf SQL_Token_Num, "$name is a Num token" );
+    is( $token->value(), $test['value'], "$name has the right value" );
 }
 
 foreach ( $str_tests as $name=>$test ) {
     $tok = new SQL_Tokenizer($test['sql']);
     $token = $tok->next();
-    $t->is_true( $token instanceOf SQL_Token_String, "$name is a Str token" );
-    $t->is( $token->value(), $test['value'], "$name has the right value" );
-    $t->is( $token->unquote(), $test['unquoted'], "$name unquotes correctly" );
+    ok( $token instanceOf SQL_Token_String, "$name is a Str token" );
+    is( $token->value(), $test['value'], "$name has the right value" );
+    is( $token->unquote(), $test['unquoted'], "$name unquotes correctly" );
 }
 
 foreach ( $ident_tests as $name=>$test ) {
     $tok = new SQL_Tokenizer($test['sql']);
     $token = $tok->next();
-    $t->is_true( $token instanceOf SQL_Token_Ident, "$name is an Ident token" );
+    ok( $token instanceOf SQL_Token_Ident, "$name is an Ident token" );
     if ( $token->value() != $token->literal() ) {
-        $t->is_true( $token instanceOf SQL_Token_Quoted_Ident, "$name is a Quoted Ident token" );
+        ok( $token instanceOf SQL_Token_Quoted_Ident, "$name is a Quoted Ident token" );
     }
     else {
-        $t->is_false( $token instanceOf SQL_Token_Quoted_Ident, "$name isn't a Quoted Ident token" );
+        ok( ! $token instanceOf SQL_Token_Quoted_Ident, "$name isn't a Quoted Ident token" );
     }
-    $t->is( $token->value(), $test['value'], "$name has the right value" );
-    $t->is( $token->literal(), $test['sql'], "$name is unchanged in its literal form" );
+    is( $token->value(), $test['value'], "$name has the right value" );
+    is( $token->literal(), $test['sql'], "$name is unchanged in its literal form" );
 }
 
 foreach ( $comment_tests as $name=>$test ) {
     $tok = new SQL_Tokenizer($test['sql']);
     $token = $tok->next();
-    $t->is_true( $token instanceOf SQL_Token_Comment, "$name is a Comment token" );
-    $t->is( $token->value(), $test['value'], "$name has the right value" );
+    ok( $token instanceOf SQL_Token_Comment, "$name is a Comment token" );
+    is( $token->value(), $test['value'], "$name has the right value" );
 }
 
 $tok = new SQL_Tokenizer("create");
 $token = $tok->next();
-$t->is_true( $token instanceOf SQL_Token_Reserved, "CREATE is Reserved token" );
-$t->is( $token->value(), "create", "CREATE has the right value" );
-$t->is( $token->token(), "CREATE", "CREATE is all caps as a token" );
+ok( $token instanceOf SQL_Token_Reserved, "CREATE is Reserved token" );
+is( $token->value(), "create", "CREATE has the right value" );
+is( $token->token(), "CREATE", "CREATE is all caps as a token" );
 
 $tok = new SQL_Tokenizer(" \t \n test");
 $token = $tok->next(TRUE);
-$t->is_true( $token instanceOf SQL_Token_Whitespace, "Whitespace got tokenized" );
-$t->is( $token->value(), " \t \n ", "The whitespace is what we expected" );
+ok( $token instanceOf SQL_Token_Whitespace, "Whitespace got tokenized" );
+is( $token->value(), " \t \n ", "The whitespace is what we expected" );
 
 $tok = new SQL_Tokenizer(" \t \n test");
 $token = $tok->next();
-$t->is_true( $token instanceOf SQL_Token_Ident, "Not asking for whitespace correctly ignored it" );
+ok( $token instanceOf SQL_Token_Ident, "Not asking for whitespace correctly ignored it" );
 
 $tok = new SQL_Tokenizer(":");
 $token = $tok->next();
-$t->is_true( $token instanceOf SQL_Token_Symbol, "Arbitrary symbol is a Symbol token" );
+ok( $token instanceOf SQL_Token_Symbol, "Arbitrary symbol is a Symbol token" );
 
 $tok = new SQL_Tokenizer("/*!12345 test */");
 $token = $tok->next();
-$t->is_true( $token instanceOf SQL_Token_Ident, "MySQL conditional comments are handled correctly" );
+ok( $token instanceOf SQL_Token_Ident, "MySQL conditional comments are handled correctly" );
 
 $tok = new SQL_Tokenizer("");
 $token = $tok->next();
-$t->is_true( $token instanceOf SQL_Token_EOF, "Empty string is immediate EOF" );
-$t->is_true( $token instanceOf SQL_Token_EOC, "Empty string is EOC" );
+ok( $token instanceOf SQL_Token_EOF, "Empty string is immediate EOF" );
+ok( $token instanceOf SQL_Token_EOC, "Empty string is EOC" );
 
 $tok = new SQL_Tokenizer(";");
 $token = $tok->next();
-$t->is_true( $token instanceOf SQL_Token_EOC, "Delimiter produces EOC" );
+ok( $token instanceOf SQL_Token_EOC, "Delimiter produces EOC" );
 
 $tok = new SQL_Tokenizer("ó");
 $token = $tok->next();
-$t->is_true( $token instanceOf SQL_Token_Error, "Unicode bareword character produces syntax error" );
+ok( $token instanceOf SQL_Token_Error, "Unicode bareword character produces syntax error" );
 
 ## todo, explicit tests for:
 ## set_delimiter
