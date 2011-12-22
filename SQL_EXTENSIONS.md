@@ -15,31 +15,31 @@ The procedure return value is used by the code generator to determine what
 sort of value, if any, the helper for this stored proc should return.  If
 nothing is specified then nothing is returned.
 
-  * TABLE           -- Fetches all of the rows and returns an array of them
-  * ROW             -- Fetches one row and returns it
-  * COLUMN colname  -- Fetches one row and returns colname from it
-  * LIST colname    -- Fetches colname from all matching rows and returns an array of them
-  * MAP (key,value) -- Fetches all of the rows and uses the columns key and
-                       value to build a map and returns that.
-  * MAP (key,ROW)   -- Fetches all of the rows and uses the column key to
-                       build a map with the entire row as the value, and
-                       returns that.
-  * STH             -- Returns a raw statement handle.
-  * NONE            -- No return value, the default.
+  * `TABLE`           -- Fetches all of the rows and returns an array of them
+  * `ROW`             -- Fetches one row and returns it
+  * `COLUMN colname`  -- Fetches one row and returns colname from it
+  * `LIST colname`    -- Fetches colname from all matching rows and returns an array of them
+  * `MAP (key,value)` -- Fetches all of the rows and uses the columns key and
+                         value to build a map and returns that.
+  * `MAP (key,ROW)`   -- Fetches all of the rows and uses the column key to
+                         build a map with the entire row as the value, and
+                         returns that.
+  * `STH`             -- Returns a raw statement handle.
+  * `NONE`            -- No return value, the default.
 
 Stored procedures and functions whose name begins with an underscore (_)
 will not have a helper method generated for them.
 
-The optional ARGS attribute for both procedures and functions declares how
+The optional `ARGS` attribute for both procedures and functions declares how
 you want to pass in arguments.  Either as a list, or named. 
-For PHP, LIST means regular method arguments and MAP means accepting an
+For PHP, `LIST` means regular method arguments and `MAP` means accepting an
 array with pairs matching the argument names of the stored proc.  The key
 names should not include a leading p_ if your proc argument names start with
 that.
 
-(If we were supporting a language that supports named arguments then MAP
+(If we were supporting a language that supports named arguments then `MAP`
 would use those.  For something like Perl 6, where positional arguments can
-be passed in by name, LIST and MAP would produce the same code.)
+be passed in by name, `LIST` and `MAP` would produce the same code.)
 
 ---
 
@@ -65,7 +65,7 @@ In `CREATE TABLE` statements, your column definitions can have an additional
 list of other names the field has been known by.  If you migrate to this
 version from a version that had a field with one of those names, it will
 rename issue a rename, rather then dropping the old field and adding the new
-one.  You do this by adding "`ALIASES (fields,...)`" to the columnspec.  Eg:
+one.  You do this by adding `ALIASES (fields,...)` to the columnspec.  Eg:
 
     total FLOAT NOT NULL ALIASES (amount),
 
