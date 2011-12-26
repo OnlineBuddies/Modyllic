@@ -3,3 +3,7 @@
 ### [Schemagic](http://schemagic.sourceforge.net/)
 
 Schemagic appears to have been a project with similar intent.  It was written in Java and published to Sourceforge in 2006.  However, it's release was never completed.
+
+### [SchemaSync](http://schemasync.org)
+
+SchemaSync is a Python project that can generate SQL diffs between two MySQL instances.  It compares live databases only and cannot read DDL itself.
