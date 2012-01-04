@@ -954,7 +954,7 @@ class SQL_Parser {
                     $this->get_reserved();
                     $key->weak = TRUE;
                 }
-                $key->columns = array( $column->name );
+                $key->columns = array( $column->name => FALSE );
                 $key->references['table'] = $this->get_ident();
                 $this->get_symbol('(');
                 $key->references['columns'] = $this->get_array();
@@ -988,13 +988,13 @@ class SQL_Parser {
         if ( $is_primary ) {
             $index = new SQL_Index('!PRIMARY KEY');
             $index->primary = TRUE;
-            $index->columns = array($column->name);
+            $index->columns = array($column->name => FALSE);
             $this->add_index( $index );
         }
         else if ( $is_unique ) {
             $index = new SQL_Index($column->name);
             $index->unique = TRUE;
-            $index->columns = array($column->name);
+            $index->columns = array($column->name => FALSE);
             $this->add_index( $index );
         }
     }
@@ -1027,7 +1027,7 @@ class SQL_Parser {
             
             // after the name, the column list is mandetory
             $this->get_symbol('(');
-            $key->columns = $this->get_array();
+            $key->columns = $this->index_columns();
 
             $this->get_reserved( 'REFERENCES' );
             if ( $this->peek_next()->token() == 'WEAKLY' ) {
@@ -1089,7 +1089,7 @@ class SQL_Parser {
                 $key->name = $this->get_ident();
             }
             $this->get_symbol('(');
-            $key->columns = $this->get_array();
+            $key->columns = $this->index_columns();
 
             if ( ! $key->name ) {
                 $key->name = $this->gen_index_name($key);
@@ -1102,6 +1102,27 @@ class SQL_Parser {
             $this->next();
         }
         $this->add_index( $key );
+    }
+    
+    function index_columns() {
+        $columns = array();
+        $last_col = null;
+        while ( $this->next()->value() != ')' ) {
+            if ( $this->cur() instanceOf SQL_Token_EOC ) {
+                throw $this->error( "Hit end of command while looking for $end" );
+            }
+            if ( $this->cur()->value() != ',' ) {
+                $colname = $this->cur()->value();
+                if ( $this->maybe('(') ) {
+                    $columns[$last_col] = $this->get_num();
+                    $this->get_symbol(')');
+                }
+                else {
+                    $columns[$colname] = FALSE;
+                }
+            }
+        }
+        return $columns;
     }
     
     function add_index($key) {

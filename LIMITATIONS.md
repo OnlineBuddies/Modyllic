@@ -9,9 +9,9 @@ extensions.  Limitations on that dialect currently are:
 
   * Multiple string literals in a row are supported, however this is not
     maintained and they will be be emitted as a single string.  Ie:
-        'a' ' ' 'string'
+        `'a' ' ' 'string'`
     Will be emitted as:
-        'a string'
+        `'a string'`
 
   * Hexidecimal literals are not supported and will produce a syntax error.
 
@@ -35,11 +35,12 @@ extensions.  Limitations on that dialect currently are:
     generated SQL will be correct, however, as it will be quoted there.
 
   * MySQL's conditional comments are passed are kind of supported:
-        Without a version number, they're treated as a regular comment.
-        With a version number the comment markers and version number are
-        removed and parsing then continues.
+  * * Without a version number, they're treated as a regular comment.
+  * * With a version number the comment markers and version number are
+      removed and parsing then continues.
 
   * Some non-MySQL data types that MySQL supports are not supported:
+
         CHARACTER VARYING(M)
         FLOAT4
         FLOAT8
@@ -54,7 +55,7 @@ extensions.  Limitations on that dialect currently are:
         MIDDLEINT
 
 There are some other miscellaneous limitations:
-    No support for renaming databases or tables.
-    No support for moving columns between tables.
-    No support for renaming events, procs or funcs.
-    
+
+  * No support for renaming databases or tables.
+  * No support for moving columns between tables.
+  * No support for renaming events, procs or funcs. (Currently the old name would be dropped and the new one created.)
