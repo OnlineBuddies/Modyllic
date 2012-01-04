@@ -32,9 +32,10 @@ Setting command delimiters:
 
 SQL types:
 
-   num_type | str_type | datetime_type | misc_type
+    num_type | str_type | datetime_type | misc_type
 
 num_type:
+
     {int_type(length) | dec_type(length,scale) | float_type(length,decimals)}
     [UNSIGNED] [ZEROFILL]
 
@@ -64,17 +65,20 @@ float_type:
     | DOUBLE PRECISION
 
 str_type:
+
     {char_type|text_type|compound_type}[(length)] 
     [{ASCII | UNICODE | CHARACTER SET charset] 
     [{BINARY | COLLATE collate}]
 
 char_type:
+
       CHAR
     | BINARY
     | VARCHAR
     | VARBINARY
 
 text_type:
+
       TINYTEXT
     | TINYBLOB
     | TEXT
@@ -85,10 +89,12 @@ text_type:
     | LONGBLOB
 
 compound_type:
+
       ENUM(value,...)
     | SET(value,...)
 
 datetime_type:
+
       DATE
     | DATETIME
     | TIMESTAMP
@@ -96,12 +102,15 @@ datetime_type:
     | YEAR(length)
 
 misc_type:        
+
       BIT
     | GEOMETRY
     | SERIAL
 
     SERIAL is only valid in CREATE TABLE statements and is there an alias for:
+
         BIGINT UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT
+
     Note that NOT NULL UNIQUE AUTO_INCRMENT is not part of the type declaration.
 
 Truncate:
