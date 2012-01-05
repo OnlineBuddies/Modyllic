@@ -428,7 +428,12 @@ class SQL_Generator_SQL {
     }
 
     function create_column( $column ) {
-        $this->extend("%id %lit", $column->name, $column->type->toSql() );
+        if ( isset($column->from) ) {
+            $this->extend("%id %lit", $column->name, $column->type->toSql($column->from->type) );
+        }
+        else {
+            $this->extend("%id %lit", $column->name, $column->type->toSql() );
+        }
         if ( ! $column->null ) {
             $this->add( " NOT NULL" );
         }
