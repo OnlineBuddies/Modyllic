@@ -1,8 +1,8 @@
 #!/usr/bin/env php
 <?php
-@include_once dirname(realpath(__FILE__))."/../lib/OLB/SQL.php";
+@include_once dirname(realpath(__FILE__))."/../lib/SQL.php";
 if ( ! class_exists('SQL',FALSE) ) {
-    require_once "OLB/SQL.php";
+    require_once "SQL.php";
 }
 
 $filename = "php://stdin";
