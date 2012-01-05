@@ -307,6 +307,10 @@ class SQL {
             "YEAR_MONTH" => TRUE,
             "ZEROFILL" => TRUE,
             "_FILENAME" => TRUE,
+            // We also need
+            "AT" => TRUE,
+            "DAY" => TRUE,
+            "END" => TRUE,
         );
         return isset($mysql_reserved[strtoupper($word)]);
     }
