@@ -396,7 +396,7 @@ class SQL_Parser {
         // create_specification:
         //      [DEFAULT] {CHARACTER SET | CHARSET} [=] charset_name
         //    | [DEFAULT] COLLATE [=] collation_name
-              
+        $this->maybe('IF NOT EXISTS');
         $this->schema->name = $this->get_ident();
         $this->get_create_specification();
     }
