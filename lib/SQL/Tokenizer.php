@@ -756,6 +756,7 @@ class SQL_Tokenizer {
             "HOUR_MINUTE",
             "HOUR_SECOND",
             "IF EXISTS",
+            "IF NOT EXISTS",
             "IN",
             "INDEX",
             "INNODB",
