@@ -340,7 +340,7 @@ class SQL_Table extends SQL_Diffable {
         }
         $pk = array();
         foreach ($this->columns as $name=>&$col) {
-            $pk[] = $name;
+            $pk[$name] = FALSE;
         }
         return $pk;
     }
