@@ -523,7 +523,18 @@ class SQL_Generator_SQL {
         if ( !$index->primary and $index->name ) {
             $this->add( "%id ", $index->name );
         }
-        $this->add( "(" . implode(", ", array_map(array("SQL","quote_ident"),$index->columns)) . ")" );
+        $this->add( "(" );
+        $num = 0;
+        foreach ($index->columns as $name=>$length) {
+            if ( $num++ ) {
+                $this->add( "," );
+            }
+            $this->add( "%id", $name );
+            if ( $length !== FALSE ) {
+                $this->add( "(%lit)", $length );
+            }
+        }
+        $this->add( ")" );
         if ( $index instanceOf SQL_Index_Foreign ) {
             $this->foreign_key( $index );
         }
