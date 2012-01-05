@@ -448,7 +448,6 @@ class SQL_String extends SQL_Type {
         return SQL::quote_str( $value );
     }
     function charset_collation($other=null) {
-        $sql = "";
         $other_charset = isset($other)? $other->charset(): $this->default_charset;
         $other_collate = isset($other)? $other->collate(): $this->default_collate;
         $diff_charset = $this->charset() != $other_charset;
@@ -461,6 +460,7 @@ class SQL_String extends SQL_Type {
                 return " UNICODE";
             }
         }
+        $sql = "";
         if ( $diff_charset ) {
             $sql .= " CHARACTER SET ".$this->charset();
         }
