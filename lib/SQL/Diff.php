@@ -434,7 +434,7 @@ class SQL_Changeset {
                     count($this->update['tables']) + count($this->update['routines'])+
                     count($this->update['events']) + count($this->update['views'])
                     );
-        return $changed != 0;
+        return ($changed != 0 or $this->create_sqlmeta or isset($this->schema->charset) or isset($this->schema->collate));
     }
 }
 
