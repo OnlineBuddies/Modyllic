@@ -292,7 +292,7 @@ class SQL_Table extends SQL_Diffable {
             if ( ! $value->equalTo( $other->columns[$key] ) ) { return FALSE; }
         }
         foreach ( $this->indexes as $key=>&$value ) {
-            if ( ! $value->equalTo( $other->columns[$key] ) ) { return FALSE; }
+            if ( ! $value->equalTo( $other->indexes[$key] ) ) { return FALSE; }
         }
         return TRUE;
     }
