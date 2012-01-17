@@ -1170,7 +1170,7 @@ class SQL_Parser {
                 if ( count($key->columns) <= count($otherKey->columns) ) {
                     $matched = TRUE;
                     foreach ( $key->columns as $idx=>&$colname ) {
-                        if ( $colname != $otherKey->columns[$idx] ) {
+                        if ( !isset($otherKey->columns[$idx]) or $colname != $otherKey->columns[$idx] ) {
                             $matched = FALSE;
                             break;
                         }
@@ -1179,7 +1179,8 @@ class SQL_Parser {
                 }
             }
             if ( ! $name ) {
-                $name = $this->ctx->gen_index_name($key->columns[0]);
+                $first = array_shift( array_keys($key->columns) );
+                $name = $this->ctx->gen_index_name($first);
             }
             if ( ! $matched ) {
                 $regkey = new SQL_Index($name);
