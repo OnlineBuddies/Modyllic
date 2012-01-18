@@ -28,7 +28,7 @@ class SQL_Commandline {
             }
             $source = SQL_Schema_Loader::$source;
         }
-        self::warn(sprintf("\rLoading %s [%s%s] %2.1f%%", 
+        if(!function_exists('posix_isatty') or posix_isatty(0)) self::warn(sprintf("\rLoading %s [%s%s] %2.1f%%", 
             SQL_Schema_Loader::$source,
             str_repeat("*",$star_count), str_repeat("-",$dash_count),
             $percent ));
