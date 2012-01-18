@@ -120,27 +120,6 @@ class SQL_Commandline {
                     $load[$which]['args'] = array(array_shift($argv)); 
                     $which = self::next_step($steps);
                     break;
-                default:
-                    // Special case for MySQL style passwords
-                    if ( $arg[0] == "-" and $arg[1] == "p" ) {
-                        $load[$which]['kind'] = "from_db";
-                        $load[$which]['args'][3] = substr($arg, 2);
-                        break;
-                    }
-                    // Unknown arguments terminate early
-                    if ( $arg[0] == "-" ) {
-                        $extra[] = $arg;
-                        $which="done";
-                        break;
-                    }
-                    else if ( ! isset($load[$which]['kind']) ) {
-                        $load[$which]['kind'] = "from_file";
-                        $load[$which]['args'] = array($arg);
-                    }
-                    else if ( $load[$which]['kind'] == "from_db" ) {
-                        $load[$which]['args'][1] = $arg;
-                    }
-                    $which = self::next_step($steps);
                 }
                 break;
             case "outputformat":
@@ -148,7 +127,26 @@ class SQL_Commandline {
                 $which = self::next_step($steps);
                 break;
             default:
-                throw new Exception("Unknown argument spec step");
+                // Special case for MySQL style passwords
+                if ( $arg[0] == "-" and $arg[1] == "p" ) {
+                    $load[$which]['kind'] = "from_db";
+                    $load[$which]['args'][3] = substr($arg, 2);
+                    break;
+                }
+                // Unknown arguments terminate early
+                if ( $arg[0] == "-" ) {
+                    $extra[] = $arg;
+                    $which="done";
+                    break;
+                }
+                else if ( ! isset($load[$which]['kind']) ) {
+                    $load[$which]['kind'] = "from_file";
+                    $load[$which]['args'] = array($arg);
+                }
+                else if ( $load[$which]['kind'] == "from_db" ) {
+                    $load[$which]['args'][1] = $arg;
+                }
+                $which = self::next_step($steps);
             }
         }
 
