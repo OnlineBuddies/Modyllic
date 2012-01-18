@@ -77,11 +77,13 @@ class SQL_Commandline {
                 $load[$arg] ++;
                 continue;
             }
-            if ( $which == "done" ) {
+            switch ($which) {
+            case "done":
                 $extra[] = array_shift($argv);
                 continue;
-            }
-            switch ($arg) {
+            case "oldspec":
+            case "newspec":
+                switch ($arg) {
                 case "-h":
                     if ( isset($load[$which]['args'][0]) ) {
                         $which = self::next_step($steps);
@@ -139,6 +141,14 @@ class SQL_Commandline {
                         $load[$which]['args'][1] = $arg;
                     }
                     $which = self::next_step($steps);
+                }
+                break;
+            case "outputformat":
+                $load[$which]['format'] = $arg;
+                $which = self::next_step($steps);
+                break;
+            default:
+                throw new Exception("Unknown argument spec step");
             }
         }
 

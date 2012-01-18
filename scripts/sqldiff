@@ -12,12 +12,19 @@ if ( ! class_exists('SQL',FALSE) ) {
     require_once "SQL.php";
 }
 
-$load = SQL_Commandline::args( "sqldiff", "oldspec newspec", $argv );
+$load = SQL_Commandline::args( "sqldiff", "oldspec newspec outputformat", $argv );
 
 $from = SQL_Commandline::schema($load['oldspec']);
 $to   = SQL_Commandline::schema($load['newspec']);
 SQL_Commandline::warn("\r".str_repeat(" ",70)."\r");
 
 $diff = new SQL_Diff( $from, $to );
-$gen = new SQL_Generator_NativeSQL();
+if(!$load['outputformat']['format'] or $load['outputformat']['format'] == 'native') {
+    $gen = new SQL_Generator_NativeSQL();
+} else if($load['outputformat']['format'] == 'plain') {
+    $gen = new SQL_Generator_PlainSQL();
+} else {
+    SQL_Commandline::warn("Unknown output format {$load['outputformat']['format']}\n");
+    exit(1);
+}
 print $gen->alter_sql($diff);
