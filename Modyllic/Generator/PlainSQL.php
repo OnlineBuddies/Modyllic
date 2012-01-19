@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class SQL_Generator_PlainSQL extends SQL_Generator_SQL {
+class Modyllic_Generator_PlainSQL extends Modyllic_Generator_SQL {
     // We include weak constraints as well as regular ones
     function ignore_index( $index ) {
         return FALSE;

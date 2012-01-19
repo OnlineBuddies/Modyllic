@@ -7,21 +7,18 @@
  * @author bturner@online-buddies.com
  */
 
-@include_once dirname(realpath(__FILE__))."/../lib/SQL.php";
-if ( ! class_exists('SQL',FALSE) ) {
-    require_once "SQL.php";
-}
+require_once "Modyllic/SQL.php";
 
 require_once '/opt/php/xhprof/xhprof_lib/utils/xhprof_lib.php';
 require_once '/opt/php/xhprof/xhprof_lib/utils/xhprof_runs.php';
         
-$load = SQL_Commandline::args( "create", "spec", $argv );
+$load = Modyllic_Commandline::args( "create", "spec", $argv );
 
 $ignore = array('call_user_func', 'call_user_func_array');
 
 xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY, $ignore);
 
-$schema = SQL_Commandline::schema($load['spec']);
+$schema = Modyllic_Commandline::schema($load['spec']);
 
 $xhprof_data = xhprof_disable();
 $xhprof_runs = new XHProfRuns_Default();
