@@ -51,7 +51,7 @@ $sql_types = array(
     );
 
 
-plan( 2 + count($sql_types) );
+plan( 8 + count($sql_types) );
 
 require_ok("Modyllic/Types.php");
 
