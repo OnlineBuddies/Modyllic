@@ -1,12 +1,6 @@
 default:
 
-.PHONY: test install
-
-install:
-	pear install package.xml
-
-uninstall
-	pear uninstall __uri/Modyllic
+.PHONY: test
 
 test: check
 	prove --exec 'php -d include_path=lib' --ext '.phpt' test

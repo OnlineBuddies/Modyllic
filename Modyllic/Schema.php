@@ -606,7 +606,7 @@ class Modyllic_Arg extends Modyllic_Diffable {
         if ( $dir != "IN" ) {
             $sql .= "$dir ";
         }
-        $sql .= SQL::quote_ident($name)." ";
+        $sql .= Modyllic_SQL::quote_ident($name)." ";
         $sql .= $type->toSql();
         return $sql;
     }

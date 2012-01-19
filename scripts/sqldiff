@@ -21,7 +21,7 @@ if(!$load['outputformat']['format'] or $load['outputformat']['format'] == 'nativ
 } else if($load['outputformat']['format'] == 'plain') {
     $gen = new Modyllic_Generator_PlainSQL();
 } else {
-    SQL_Commandline::warn("Unknown output format {$load['outputformat']['format']}\n");
+    Modyllic_Commandline::warn("Unknown output format {$load['outputformat']['format']}\n");
     exit(1);
 }
 print $gen->alter_sql($diff);

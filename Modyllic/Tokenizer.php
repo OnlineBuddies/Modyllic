@@ -250,7 +250,7 @@ class Modyllic_Tokenizer {
         $this->pos = 0;
         $this->len = strlen($this->cmdstr);
         $this->generate_reserved_re();
-        $this->ident_re = '/\G('.SQL::$valid_ident_re.')/';
+        $this->ident_re = '/\G('.Modyllic_SQL::$valid_ident_re.')/';
         $this->cur = new Modyllic_Token_SOC(0);
     }
     
@@ -662,7 +662,7 @@ class Modyllic_Tokenizer {
             if ( $this->peek_next(TRUE) instanceOf Modyllic_Token_Whitespace ) {
                 $ws = $this->next(TRUE);
                 if ( $this->peek_next(TRUE) instanceOf Modyllic_Token_String ) {
-                    $token = new Modyllic_Token_String($this->pos, SQL::quote_str( $token->unquote() . $this->next(FALSE)->unquote() ) );
+                    $token = new Modyllic_Token_String($this->pos, Modyllic_SQL::quote_str( $token->unquote() . $this->next(FALSE)->unquote() ) );
                 }
                 else {
                     $this->inject($ws);
