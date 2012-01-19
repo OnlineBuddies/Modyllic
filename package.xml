@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+    http://pear.php.net/dtd/tasks-1.0.xsd
+    http://pear.php.net/dtd/package-2.0
+    http://pear.php.net/dtd/package-2.0.xsd">
+ <name>Modyllic</name>
+ <uri>http://path/to/package</uri>
+ <summary>Schema management and DDL diff</summary>
+ <description>Modyllic, PHP SQL Parser and schema management tool</description>
+ <lead>
+  <name>Online Buddies, Inc</name>
+  <user>olb</user>
+  <email>development@online-buddies.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2012-01-10</date>
+ <time>11:41:05</time>
+ <version>
+  <release>0.9.0</release>
+  <api>0.9.0</api>
+ </version>
+ <stability>
+  <release>beta</release>
+  <api>beta</api>
+ </stability>
+ <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
+ <notes>
+release note
+ </notes>
+ <contents>
+  <dir name="/">
+   <file name="Modyllic/SQL.php" role="php" />
+   <file name="Modyllic/Commandline.php" role="php" />
+   <file name="Modyllic/Diff.php" role="php" />
+   <file name="Modyllic/Generator.php" role="php" />
+   <file name="Modyllic/Parser.php" role="php" />
+   <file name="Modyllic/Schema.php" role="php" />
+   <file name="Modyllic/Tokenizer.php" role="php" />
+   <file name="Modyllic/Types.php" role="php" />
+   <file name="Modyllic/Generator/NativeSQL.php" role="php" />
+   <file name="Modyllic/Generator/PHP.php" role="php" />
+   <file name="Modyllic/Generator/SQL.php" role="php" />
+   <file name="Modyllic/Generator/StrictSQL.php" role="php" />
+   <file name="Modyllic/Schema/FromDB.php" role="php" />
+   <file name="Modyllic/Schema/Loader.php" role="php" />
+   <file baseinstalldir="/" name="scripts/migrate" role="script" />
+   <file baseinstalldir="/" name="scripts/sqlcolorize" role="script" />
+   <file baseinstalldir="/" name="scripts/sqldiff" role="script" />
+   <file baseinstalldir="/" name="scripts/sqldrop" role="script" />
+   <file baseinstalldir="/" name="scripts/sqldump" role="script" />
+   <file baseinstalldir="/" name="scripts/sqlpreparse" role="script" />
+   <file baseinstalldir="/" name="scripts/sqlprofile" role="script" />
+   <file baseinstalldir="/" name="scripts/sqltophp" role="script" />
+   <file name="test/SQL.phpt" role="data" />
+   <file name="test/SQL_Tokenizer.phpt" role="data" />
+   <file name="testlib/README.md" role="data" />
+   <file name="testlib/testmore.php" role="data" />
+   <file name="testlib/test/inc_false.php" role="data" />
+   <file name="testlib/test/inc_true.php" role="data" />
+   <file name="testlib/test/test.php" role="data" />
+   <file name="DIALECT_SUPPORT.md" role="data" />
+   <file name="HACKING.md" role="data" />
+   <file name="LICENSE.md" role="data" />
+   <file name="LIMITATIONS.md" role="data" />
+   <file name="Makefile" role="data" />
+   <file name="README.md" role="doc" />
+   <file name="SCHEMA_CHANGE_EVENTS.md" role="doc" />
+   <file name="SQL_DIALECT.md" role="doc" />
+   <file name="SQL_EXTENSIONS.md" role="doc" />
+   <file name="TODO.md" role="doc" />
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.2</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.0</min>
+   </pearinstaller>
+  </required>
+ </dependencies>
+ <phprelease>
+  <filelist>
+   <install as="migrate" name="scripts/migrate" />
+   <install as="sqlcolorize" name="scripts/sqlcolorize" />
+   <install as="sqldiff" name="scripts/sqldiff" />
+   <install as="sqldrop" name="scripts/sqldrop" />
+   <install as="sqldump" name="scripts/sqldump" />
+   <install as="sqlpreparse" name="scripts/sqlpreparse" />
+   <install as="sqlprofile" name="scripts/sqlprofile" />
+   <install as="sqltophp" name="scripts/sqltophp" />
+  </filelist>
+ </phprelease>
+ <changelog>
+  <release>
+   <version>
+    <release>1.0.0</release>
+    <api>1.0.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2012-01-10</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
+   <notes>
+release note
+   </notes>
+  </release>
+ </changelog>
+</package>
