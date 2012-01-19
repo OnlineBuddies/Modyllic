@@ -3,7 +3,7 @@
 /**
  * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
  *
- * @package OLB::SQL
+ * @package Modyllic
  * @author bturner@online-buddies.com
  */
 
@@ -34,12 +34,12 @@ $str_tests = array(
 
 plan( 1 + count($ident_tests) + count($str_tests) );
 
-require_ok("SQL.php");
+require_ok("Modyllic/SQL.php");
 
 foreach ($ident_tests as $plain=>$quoted) {
-    is( SQL::quote_ident($plain), $quoted, "Identifier $plain");
+    is( Modyllic_SQL::quote_ident($plain), $quoted, "Identifier $plain");
 }
 
 foreach ($str_tests as $plain=>$quoted) {
-    is( SQL::quote_str($plain), $quoted, "String $plain");
+    is( Modyllic_SQL::quote_str($plain), $quoted, "String $plain");
 }

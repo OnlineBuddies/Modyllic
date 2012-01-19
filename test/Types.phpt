@@ -10,58 +10,58 @@
 require_once dirname(__FILE__)."/../testlib/testmore.php";
 
 $sql_types = array(
-    "BIT"              => "SQL_Bit",
-    "BOOL"             => "SQL_TinyInt",
-    "BOOLEAN"          => "SQL_TinyInt",
-    "TINYINT"          => "SQL_TinyInt",
-    "SMALLINT"         => "SQL_SmallInt",
-    "MEDIUMINT"        => "SQL_MediumInt",
-    "INT"              => "SQL_Integer",
-    "INTEGER"          => "SQL_Integer",
-    "BIGINT"           => "SQL_BigInt",
-    "SERIAL"           => "SQL_BigInt",
-    "FLOAT"            => "SQL_Float",
-    "REAL"             => "SQL_Double_Float",
-    "DOUBLE"           => "SQL_Double_Float",
-    "DOUBLE PRECISION" => "SQL_Double_Float",
-    "DEC"              => "SQL_Decimal",
-    "FIXED"            => "SQL_Decimal",
-    "NUMERIC"          => "SQL_Decimal",
-    "DECIMAL"          => "SQL_Decimal",
-    "CHAR"             => "SQL_Char",
-    "BINARY"           => "SQL_Binary",
-    "VARCHAR"          => "SQL_VarChar",
-    "VARBINARY"        => "SQL_VarBinary",
-    "TINYTEXT"         => "SQL_Text",
-    "TINYBLOB"         => "SQL_Blob",
-    "TEXT"             => "SQL_Text",
-    "BLOB"             => "SQL_Blob",
-    "MEDIUMTEXT"       => "SQL_Text",
-    "MEDIUMBLOB"       => "SQL_Blob",
-    "LONGTEXT"         => "SQL_Text",
-    "LONGBLOB"         => "SQL_Blob",
-    "ENUM"             => "SQL_Enum",
-    "SET"              => "SQL_Set",
-    "DATE"             => "SQL_Date",
-    "DATETIME"         => "SQL_Datetime",
-    "TIMESTAMP"        => "SQL_Timestamp",
-    "TIME"             => "SQL_Time",
-    "YEAR"             => "SQL_Year",
-    "GEOMETRY"         => "SQL_Geometry",
+    "BIT"              => "Modyllic_Bit",
+    "BOOL"             => "Modyllic_TinyInt",
+    "BOOLEAN"          => "Modyllic_TinyInt",
+    "TINYINT"          => "Modyllic_TinyInt",
+    "SMALLINT"         => "Modyllic_SmallInt",
+    "MEDIUMINT"        => "Modyllic_MediumInt",
+    "INT"              => "Modyllic_Integer",
+    "INTEGER"          => "Modyllic_Integer",
+    "BIGINT"           => "Modyllic_BigInt",
+    "SERIAL"           => "Modyllic_BigInt",
+    "FLOAT"            => "Modyllic_Float",
+    "REAL"             => "Modyllic_Double_Float",
+    "DOUBLE"           => "Modyllic_Double_Float",
+    "DOUBLE PRECISION" => "Modyllic_Double_Float",
+    "DEC"              => "Modyllic_Decimal",
+    "FIXED"            => "Modyllic_Decimal",
+    "NUMERIC"          => "Modyllic_Decimal",
+    "DECIMAL"          => "Modyllic_Decimal",
+    "CHAR"             => "Modyllic_Char",
+    "BINARY"           => "Modyllic_Binary",
+    "VARCHAR"          => "Modyllic_VarChar",
+    "VARBINARY"        => "Modyllic_VarBinary",
+    "TINYTEXT"         => "Modyllic_Text",
+    "TINYBLOB"         => "Modyllic_Blob",
+    "TEXT"             => "Modyllic_Text",
+    "BLOB"             => "Modyllic_Blob",
+    "MEDIUMTEXT"       => "Modyllic_Text",
+    "MEDIUMBLOB"       => "Modyllic_Blob",
+    "LONGTEXT"         => "Modyllic_Text",
+    "LONGBLOB"         => "Modyllic_Blob",
+    "ENUM"             => "Modyllic_Enum",
+    "SET"              => "Modyllic_Set",
+    "DATE"             => "Modyllic_Date",
+    "DATETIME"         => "Modyllic_Datetime",
+    "TIMESTAMP"        => "Modyllic_Timestamp",
+    "TIME"             => "Modyllic_Time",
+    "YEAR"             => "Modyllic_Year",
+    "GEOMETRY"         => "Modyllic_Geometry",
     );
 
 
 plan( 2 + count($sql_types) );
 
-require_ok("SQL/Types.php");
+require_ok("Modyllic/Types.php");
 
 foreach ($sql_types as $sql_type=>$class) {
-    $type = SQL_Type::create($sql_type);
+    $type = Modyllic_Type::create($sql_type);
     is( get_class($type), $class, "Create $sql_type -> $class" );
 }
 
 try {
-    $type = SQL_Type::create("BOGUS");
+    $type = Modyllic_Type::create("BOGUS");
     fail( "Creating a bogus type throws exception" );
     diag( "Got: ".get_class($type)." expected: Exception");
 }
@@ -69,14 +69,14 @@ catch (Exception $e) {
     is( $e->getMessage(), "Unknown SQL type: BOGUS", "Creating a bogus type throws exception" );
 }
 
-$bit = SQL_Type::create("BIT");
+$bit = Modyllic_Type::create("BIT");
 is( $bit->name, "BIT", "Name property is set");
 is( $bit->toSql(), "BIT", "SQL name is correct");
 
-$num = SQL_Type::create("INTEGER");
+$num = Modyllic_Type::create("INTEGER");
 ok( ! $bit->equalTo($num), "Bits are not integers" );
 ok( $bit->equalTo($bit), "Bits are indeed bits" );
 ok( $bit->isValid(), "Bits are valid" );
 
-$int = SQL_Type::create("INTEGER");
+$int = Modyllic_Type::create("INTEGER");
 is( $int->length, $int->default_length, "Length is initialized properly" );
