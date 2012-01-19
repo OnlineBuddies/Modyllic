@@ -2,86 +2,86 @@
 /**
  * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
  *
- * @package OLB::SQL
+ * @package Modyllic
  * @author bturner@online-buddies.com
  */
 
 /**
  * A collection of attributes describing a type declaration
  */
-class SQL_Type {
+class Modyllic_Type {
     static function create($type) {
         switch ($type) {
             case "BIT":
-                return new SQL_Bit($type);
+                return new Modyllic_Bit($type);
             case "BOOL":
             case "BOOLEAN":
             case "TINYINT":
-                return new SQL_TinyInt($type);
+                return new Modyllic_TinyInt($type);
             case "SMALLINT":
-                return new SQL_SmallInt($type);
+                return new Modyllic_SmallInt($type);
             case "MEDIUMINT":
-                return new SQL_MediumInt($type);
+                return new Modyllic_MediumInt($type);
             case "INT":
             case "INTEGER":
-                return new SQL_Integer($type);
+                return new Modyllic_Integer($type);
             case "BIGINT":
-                return new SQL_BigInt($type);
+                return new Modyllic_BigInt($type);
             case "SERIAL":
-                $new = new SQL_BigInt($type);
+                $new = new Modyllic_BigInt($type);
                 $new->unsigned = TRUE;
                 return $new;
             case "FLOAT":
-                return new SQL_Float($type);
+                return new Modyllic_Float($type);
             case "REAL":
             case "DOUBLE":
             case "DOUBLE PRECISION":
-                return new SQL_Double_Float($type);
+                return new Modyllic_Double_Float($type);
             case "DEC":
             case "FIXED":
             case "NUMERIC":
             case "DECIMAL":
-                return new SQL_Decimal($type);
+                return new Modyllic_Decimal($type);
             case "CHAR":
-                return new SQL_Char($type);
+                return new Modyllic_Char($type);
             case "BINARY":
-                return new SQL_Binary($type);
+                return new Modyllic_Binary($type);
             case "VARCHAR":
-                return new SQL_Varchar($type);
+                return new Modyllic_Varchar($type);
             case "VARBINARY":
-                return new SQL_Varbinary($type);
+                return new Modyllic_Varbinary($type);
             case "TINYTEXT":
-                return new SQL_Text($type,255); // 2^8 -1
+                return new Modyllic_Text($type,255); // 2^8 -1
             case "TINYBLOB":
-                return new SQL_Blob($type,255); // 2^8 -1
+                return new Modyllic_Blob($type,255); // 2^8 -1
             case "TEXT":
-                return new SQL_Text($type,65535); // 2^16 -1
+                return new Modyllic_Text($type,65535); // 2^16 -1
             case "BLOB":
-                return new SQL_Blob($type,65535); // 2^16 -1
+                return new Modyllic_Blob($type,65535); // 2^16 -1
             case "MEDIUMTEXT":
-                return new SQL_Text($type,16777215); // 2^24 -1
+                return new Modyllic_Text($type,16777215); // 2^24 -1
             case "MEDIUMBLOB":
-                return new SQL_Blob($type,16777215); // 2^24 -1
+                return new Modyllic_Blob($type,16777215); // 2^24 -1
             case "LONGTEXT":
-                return new SQL_Text($type,4294967295); // 2^32 -1
+                return new Modyllic_Text($type,4294967295); // 2^32 -1
             case "LONGBLOB":
-                return new SQL_Blob($type,4294967295); // 2^32 -1
+                return new Modyllic_Blob($type,4294967295); // 2^32 -1
             case "ENUM":
-                return new SQL_Enum($type);
+                return new Modyllic_Enum($type);
             case "SET":
-                return new SQL_Set($type);
+                return new Modyllic_Set($type);
             case "DATE":
-                return new SQL_Date($type);
+                return new Modyllic_Date($type);
             case "DATETIME":
-                return new SQL_Datetime($type);
+                return new Modyllic_Datetime($type);
             case "TIMESTAMP":
-                return new SQL_Timestamp($type);
+                return new Modyllic_Timestamp($type);
             case "TIME":
-                return new SQL_Time($type);
+                return new Modyllic_Time($type);
             case "YEAR":
-                return new SQL_Year($type);
+                return new Modyllic_Year($type);
             case "GEOMETRY":
-                return new SQL_Geometry($type);
+                return new Modyllic_Geometry($type);
             default:
                 throw new Exception("Unknown SQL type: $type" );
         }
@@ -107,9 +107,9 @@ class SQL_Type {
     }
 }
 
-class SQL_Bit extends SQL_Type {}
+class Modyllic_Bit extends Modyllic_Type {}
 
-class SQL_Numeric extends SQL_Type {
+class Modyllic_Numeric extends Modyllic_Type {
     public $default_length = 11;
     public $length;
     public $unsigned = FALSE;
@@ -133,10 +133,10 @@ class SQL_Numeric extends SQL_Type {
         $this->length = $old->length;
     }
     function numify($value) {
-        if ( $value instanceOf SQL_Token_String ) {
+        if ( $value instanceOf Modyllic_Token_String ) {
             $plain = $value->unquote() + 0;
         }
-        else if ( $value instanceOf SQL_Token_Num ) {
+        else if ( $value instanceOf Modyllic_Token_Num ) {
             $plain = $value->value() + 0;
         }
         else {
@@ -146,7 +146,7 @@ class SQL_Numeric extends SQL_Type {
     }
 }
 
-class SQL_Integer extends SQL_Numeric {
+class Modyllic_Integer extends Modyllic_Numeric {
     function toSql() {
         $sql = $this->name;
         if ( $this->length != $this->default_length ) {
@@ -161,30 +161,30 @@ class SQL_Integer extends SQL_Numeric {
         return $sql;
     }
     function normalize($int) {
-        if ( $int instanceOf SQL_Token_Reserved ) {
+        if ( $int instanceOf Modyllic_Token_Reserved ) {
             return $int->value();
         }
         return round($this->numify($int));
     }
 }
 
-class SQL_TinyInt extends SQL_Integer {
+class Modyllic_TinyInt extends Modyllic_Integer {
     public $default_length = 4;
 }
 
-class SQL_SmallInt extends SQL_Integer {
+class Modyllic_SmallInt extends Modyllic_Integer {
     public $default_length = 6;
 }
 
-class SQL_MediumInt extends SQL_Integer {
+class Modyllic_MediumInt extends Modyllic_Integer {
     public $default_length = 9;
 }
 
-class SQL_BigInt extends SQL_Integer {
+class Modyllic_BigInt extends Modyllic_Integer {
     public $default_length = 20;
 }
 
-class SQL_Decimal extends SQL_Numeric {
+class Modyllic_Decimal extends Modyllic_Numeric {
     public $default_length = 10;
     public $default_scale  = 0;
     public $scale;
@@ -216,14 +216,14 @@ class SQL_Decimal extends SQL_Numeric {
         $this->scale = $old->scale;
     }
     function normalize($num) {
-        if ( $num instanceOf SQL_Token_Reserved ) {
+        if ( $num instanceOf Modyllic_Token_Reserved ) {
             return $num->value();
         }
         return $this->numify($num);
     }
 }
 
-class SQL_Float extends SQL_Numeric {
+class Modyllic_Float extends Modyllic_Numeric {
     public $decimals;
     function toSql() {
         $sql = $this->name;
@@ -253,21 +253,21 @@ class SQL_Float extends SQL_Numeric {
         $this->decimals = $old->decimals;
     }
     function normalize($float) {
-        if ( $float instanceOf SQL_Token_Reserved ) {
+        if ( $float instanceOf Modyllic_Token_Reserved ) {
             return $float->value();
         }
         return $this->numify($float);
     }
 }
 
-class SQL_Double_Float extends SQL_Float {}
+class Modyllic_Double_Float extends Modyllic_Float {}
 
-class SQL_Date extends SQL_Type {
+class Modyllic_Date extends Modyllic_Type {
     function normalize($date) {
-        if ( $date instanceOf SQL_Token_Reserved ) {
+        if ( $date instanceOf Modyllic_Token_Reserved ) {
             return $date->value();
         }
-        if ( $date instanceOf SQL_Token_Num ) {
+        if ( $date instanceOf Modyllic_Token_Num ) {
             if ( $date->value() == 0 ) {
                 return "'0000-00-00'";
             }
@@ -275,7 +275,7 @@ class SQL_Date extends SQL_Type {
                 throw new Exception("Invalid default for date: ".$date->debug());
             }
         }
-        if ( ! $date instanceOf SQL_Token_String ) {
+        if ( ! $date instanceOf Modyllic_Token_String ) {
             throw new Exception("Invalid default for date: ".$date->debug());
         }
         if ( $date->value() == '0' ) {
@@ -287,12 +287,12 @@ class SQL_Date extends SQL_Type {
         return $date->value();
     }
 }
-class SQL_Datetime extends SQL_Type {
+class Modyllic_Datetime extends Modyllic_Type {
     function normalize($date) {
-        if ( $date instanceOf SQL_Token_Reserved ) {
+        if ( $date instanceOf Modyllic_Token_Reserved ) {
             return $date->value();
         }
-        if ( $date instanceOf SQL_Token_Num ) {
+        if ( $date instanceOf Modyllic_Token_Num ) {
             if ( $date->value() == 0 ) {
                 return "'0000-00-00 00:00:00'";
             }
@@ -300,7 +300,7 @@ class SQL_Datetime extends SQL_Type {
                 throw new Exception("Invalid default for date: ".$date->debug());
             }
         }
-        if ( ! $date instanceOf SQL_Token_String ) {
+        if ( ! $date instanceOf Modyllic_Token_String ) {
             throw new Exception("Invalid default for date: ".$date->debug());
         }
         if ( $date->value() == '0' ) {
@@ -321,9 +321,9 @@ class SQL_Datetime extends SQL_Type {
         }
     }
 }
-class SQL_Time extends SQL_Type {}
-class SQL_Timestamp extends SQL_Type {}
-class SQL_Year extends SQL_Type {
+class Modyllic_Time extends Modyllic_Type {}
+class Modyllic_Timestamp extends Modyllic_Type {}
+class Modyllic_Year extends Modyllic_Type {
     public $default_length = 4;
     public $length;
     function __construct($type) {
@@ -348,10 +348,10 @@ class SQL_Year extends SQL_Type {
         $this->length = $old->length;
     }
     function normalize($year) {
-        if ( $year instanceOf SQL_Token_Reserved ) {
+        if ( $year instanceOf Modyllic_Token_Reserved ) {
             return $year->value();
         }
-        if ( $year instanceOf SQL_Token_String ) {
+        if ( $year instanceOf Modyllic_Token_String ) {
             $plain = $year->unquote() + 0;
             if ( $plain >= 0 and $plain < 70 ) {
                 return "'20$plain'";
@@ -360,7 +360,7 @@ class SQL_Year extends SQL_Type {
                 return "'19$plain'";
             }
         }
-        else if ( $year instanceOf SQL_Token_Num ) {
+        else if ( $year instanceOf Modyllic_Token_Num ) {
             $plain = $year->value() + 0;
             if ( $plain == 0 ) {
                 return "'0000'";
@@ -379,7 +379,7 @@ class SQL_Year extends SQL_Type {
     }
 }
 
-class SQL_String extends SQL_Type {
+class Modyllic_String extends Modyllic_Type {
     protected $default_charset = "utf8";
     protected $default_collate = "utf8_general_ci";
     private $charset;
@@ -427,13 +427,13 @@ class SQL_String extends SQL_Type {
     
     
     function normalize($str) {
-        if ( $str instanceOf SQL_Token_Reserved ) {
+        if ( $str instanceOf Modyllic_Token_Reserved ) {
             return $str->value();
         }
-        else if ( $str instanceOf SQL_Token_String ) {
+        else if ( $str instanceOf Modyllic_Token_String ) {
             $value = $str->unquote();
         }
-        else if ( $str instanceOf SQL_Token_Num ) {
+        else if ( $str instanceOf Modyllic_Token_Num ) {
             $value = $str->value();
         }
         else if ( ! is_object($str) ) {
@@ -476,7 +476,7 @@ class SQL_String extends SQL_Type {
     }
 }
 
-class SQL_VarString extends SQL_String {
+class Modyllic_VarString extends Modyllic_String {
     function equalTo($other) {
         if ( ! parent::equalTo($other) ) { return FALSE; }
         if ( $this->length != $other->length ) { return FALSE; }
@@ -496,16 +496,16 @@ class SQL_VarString extends SQL_String {
     }
 }
 
-class SQL_VarChar extends SQL_VarString {
+class Modyllic_VarChar extends Modyllic_VarString {
     function binary() {
-        $new = new SQL_VarBinary("VARBINARY");
+        $new = new Modyllic_VarBinary("VARBINARY");
         $new->cloneFrom($this);
         return $new;
     }
 }
-class SQL_VarBinary extends SQL_VarString {}
+class Modyllic_VarBinary extends Modyllic_VarString {}
 
-class SQL_Char extends SQL_VarString {
+class Modyllic_Char extends Modyllic_VarString {
     public $default_length = 1;
     function __construct($type) {
         parent::__construct($type);
@@ -520,14 +520,14 @@ class SQL_Char extends SQL_VarString {
         return $sql;
     }
     function binary() {
-        $new = new SQL_Binary("BINARY");
+        $new = new Modyllic_Binary("BINARY");
         $new->cloneFrom($this);
         return $new;
     }
 }
-class SQL_Binary extends SQL_Char { }
+class Modyllic_Binary extends Modyllic_Char { }
 
-class SQL_Text extends SQL_String {
+class Modyllic_Text extends Modyllic_String {
     function __construct($type,$length) {
         parent::__construct($type);
         $this->length = $length;
@@ -554,18 +554,18 @@ class SQL_Text extends SQL_String {
         return $sql;
     }
     function binary() {
-        $new = new SQL_Blob("BLOB");
+        $new = new Modyllic_Blob("BLOB");
         $new->cloneFrom($this);
         return $new;
     }
 }
-class SQL_Blob extends SQL_Text {
+class Modyllic_Blob extends Modyllic_Text {
     function type_name($size) { return $size . "BLOB"; }
 }
 
-class SQL_Geometry extends SQL_String { }
+class Modyllic_Geometry extends Modyllic_String { }
 
-class SQL_Compound extends SQL_String {
+class Modyllic_Compound extends Modyllic_String {
     public $values;
     function cloneFrom($old) {
         parent::cloneFrom($old);
@@ -586,6 +586,6 @@ class SQL_Compound extends SQL_String {
     }
 }
 
-class SQL_Enum extends SQL_Compound { }
+class Modyllic_Enum extends Modyllic_Compound { }
 
-class SQL_Set extends SQL_Compound { }
+class Modyllic_Set extends Modyllic_Compound { }

@@ -7,17 +7,14 @@
  * @author bturner@online-buddies.com
  */
 
-@include_once dirname(realpath(__FILE__))."/../lib/SQL.php";
-if ( ! class_exists('SQL',FALSE) ) {
-    require_once "SQL.php";
-}
+require_once "Modyllic/SQL.php";
 
-$load = SQL_Commandline::args( "sqltophp", "spec class", $argv );
+$load = Modyllic_Commandline::args( "sqltophp", "spec class", $argv );
 
-$schema = SQL_Commandline::schema($load['spec']);
+$schema = Modyllic_Commandline::schema($load['spec']);
 
 $class = @$load['class']['args'][0];
 if (!$class) { $class = ucfirst($schema->name); }
-$generator = new SQL_Generator_PHP();
+$generator = new Modyllic_Generator_PHP();
 
 print $generator->helpers($schema,$class);

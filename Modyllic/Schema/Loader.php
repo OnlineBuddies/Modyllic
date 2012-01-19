@@ -2,25 +2,25 @@
 /**
  * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
  *
- * @package OLB::SQL
+ * @package Modyllic
  * @author bturner@online-buddies.com
  */
 
 require_once dirname(__FILE__)."/../Parser.php";
 require_once dirname(__FILE__)."/FromDB.php";
 
-class SQL_Schema_Loader_Exception extends Exception {}
+class Modyllic_Schema_Loader_Exception extends Exception {}
 
 /**
  * Factory class for creating Schema objects from various sources
  */
-class SQL_Schema_Loader {
+class Modyllic_Schema_Loader {
     static $source;
     /**
      * Load a schema from a file of SQL DDL
      *
      * @param string $filename
-     * @returns SQL_Schema
+     * @returns Modyllic_Schema
      */
     static function from_file($file) {
         if ( is_dir($file) ) {
@@ -32,8 +32,8 @@ class SQL_Schema_Loader {
     }
     
     static function from_files(array $files) {
-        $parser = new SQL_Parser();
-        $schema = new SQL_Schema();
+        $parser = new Modyllic_Parser();
+        $schema = new Modyllic_Schema();
         foreach ($files as $file) {
             $file_bits = explode(".",$file);
             array_pop($file_bits);
@@ -41,17 +41,17 @@ class SQL_Schema_Loader {
             $sqlc = @stat($sqlc_file);
             $sql  = @stat($file);
             if ( ! $sql ) {
-                throw new SQL_Schema_Loader_Exception("$file: File not found.");
+                throw new Modyllic_Schema_Loader_Exception("$file: File not found.");
             }
             else if ( !$sqlc or $sqlc[9] < $sql[9] ) {
                 if ( ($data = @file_get_contents($file)) === FALSE ) {
-                    throw new SQL_Schema_Loader_Exception("Error opening $file");
+                    throw new Modyllic_Schema_Loader_Exception("Error opening $file");
                 }
                 $parser->partial($schema, $data, $file, ";" );
             }
             else {
                 if ( ($data = @file_get_contents($sqlc_file)) === FALSE ) {
-                    throw new SQL_Schema_Loader_Exception("Error opening $sqlc_file");
+                    throw new Modyllic_Schema_Loader_Exception("Error opening $sqlc_file");
                 }
                 $subschema = unserialize($data);
                 $schema->merge($subschema);
@@ -64,7 +64,7 @@ class SQL_Schema_Loader {
     /**
      * Load a schema from a directory of SQL files
      * @param string $filename
-     * @returns SQL_Schema
+     * @returns Modyllic_Schema
      */
     static function from_dir($dir) {
         $raw = glob("$dir/*.sql",GLOB_NOSORT);
@@ -79,7 +79,7 @@ class SQL_Schema_Loader {
      * @param string $dbname
      * @param string $user
      * @param string $pass
-     * @returns SQL_Schema
+     * @returns Modyllic_Schema
      */
     static function from_db($host=null,$dbname,$user=null,$pass=null) {
         $dsn = "mysql:";
@@ -89,7 +89,7 @@ class SQL_Schema_Loader {
         $dsn .= "dbname=information_schema";
         self::$source = $dsn;
         $dbh = new PDO( $dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES=>TRUE ) );
-        $loader = new SQL_Schema_FromDB( $dbh );
+        $loader = new Modyllic_Schema_FromDB( $dbh );
         $schema = $loader->get_schema( $dbname );
         return $schema;
     }

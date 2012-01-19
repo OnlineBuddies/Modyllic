@@ -2,20 +2,20 @@
 /**
  * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
  *
- * @package OLB::SQL
+ * @package Modyllic
  * @author bturner@online-buddies.com
  */
 
-class SQL_Generator_SQL {
+class Modyllic_Generator_SQL {
 
 // ALTER
 
-    function alter_sql( SQL_Diff $diff, $delim=";;", $sep=TRUE ) {
+    function alter_sql( Modyllic_Diff $diff, $delim=";;", $sep=TRUE ) {
         $this->alter( $diff );
         return $this->sql_document( $delim, $sep );
     }
 
-    function alter( SQL_Diff $diff ) {
+    function alter( Modyllic_Diff $diff ) {
         if ( ! $diff->changeset->has_changes() ) {
             $this->cmd("-- No changes detected.");
             return $this;
@@ -45,12 +45,12 @@ class SQL_Generator_SQL {
 
 // CREATE
     
-    function create_sql( SQL_Schema $schema, $delim=";;", $sep=TRUE  ) {
+    function create_sql( Modyllic_Schema $schema, $delim=";;", $sep=TRUE  ) {
         $this->create( $schema );
         return $this->sql_document( $delim, $sep );
     }
 
-    function create( SQL_Schema $schema, $delim=";;", $sep=TRUE  ) {
+    function create( Modyllic_Schema $schema, $delim=";;", $sep=TRUE  ) {
         $this->create_database( $schema );
         $this->create_sqlmeta();
         $this->create_tables( $schema->tables, $schema );
@@ -78,12 +78,12 @@ class SQL_Generator_SQL {
 
 // DROP
     
-    function drop_sql( SQL_Schema $schema, $delim=";", $sep=FALSE  ) {
+    function drop_sql( Modyllic_Schema $schema, $delim=";", $sep=FALSE  ) {
         $this->drop($schema);
         return $this->sql_document( $delim, $sep );
     }
     
-    function drop( SQL_Schema $schema ) {
+    function drop( Modyllic_Schema $schema ) {
         $this->drop_events( $schema->events );
         $this->drop_routines( $schema->routines );
         $this->drop_views( $schema->views );
@@ -224,7 +224,7 @@ class SQL_Generator_SQL {
 // TABLE
 
     function table_meta($table) {
-        if ( $table->static != SQL_Table::STATIC_DEFAULT ) {
+        if ( $table->static != Modyllic_Table::STATIC_DEFAULT ) {
             return array( "static", $table->static );
         }
         else {
@@ -452,8 +452,8 @@ class SQL_Generator_SQL {
     }
 
     function index_meta($index) {
-        if ( $index instanceOf SQL_Index_Foreign ) {
-            if ( $index->weak != SQL_Index_Foreign::WEAK_DEFAULT ) { 
+        if ( $index instanceOf Modyllic_Index_Foreign ) {
+            if ( $index->weak != Modyllic_Index_Foreign::WEAK_DEFAULT ) { 
                 return array( "weak" => $index->weak );
             }
             else {
@@ -471,7 +471,7 @@ class SQL_Generator_SQL {
     }
 
     function drop_index( $index ) {
-        if ( $index instanceOf SQL_Index_Foreign ) {
+        if ( $index instanceOf Modyllic_Index_Foreign ) {
             $this->extend("DROP FOREIGN KEY %id", $index->cname);
         }
         else if ( $index->primary ) {
@@ -488,7 +488,7 @@ class SQL_Generator_SQL {
     }
 
     function ignore_index( $index ) {
-        if ( $index instanceOf SQL_Index_Foreign and $index->weak ) {
+        if ( $index instanceOf Modyllic_Index_Foreign and $index->weak ) {
             return TRUE;
         }
         else {
@@ -504,7 +504,7 @@ class SQL_Generator_SQL {
             $this->partial($prefix);
         }
         $this->extend();
-        if ( $index instanceOf SQL_Index_Foreign ) {
+        if ( $index instanceOf Modyllic_Index_Foreign ) {
             if ( $index->cname ) {
                 $this->add( "CONSTRAINT %id ", $index->cname );
             }
@@ -540,7 +540,7 @@ class SQL_Generator_SQL {
             }
         }
         $this->add( ")" );
-        if ( $index instanceOf SQL_Index_Foreign ) {
+        if ( $index instanceOf Modyllic_Index_Foreign ) {
             $this->foreign_key( $index );
         }
         if ( isset($index->using) ) {
@@ -626,25 +626,25 @@ class SQL_Generator_SQL {
     
     function routine_meta($routine) {
         $meta = array();
-        if ( $routine->args_type != SQL_Routine::ARGS_TYPE_DEFAULT ) {
+        if ( $routine->args_type != Modyllic_Routine::ARGS_TYPE_DEFAULT ) {
             $meta["args_type"] = $routine->args_type;
         }
-        if ( $routine instanceOf SQL_Proc ) {
-            if ( $routine->returns["type"] != SQL_Proc::RETURNS_TYPE_DEFAULT ) {
+        if ( $routine instanceOf Modyllic_Proc ) {
+            if ( $routine->returns["type"] != Modyllic_Proc::RETURNS_TYPE_DEFAULT ) {
                 $meta["returns"] = $routine->returns;
             }
         }
-        if ( $routine->txns != SQL_ROUTINE::TXNS_DEFAULT ) {
+        if ( $routine->txns != Modyllic_ROUTINE::TXNS_DEFAULT ) {
             $meta["txns"] = $routine->txns;
         }
         return $meta;
     }
 
     function create_routine( $routine, $dometa=TRUE ) {
-        if ( $routine instanceOf SQL_Func ) {
+        if ( $routine instanceOf Modyllic_Func ) {
             $this->create_function( $routine );
         }
-        else if ($routine instanceOf SQL_Proc ) {
+        else if ($routine instanceOf Modyllic_Proc ) {
             $this->create_procedure( $routine );
         }
         else {
@@ -668,10 +668,10 @@ class SQL_Generator_SQL {
     }
 
     function drop_routine( $routine, $dometa=TRUE ) {
-        if ( $routine instanceOf SQL_Func ) {
+        if ( $routine instanceOf Modyllic_Func ) {
             $this->drop_function( $routine );
         }
-        else if ($routine instanceOf SQL_Proc ) {
+        else if ($routine instanceOf Modyllic_Proc ) {
             $this->drop_procedure( $routine );
         }
         else {
@@ -684,10 +684,10 @@ class SQL_Generator_SQL {
     }
 
     function routine_attrs( $routine ) {
-        if ( $routine->access != SQL_Routine::ACCESS_DEFAULT ) {
+        if ( $routine->access != Modyllic_Routine::ACCESS_DEFAULT ) {
             $this->extend( $routine->access );
         }
-        if ( $routine->deterministic != SQL_Routine::DETERMINISTIC_DEFAULT ) {
+        if ( $routine->deterministic != Modyllic_Routine::DETERMINISTIC_DEFAULT ) {
             $this->extend( $routine->deterministic ? "DETERMINISTIC" : "NOT DETERMINISTIC" );
         }
         return $this;
@@ -1037,10 +1037,10 @@ class SQL_Generator_SQL {
     protected function _format_replace( $matches ) {
         switch ($matches[1]) {
             case 'id':
-                $result = SQL::quote_ident(array_shift($this->_format_args));
+                $result = Modyllic_SQL::quote_ident(array_shift($this->_format_args));
                 break;
             case 'str':
-                $result = SQL::quote_str(array_shift($this->_format_args));
+                $result = Modyllic_SQL::quote_str(array_shift($this->_format_args));
                 break;
             case 'lit':
                 $result = array_shift($this->_format_args);

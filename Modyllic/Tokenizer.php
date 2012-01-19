@@ -2,14 +2,14 @@
 /**
  * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
  *
- * @package OLB::SQL
+ * @package Modyllic
  * @author bturner@online-buddies.com
  */
 
 /**
  * These are what are returned by the tokenizer
  */
-class SQL_Token {
+class Modyllic_Token {
     public $pos;
     protected $value;
     function __construct($pos,$value=null) {
@@ -46,7 +46,7 @@ class SQL_Token {
 /**
  * Whitespace chunks, including newlines
  */
-class SQL_Token_Whitespace extends SQL_Token {
+class Modyllic_Token_Whitespace extends Modyllic_Token {
     function value() {
         return preg_replace('/\r/','',$this->value);
     }
@@ -55,7 +55,7 @@ class SQL_Token_Whitespace extends SQL_Token {
 /**
  * Identifiers, eg, column names, table names, etc.
  */
-class SQL_Token_Ident extends SQL_Token {
+class Modyllic_Token_Ident extends Modyllic_Token {
     private $upper;
     function token() {
         if ( isset($this->upper) ) {
@@ -69,7 +69,7 @@ class SQL_Token_Ident extends SQL_Token {
 /**
  * Identifiers that were quoted (`` in MySQL, "" elsewhere)
  */
-class SQL_Token_Quoted_Ident extends SQL_Token_Ident {
+class Modyllic_Token_Quoted_Ident extends Modyllic_Token_Ident {
     function value() {
         $quote = $this->value[0];
         $unquoted = substr( $this->value, 1, -1 );
@@ -82,22 +82,22 @@ class SQL_Token_Quoted_Ident extends SQL_Token_Ident {
 /**
  * Reserved words
  */
-class SQL_Token_Reserved extends SQL_Token_Ident { }
+class Modyllic_Token_Reserved extends Modyllic_Token_Ident { }
 
 /**
  * Things that look like numbers
  */
-class SQL_Token_Num extends SQL_Token {}
+class Modyllic_Token_Num extends Modyllic_Token {}
 
 /**
  * Things that look like symbols
  */
-class SQL_Token_Symbol extends SQL_Token { }
+class Modyllic_Token_Symbol extends Modyllic_Token { }
 
 /**
  * Comments, both C style and SQL style
  */
-class SQL_Token_Comment extends SQL_Token {
+class Modyllic_Token_Comment extends Modyllic_Token {
     protected $literal;
     function __construct( $pos, $literal, $value ) {
         parent::__construct( $pos, $value );
@@ -114,7 +114,7 @@ class SQL_Token_Comment extends SQL_Token {
 /**
  * Strings ('' for everyone, plus "" for MySQL)
  */
-class SQL_Token_String extends SQL_Token {
+class Modyllic_Token_String extends Modyllic_Token {
     function value() {
         return preg_replace('/\r/','',$this->value);
     }
@@ -171,30 +171,30 @@ class SQL_Token_String extends SQL_Token {
  * useful to clump up a bunch of tokens and reinject them as a single token. 
  * This is here to provide that facility.
  */
-class SQL_Token_List extends SQL_Token { }
+class Modyllic_Token_List extends Modyllic_Token { }
 
 /**
  * Exception tokens, not generated directly.  These are various non-token
  * results.
  */
-class SQL_Token_Except extends SQL_Token {}
+class Modyllic_Token_Except extends Modyllic_Token {}
 
 /**
  * End of command-- tokens of this class mark the end of an SQL command.
  */
-class SQL_Token_EOC extends SQL_Token_Except {}
+class Modyllic_Token_EOC extends Modyllic_Token_Except {}
 
 /**
  * Indicates that we've hit the end of the string that we're parsing
  */
-class SQL_Token_EOF extends SQL_Token_EOC {}
+class Modyllic_Token_EOF extends Modyllic_Token_EOC {}
 
 /**
  * Indicates that we've encountered a tokenization error.  Tokenization
  * errors do not consume any of the input string and as such, once you hit
  * one it will always be returned by next().
  */
-class SQL_Token_Error extends SQL_Token_Except {
+class Modyllic_Token_Error extends Modyllic_Token_Except {
     private $row;
     private $col;
     function __construct($pos, $row,$col) {
@@ -208,20 +208,20 @@ class SQL_Token_Error extends SQL_Token_Except {
 }
 
 
-class SQL_Token_SOC extends SQL_Token_EOC {}
+class Modyllic_Token_SOC extends Modyllic_Token_EOC {}
 
 /**
  * Indicates that we found a command delimiter (; by default)
  */
-class SQL_Token_Delim extends SQL_Token_SOC {}
+class Modyllic_Token_Delim extends Modyllic_Token_SOC {}
 
-class SQL_Token_NewDelim extends SQL_Token_Delim {}
+class Modyllic_Token_NewDelim extends Modyllic_Token_Delim {}
 
 /**
  * The SQL tokenizer-- this takes one or more SQL commands as a string and
  * splits it into useful chunks.
  */
-class SQL_Tokenizer {
+class Modyllic_Tokenizer {
     private $cmdstr;
     public $pos;
     private $len;
@@ -251,7 +251,7 @@ class SQL_Tokenizer {
         $this->len = strlen($this->cmdstr);
         $this->generate_reserved_re();
         $this->ident_re = '/\G('.SQL::$valid_ident_re.')/';
-        $this->cur = new SQL_Token_SOC(0);
+        $this->cur = new Modyllic_Token_SOC(0);
     }
     
     private $delimiter = ';';
@@ -265,14 +265,14 @@ class SQL_Tokenizer {
 
     /**
      * Returns the remainder of the current command. The next token
-     * will be of type SQL_Token_EOC
+     * will be of type Modyllic_Token_EOC
      */
     public function rest() {
         $rest = "";
         while ( ($cur = $this->rest_next()) !== NULL ) {
             $rest .= $cur;
         }
-        $this->inject( new SQL_Token_Delim($this->pos) );
+        $this->inject( new Modyllic_Token_Delim($this->pos) );
         return $rest;
     }
     
@@ -348,7 +348,7 @@ class SQL_Tokenizer {
         $ws = array();
         do {
             $next = $this->next(TRUE);
-            if ($whitespace or ! $next instanceOf SQL_Token_Whitespace) {
+            if ($whitespace or ! $next instanceOf Modyllic_Token_Whitespace) {
                 break;
             }
             array_unshift($ws, $next);
@@ -372,7 +372,7 @@ class SQL_Tokenizer {
         return isset($this->delimiter) and preg_match( "/\G\Q$this->delimiter\E/", $this->cmdstr, $matches, 0, $this->pos );
     }
     function is_new_delimiter(&$matches) {
-        return $this->prev instanceOf SQL_Token_SOC and preg_match( "/\G(DELIMITER\s+(\S+)\s*(?:\n|\z))/i", $this->cmdstr, $matches, 0, $this->pos);
+        return $this->prev instanceOf Modyllic_Token_SOC and preg_match( "/\G(DELIMITER\s+(\S+)\s*(?:\n|\z))/i", $this->cmdstr, $matches, 0, $this->pos);
     }
     function is_string() {
         return isset( $this->quote_chars[$this->cmdstr[$this->pos]] );
@@ -414,7 +414,7 @@ class SQL_Tokenizer {
             // If any tokens were injected into the head of the stream, we return those immediately
             if ( $this->is_injected() ) {
                 $cur = array_shift($this->injected);
-                if ( $cur instanceOf SQL_Token_EOC ) {
+                if ( $cur instanceOf Modyllic_Token_EOC ) {
                     return null;
                 }
                 else {
@@ -490,9 +490,9 @@ class SQL_Tokenizer {
      * tokens will be returned rather then suppressed.
      */
     function next( $whitespace = FALSE, $peek = FALSE ) {
-        $at_eof = $this->cur instanceOf SQL_Token_EOF;
-        if ( ! $this->cur instanceOf SQL_Token_Whitespace and
-             ! $this->cur instanceOf SQL_Token_Comment ) {
+        $at_eof = $this->cur instanceOf Modyllic_Token_EOF;
+        if ( ! $this->cur instanceOf Modyllic_Token_Whitespace and
+             ! $this->cur instanceOf Modyllic_Token_Comment ) {
             $this->prev = $this->cur;
         }
         
@@ -509,20 +509,20 @@ class SQL_Tokenizer {
             
             // If our position is at or past(?!) the end, return EOF
             else if ($this->is_eof()) {
-                $this->cur = new SQL_Token_EOF($this->pos);
+                $this->cur = new Modyllic_Token_EOF($this->pos);
             }
             
             // Match the command delimiter...
             else if ( $this->is_delimiter() ) {
                 $this->pos += strlen($this->delimiter);
-                $this->cur = new SQL_Token_Delim($this->pos,$this->delimiter);
+                $this->cur = new Modyllic_Token_Delim($this->pos,$this->delimiter);
             }
             
             // Symbol characters
             else if ( $this->is_safe_symbol() ) {
                 $char = $this->cmdstr[$this->pos];
                 $this->pos ++;
-                $this->cur = new SQL_Token_Symbol($this->pos,$char);
+                $this->cur = new Modyllic_Token_Symbol($this->pos,$char);
             }
             // If we see a quote character, match a string...
             else if ( $this->is_string() ) {
@@ -532,24 +532,24 @@ class SQL_Tokenizer {
             // Our simple regexp token matchers...
             else if ( $this->is_whitespace($matches) ) {
                 $this->pos += strlen($matches[1]);
-                $this->cur = new SQL_Token_Whitespace( $this->pos, $matches[1] );
+                $this->cur = new Modyllic_Token_Whitespace( $this->pos, $matches[1] );
             }
             else if ( $this->is_new_delimiter($matches) ) {
                 $this->pos += strlen($matches[1]);
                 $this->delimiter = $matches[2];
-                $this->cur = new SQL_Token_NewDelim( $this->pos, $matches[1]);
+                $this->cur = new Modyllic_Token_NewDelim( $this->pos, $matches[1]);
             }
             else if ( $this->is_reserved($matches) ) {
                 $this->pos += strlen($matches[1]);
-                $this->cur = new SQL_Token_Reserved($this->pos,$matches[1]);
+                $this->cur = new Modyllic_Token_Reserved($this->pos,$matches[1]);
             }
             else if ( $this->is_num($matches) ) {
                 $this->pos += strlen($matches[1]);
-                $this->cur = new SQL_Token_Num($this->pos,$matches[1]);
+                $this->cur = new Modyllic_Token_Num($this->pos,$matches[1]);
             }
             else if ( $this->is_ident($matches) ) {
                 $this->pos += strlen($matches[1]);
-                $this->cur = new SQL_Token_Ident($this->pos,$matches[1]);
+                $this->cur = new Modyllic_Token_Ident($this->pos,$matches[1]);
             }
 
             // MySQL version comment, strip the comment part, but keep the contents
@@ -574,32 +574,32 @@ class SQL_Tokenizer {
             else if ( $this->is_sql_comment($matches) ) {
                 $this->pos += strlen($matches[1]);
                 $cmt = isset($matches[2])? trim($matches[2]): "";
-                $this->cur = new SQL_Token_Comment($this->pos, $matches[1], $cmt );
+                $this->cur = new Modyllic_Token_Comment($this->pos, $matches[1], $cmt );
             }
             // C style comments
             else if ( $this->is_c_comment($matches) ) {
                 $this->pos += strlen($matches[1]);
                 $comment = preg_replace( '/^[*]\s*$|^\s+[*]\s?/m', '', $matches[2] );
-                $this->cur = new SQL_Token_Comment($this->pos, $matches[1], trim($comment) );
+                $this->cur = new Modyllic_Token_Comment($this->pos, $matches[1], trim($comment) );
             }
             // Symbol characters
             else if ( $this->is_other_symbol() ) {
                 $char = $this->cmdstr[$this->pos];
                 $this->pos ++;
-                $this->cur = new SQL_Token_Symbol($this->pos,$char);
+                $this->cur = new Modyllic_Token_Symbol($this->pos,$char);
             }
             // Shell style comments
             else if ( $this->is_shell_comment($matches) ) {
                 $this->pos += strlen($matches[1]);
-                $this->cur = new SQL_Token_Comment($this->pos, $matches[1], trim($matches[2]) );
+                $this->cur = new Modyllic_Token_Comment($this->pos, $matches[1], trim($matches[2]) );
             }
             // Or failing that return an error
             else {
-                $this->cur = new SQL_Token_Error($this->pos,$this->line(), $this->col());
+                $this->cur = new Modyllic_Token_Error($this->pos,$this->line(), $this->col());
             }
             
             // Supress whitespace unless we were asked for it
-            if ( $this->cur instanceOf SQL_Token_Whitespace and ! $whitespace ) {
+            if ( $this->cur instanceOf Modyllic_Token_Whitespace and ! $whitespace ) {
                 $redo = TRUE;
             }
             
@@ -610,8 +610,8 @@ class SQL_Tokenizer {
         $literal = preg_replace('/(^\s+.*|.*\s+$)/','\'$1\'', $literal);
         print sprintf("%6d",$this->pos) . ($whitespace ? " WS " : "    " )."- ".get_class($this->cur).": $literal\n";
 */
-        if ( (!$at_eof and !$peek and ($this->pos % 1000 == 0 or $this->cur instanceOf SQL_Token_Except) ) and is_callable(self::$on_advance) ) {
-            if ( $this->cur instanceOf SQL_Token_EOF ) {
+        if ( (!$at_eof and !$peek and ($this->pos % 1000 == 0 or $this->cur instanceOf Modyllic_Token_Except) ) and is_callable(self::$on_advance) ) {
+            if ( $this->cur instanceOf Modyllic_Token_EOF ) {
                 call_user_func( self::$on_advance, $this->len, $this->len );
             }
             else {
@@ -654,15 +654,15 @@ class SQL_Tokenizer {
             }
         }
         if ( $quote == '`' ) {
-            return new SQL_Token_Quoted_Ident($this->pos,$str);
+            return new Modyllic_Token_Quoted_Ident($this->pos,$str);
         }
         else {
-            $token = new SQL_Token_String($this->pos,$str);
+            $token = new Modyllic_Token_String($this->pos,$str);
             // If we're followed by whitespace and a string, then concatenate the string
-            if ( $this->peek_next(TRUE) instanceOf SQL_Token_Whitespace ) {
+            if ( $this->peek_next(TRUE) instanceOf Modyllic_Token_Whitespace ) {
                 $ws = $this->next(TRUE);
-                if ( $this->peek_next(TRUE) instanceOf SQL_Token_String ) {
-                    $token = new SQL_Token_String($this->pos, SQL::quote_str( $token->unquote() . $this->next(FALSE)->unquote() ) );
+                if ( $this->peek_next(TRUE) instanceOf Modyllic_Token_String ) {
+                    $token = new Modyllic_Token_String($this->pos, SQL::quote_str( $token->unquote() . $this->next(FALSE)->unquote() ) );
                 }
                 else {
                     $this->inject($ws);

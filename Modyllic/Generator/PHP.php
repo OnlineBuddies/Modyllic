@@ -2,11 +2,11 @@
 /**
  * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
  *
- * @package OLB::SQL
+ * @package Modyllic
  * @author bturner@online-buddies.com
  */
 
-class SQL_Generator_PHP {
+class Modyllic_Generator_PHP {
     protected $php;
     protected $indent_by = 4;
     protected $indent_with = " ";
@@ -455,7 +455,7 @@ class SQL_Generator_PHP {
     }
     function end_sql_cmd() { }
     function begin_sql_func($name) {
-        $this->add( SQL::quote_ident($name) . '(' );
+        $this->add( Modyllic_SQL::quote_ident($name) . '(' );
         return $this;
     }
     function end_sql_func() {
@@ -497,7 +497,7 @@ class SQL_Generator_PHP {
     /**
      * Generate PHP helper methods from a schema
      *
-     * @param SQL_Schema $schema
+     * @param Modyllic_Schema $schema
      * @param string $class
      * @returns string
      */
@@ -550,7 +550,7 @@ class SQL_Generator_PHP {
         return $this;
     }
     function begin_txns($routine) {
-        if ( $routine->txns == SQL_Routine::TXNS_HAS ) {
+        if ( $routine->txns == Modyllic_Routine::TXNS_HAS ) {
             $this->begin_cmd( 'if ( ')
                    ->dbh()
                    ->method( 'inTransaction' )
@@ -563,7 +563,7 @@ class SQL_Generator_PHP {
                    ->end_throw()
                  ->end_block();
         }
-        else if ($routine->txns == SQL_ROUTINE::TXNS_CALL ) {
+        else if ($routine->txns == Modyllic_ROUTINE::TXNS_CALL ) {
             $this->begin_cmd( 'if ( ! ')
                    ->dbh()
                    ->method( 'inTransaction' )
@@ -581,7 +581,7 @@ class SQL_Generator_PHP {
         }
     }
     function end_txns($routine) {
-        if ($routine->txns == SQL_ROUTINE::TXNS_CALL ) {
+        if ($routine->txns == Modyllic_ROUTINE::TXNS_CALL ) {
             $this->begin_cmd( 'if ( ')
                    ->func_var( 'isset', 'commitTransaction' )
                  ->end_cmd(' ) {')
@@ -832,7 +832,7 @@ class SQL_Generator_PHP {
         if ( $arg->type->unsigned ) {
             $this->validate_unsigned($arg->name);
         }
-        if ( $arg->type instanceOf SQL_Integer ) {
+        if ( $arg->type instanceOf Modyllic_Integer ) {
             $this->validate_integer($arg->name);
         }
         return $this;
@@ -876,34 +876,34 @@ class SQL_Generator_PHP {
         return $this;
     }
     function arg_validate($arg) {
-        if ( $arg->type instanceOf SQL_Numeric ) {
+        if ( $arg->type instanceOf Modyllic_Numeric ) {
             $this->arg_validate_numeric($arg);
         }
         else {
             $this->arg_validate_nonnumeric($arg);
         }
-        if ( $arg->type instanceOf SQL_String ) {
+        if ( $arg->type instanceOf Modyllic_String ) {
             $this->arg_validate_string( $arg );
         }
-        if ( $arg->type instanceOf SQL_Date ) {
+        if ( $arg->type instanceOf Modyllic_Date ) {
             $this->arg_validate_date( $arg );
         }
-        else if ( $arg->type instanceOf SQL_Datetime ) {
+        else if ( $arg->type instanceOf Modyllic_Datetime ) {
             $this->arg_validate_datetime( $arg );
         }
-        else if ( $arg->type instanceOf SQL_Time ) {
+        else if ( $arg->type instanceOf Modyllic_Time ) {
             $this->arg_validate_time( $arg );
         }
-        else if ( $arg->type instanceOf SQL_Timestamp ) {
+        else if ( $arg->type instanceOf Modyllic_Timestamp ) {
             $this->arg_validate_timestamp( $arg );
         }
-        else if ( $arg->type instanceOf SQL_Year ) {
+        else if ( $arg->type instanceOf Modyllic_Year ) {
             $this->arg_validate_year( $arg );
         }
-        else if ( $arg->type instanceOf SQL_Enum ) {
+        else if ( $arg->type instanceOf Modyllic_Enum ) {
             $this->arg_validate_enum( $arg );
         }
-        else if ( $arg->type instanceOf SQL_Set ) {
+        else if ( $arg->type instanceOf Modyllic_Set ) {
             $this->arg_validate_set( $arg );
         }
         return $this;
@@ -972,10 +972,10 @@ class SQL_Generator_PHP {
         return $this;
     }
     function returns_docs($routine) {
-        if ( $routine instanceOf SQL_Func ) {
+        if ( $routine instanceOf Modyllic_Func ) {
             $this->func_returns_docs($routine->returns);
         }
-        else if ( $routine instanceOf SQL_Proc ) {
+        else if ( $routine instanceOf Modyllic_Proc ) {
             $this->proc_returns_docs($routine->returns);
         }
         return $this;
@@ -1014,10 +1014,10 @@ class SQL_Generator_PHP {
     }
 
     function call_sql($routine) {
-        if ( $routine instanceOf SQL_Func ) {
+        if ( $routine instanceOf Modyllic_Func ) {
             $this->func_call_sql($routine);
         }
-        else if ( $routine instanceOf SQL_Proc ) {
+        else if ( $routine instanceOf Modyllic_Proc ) {
             $this->proc_call_sql($routine);
         }
         else {
@@ -1064,7 +1064,7 @@ class SQL_Generator_PHP {
     function bind_params($routine) {
         foreach ($routine->args as $arg) {
             $pdo_type = 'PDO::PARAM_STR';
-            if ( $arg->type instanceOf SQL_Integer ) {
+            if ( $arg->type instanceOf Modyllic_Integer ) {
                 $pdo_type = 'PDO::PARAM_INT';
                 if ( $arg->name == "BOOL" or $arg->name == "BOOLEAN" ) {
                     $php_type = "boolean";
@@ -1073,12 +1073,12 @@ class SQL_Generator_PHP {
                     $php_type = "integer";
                 }
             }
-            else if ($arg->type instanceOf SQL_Float) {
+            else if ($arg->type instanceOf Modyllic_Float) {
                 $php_type = "float";
             }
-            else if ($arg->type instanceOf SQL_VarBinary or 
-                     $arg->type instanceOf SQL_Binary or
-                     $arg->type instanceOf SQL_Blob) {
+            else if ($arg->type instanceOf Modyllic_VarBinary or 
+                     $arg->type instanceOf Modyllic_Binary or
+                     $arg->type instanceOf Modyllic_Blob) {
                 $php_type = "binary";
             }
             else {
@@ -1107,10 +1107,10 @@ class SQL_Generator_PHP {
     }
     function returns($routine) {
         $this->begin_try();
-        if ( $routine instanceOf SQL_Func ) {
+        if ( $routine instanceOf Modyllic_Func ) {
             $this->func_returns($routine);
         }
-        else if ( $routine instanceOf SQL_Proc ) {
+        else if ( $routine instanceOf Modyllic_Proc ) {
             $this->proc_returns($routine);
         }
         else {
