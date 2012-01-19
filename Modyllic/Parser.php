@@ -2,7 +2,7 @@
 /**
  * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
  *
- * @package OLB::SQL
+ * @package Modyllic
  * @author bturner@online-buddies.com
  */
 
@@ -12,7 +12,7 @@ require_once dirname(__FILE__)."/Schema.php";
 /**
  * Our SQL parser, this is intimately involved
  */
-class SQL_Parser {
+class Modyllic_Parser {
     private $schema;
 
     private $filename;
@@ -23,7 +23,7 @@ class SQL_Parser {
     private $tok; // An instance of the tokenizer
     
     /**
-     * This parses the SQL in $sql returns an SQL_Schema object.
+     * This parses the SQL in $sql returns an Modyllic_Schema object.
      *
      * @param string $sql
      * @param string $filename Optionally, the filename this SQL was loaded from, used in error messages
@@ -31,16 +31,16 @@ class SQL_Parser {
      */
     function parse($sql,$filename="SQL") {
 
-        return $this->partial( new SQL_Schema(), $sql, $filename, ";" );
+        return $this->partial( new Modyllic_Schema(), $sql, $filename, ";" );
     }
     
     /**
      * A partial parse, this differs from a full parse in two key ways, first,
-     * it doesn't make it's own SQL_Schema object and second, it allows you to
+     * it doesn't make it's own Modyllic_Schema object and second, it allows you to
      * predeclare the delimiter, by default no delimiter is allowed-- that is,
      * it will parse only one command.
      *
-     * @param SQL_Schema $schema
+     * @param Modyllic_Schema $schema
      * @param string $sql
      * @param string $filename Optionally, the filename this SQL was loaded from, used in error messages
      * @param string $delim (default: "")
@@ -48,7 +48,7 @@ class SQL_Parser {
      */
     function partial($schema, $sql, $filename="SQL", $delim=null) {
         $this->filename = $filename;
-        $this->tok = new SQL_Tokenizer( $sql );
+        $this->tok = new Modyllic_Tokenizer( $sql );
         $this->tok->set_delimiter( $delim );
 
         $this->schema = $schema;
@@ -56,10 +56,10 @@ class SQL_Parser {
         try {
             while ( 1 ) {
                 $this->parse_command();
-                if ( $this->next() instanceOf SQL_Token_Delim ) {
+                if ( $this->next() instanceOf Modyllic_Token_Delim ) {
                     continue;
                 }
-                else if ( $this->cur() instanceOf SQL_Token_EOF ) {
+                else if ( $this->cur() instanceOf Modyllic_Token_EOF ) {
                     break;
                 }
                 else {
@@ -68,7 +68,7 @@ class SQL_Parser {
             }
         }
         catch (Exception $e) {
-            if ( $e instanceOf SQL_Exception ) {
+            if ( $e instanceOf Modyllic_Exception ) {
                 throw $e;
             }
             else {
@@ -85,7 +85,7 @@ class SQL_Parser {
      */
     function next($whitespace=false) {
         $next = $this->tok->next($whitespace);
-        if ( $next instanceOf SQL_Token_Error ) {
+        if ( $next instanceOf Modyllic_Token_Error ) {
             throw $this->error( "Syntax error" );
         }
         return $next;
@@ -119,11 +119,11 @@ class SQL_Parser {
         $this->cmddocs = "";
 
         // Any leading comments are the documentation for the command to come
-        while ( $this->next() instanceOf SQL_Token_Comment ) {
+        while ( $this->next() instanceOf Modyllic_Token_Comment ) {
             $this->cmddocs = trim( $this->cmddocs . " " . $this->cur()->value() );
         }
         // Empty commands are valid
-        if ( $this->cur() instanceOf SQL_Token_EOC ) {
+        if ( $this->cur() instanceOf Modyllic_Token_EOC ) {
             $this->tok->inject($this->cur());
             return;
         }
@@ -217,7 +217,7 @@ class SQL_Parser {
         }
         else if ( $this->maybe('SET') ) {
            $this->assert_reserved();
-            while ( ! $this->peek_next() instanceOf SQL_Token_EOC ) {
+            while ( ! $this->peek_next() instanceOf Modyllic_Token_EOC ) {
                 $this->maybe(',');
                 $col = $this->get_ident();
                 $this->get_symbol('=');
@@ -233,7 +233,7 @@ class SQL_Parser {
     
     function cmd_USE() {
         $name = $this->get_ident();
-        if ( $this->schema->name == SQL_Schema::DEFAULT_NAME ) {
+        if ( $this->schema->name == Modyllic_Schema::DEFAULT_NAME ) {
             $this->schema->name = $name;
         }
         if ( $name != $this->schema->name ) {
@@ -278,7 +278,7 @@ class SQL_Parser {
                 break;
             case 'SCHEMA':
             case 'DATABASE':
-                $this->schema = new SQL_Schema();
+                $this->schema = new Modyllic_Schema();
                 break;
             case 'VIEW':
                 unset($this->schema->views[$name]);
@@ -316,7 +316,7 @@ class SQL_Parser {
     
     function cmd_ALTER_DATABASE() {
         $name = $this->get_ident();
-        if ( $this->schema->name == SQL_Schema::DEFAULT_NAME ) {
+        if ( $this->schema->name == Modyllic_Schema::DEFAULT_NAME ) {
             $this->schema->name = $name;
         }
         if ( $name != $this->schema->name ) {
@@ -333,7 +333,7 @@ class SQL_Parser {
         else {
             throw $this->error("Can't alter $table_name as $table_name does not exist");
         }
-        while ( ! ($this->next() instanceOf SQL_Token_EOC) ) {
+        while ( ! ($this->next() instanceOf Modyllic_Token_EOC) ) {
             if ( $this->maybe_table_option() ) { }
             else if ( $this->cur()->token() == "DROP" ) {
                 $this->get_reserved();
@@ -363,8 +363,8 @@ class SQL_Parser {
                         throw $this->error("Can't drop index $table_name.$name as $name does not exist");
                     }
                 }
-                else if ( $this->cur()->token() == "COLUMN" or $this->cur() instanceOf SQL_Token_Ident ) {
-                    if ( $this->cur() instanceOf SQL_Token_Ident ) {
+                else if ( $this->cur()->token() == "COLUMN" or $this->cur() instanceOf Modyllic_Token_Ident ) {
+                    if ( $this->cur() instanceOf Modyllic_Token_Ident ) {
                         $name = $this->cur()->value();
                     }
                     else {
@@ -406,7 +406,7 @@ class SQL_Parser {
     }
     
     function get_create_specification() {
-        while ( ! $this->peek_next() instanceOf SQL_Token_EOC ) {
+        while ( ! $this->peek_next() instanceOf Modyllic_Token_EOC ) {
             $attr = $this->get_reserved(array("DEFAULT", "CHARACTER SET", "CHARSET", "COLLATE"));
             if ( $attr == "DEFAULT" ) {
                 $attr = $this->get_reserved(array("CHARACTER SET", "CHARSET", "COLLATE"));
@@ -454,7 +454,7 @@ class SQL_Parser {
     }
     
     function cmd_CREATE_EVENT() {
-        $this->ctx = $this->schema->add_event( new SQL_Event( $this->get_ident() ) );
+        $this->ctx = $this->schema->add_event( new Modyllic_Event( $this->get_ident() ) );
         $this->get_reserved('ON SCHEDULE');
         $this->get_schedule();
         if ( $this->maybe('ON COMPLETION') ) {
@@ -530,7 +530,7 @@ class SQL_Parser {
     
     function get_expression($term) {
         $expr = " ";
-        while ( ! $this->peek_next(true) instanceOf SQL_Token_EOC and
+        while ( ! $this->peek_next(true) instanceOf Modyllic_Token_EOC and
                 ! in_array($this->peek_next(true)->token(),$term) ) {
             $expr .= $this->next(true)->value();
         }
@@ -542,7 +542,7 @@ class SQL_Parser {
         if ( isset($this->schema->tables[$name]) ) {
             throw $this->error("Can't create VIEW $name when a table of that name already exists");
         }
-        $view = $this->schema->add_view( new SQL_View( $name ) );
+        $view = $this->schema->add_view( new Modyllic_View( $name ) );
         ## Minimal support for views currently
         $view->def = $this->rest();
     }
@@ -551,7 +551,7 @@ class SQL_Parser {
         // CREATE PROCEDURE sp_name ([proc_parameter[,...]]) 
         // [RETURNS {ROW|COLUMN colname|MAP (key,val)|STH|TABLE|NONE}]
         // [characteristic ...] routine_body
-        $proc = $this->schema->add_routine( new SQL_Proc( $this->get_ident() ) );
+        $proc = $this->schema->add_routine( new Modyllic_Proc( $this->get_ident() ) );
         $proc->args = $this->get_args();
         $proc->docs = $this->cmddocs;
         $proc->returns = array('type'=>'NONE');
@@ -587,7 +587,7 @@ class SQL_Parser {
     
     function cmd_CREATE_FUNCTION() {
         // CREATE FUNCTION sp_name ([proc_parameter[,...]]) RETURNS type [characteristic ...] routine_body
-        $func = $this->schema->add_routine( new SQL_Func( $this->get_ident() ) );
+        $func = $this->schema->add_routine( new Modyllic_Func( $this->get_ident() ) );
         $func->args = $this->get_args();
         $func->docs = $this->cmddocs;
         $this->get_reserved('RETURNS');
@@ -614,13 +614,13 @@ class SQL_Parser {
                     $routine->access = $this->cur()->token();
                     break;
                 case 'CONTAINS TRANSACTIONS':
-                    $routine->txns = SQL_Routine::TXNS_HAS;
+                    $routine->txns = Modyllic_Routine::TXNS_HAS;
                     break;
                 case 'CALL IN TRANSACTION':
-                    $routine->txns = SQL_Routine::TXNS_CALL;
+                    $routine->txns = Modyllic_Routine::TXNS_CALL;
                     break;
                 case 'NO TRANSACTIONS':
-                    $routine->txns = SQL_Routine::TXNS_NONE;
+                    $routine->txns = Modyllic_Routine::TXNS_NONE;
                     break;
                 case 'NOT DETERMINISTIC':
                     $routine->deterministic = FALSE;
@@ -660,25 +660,25 @@ class SQL_Parser {
         $this->next();
         $lastarg = null;
         while ( $this->cur()->value() != ')' ) {
-            if ( $this->cur() instanceOf SQL_Token_EOC ) {
+            if ( $this->cur() instanceOf Modyllic_Token_EOC ) {
                 throw $this->error("Command ended while looking for close of argument list");
             }
-            $arg = new SQL_Arg();
-            while ( $this->cur() instanceOf SQL_Token_Comment ) {
+            $arg = new Modyllic_Arg();
+            while ( $this->cur() instanceOf Modyllic_Token_Comment ) {
                 if ( isset($lastarg) ) {
                     $lastarg->docs = trim( $lastarg->docs . " " . $this->cur()->value() );
                 }
                 $this->next();
             }
             $arg->dir = 'IN';
-            if ( $this->cur() instanceOf SQL_Token_Reserved and
+            if ( $this->cur() instanceOf Modyllic_Token_Reserved and
                  in_array($this->cur()->token(), array('IN','INOUT','OUT')) ) {
                 $arg->dir = $this->cur()->token();
                 $this->next();
             }
             $arg->name = $this->assert_ident();
             $arg->type = $this->get_type();
-            while ( $this->next() instanceOf SQL_Token_Comment ) {
+            while ( $this->next() instanceOf Modyllic_Token_Comment ) {
                 $arg->docs = trim( $arg->docs . " " . $this->cur()->value() );
             }
             $args[] = $arg;
@@ -687,7 +687,7 @@ class SQL_Parser {
                 $this->next();
             }
         }
-        while ( $this->peek_next() instanceOf SQL_Token_Comment ) {
+        while ( $this->peek_next() instanceOf Modyllic_Token_Comment ) {
             $this->next();
             if ( isset($lastarg) ) {
                 $lastarg->docs = trim( $lastarg->docs . " " . $this->cur()->value() );
@@ -698,38 +698,38 @@ class SQL_Parser {
     
     function get_type() {
         // reserved[(token ...)>] [SIGNED|UNSIGNED] [ZEROFILL] [BINARY|ASCII|UNICODE] [{CHARACTER SET|CHARSET} ident] [COLLATE ident]
-        $type = SQL_Type::create( $this->get_reserved() );
+        $type = Modyllic_Type::create( $this->get_reserved() );
         if ( $this->peek_next()->value() == '(' ) {
             $this->get_symbol();
-            if ( $type instanceOf SQL_Numeric ) {
+            if ( $type instanceOf Modyllic_Numeric ) {
                 $args = $this->get_array();
                 $type->length = $args[0];
                 if ( count($args) > 1 ) {
                     $type->scale = $args[1];
                 }
             }
-            else if ( $type instanceOf SQL_Float ) {
+            else if ( $type instanceOf Modyllic_Float ) {
                 $args = $this->get_array();
                 $type->length = $args[0];
                 if ( count($args) > 1 ) {
                     $type->decimals = $args[1];
                 }
             }
-            else if ( $type instanceOf SQL_Compound ) {
+            else if ( $type instanceOf Modyllic_Compound ) {
                 $type->values = $this->get_array();
             }
             else {
                 $type->length = $this->get_list();
-                if ( $type instanceOf SQL_VarChar and $type->length > 65535 ) {
-                    $type = new SQL_Text($type->name,$type->length);
+                if ( $type instanceOf Modyllic_VarChar and $type->length > 65535 ) {
+                    $type = new Modyllic_Text($type->name,$type->length);
                 }
-                else if ( $type instanceOf SQL_VarBinary and $type->length > 65535 ) {
-                    $type = new SQL_Blob($type->name,$type->length);
+                else if ( $type instanceOf Modyllic_VarBinary and $type->length > 65535 ) {
+                    $type = new Modyllic_Blob($type->name,$type->length);
                 }
             }
         }
         $binary = FALSE;
-        while ( $this->peek_next() instanceOf SQL_Token_Reserved ) {
+        while ( $this->peek_next() instanceOf Modyllic_Token_Reserved ) {
             if ( in_array( $this->peek_next()->token(), array( 'SIGNED', 'UNSIGNED', 'ZEROFILL', 'ASCII', 'UNICODE', 'BINARY' ) ) ) {
                 switch ( $this->get_reserved() ) {
                     case 'SIGNED':   $type->unsigned = FALSE; break;
@@ -757,7 +757,7 @@ class SQL_Parser {
             }
         }
         
-        if ( ( $type instanceOf SQL_VarChar or $type instanceOf SQL_Text ) and strtolower($type->charset()) == 'binary' ) {
+        if ( ( $type instanceOf Modyllic_VarChar or $type instanceOf Modyllic_Text ) and strtolower($type->charset()) == 'binary' ) {
             $type = $type->binary();
         }
         else if ( $binary ) {
@@ -785,16 +785,16 @@ class SQL_Parser {
         }
         $this->get_symbol('(');
 
-        $this->ctx = $this->schema->add_table( new SQL_Table($table) );
+        $this->ctx = $this->schema->add_table( new Modyllic_Table($table) );
         $this->ctx->charset = $this->schema->charset;
         $this->ctx->collate = $this->schema->collate;
         $this->ctx->docs = $this->cmddocs;
         
         // Load tablespec
-        while (! $this->next() instanceOf SQL_Token_EOC ) {
+        while (! $this->next() instanceOf Modyllic_Token_EOC ) {
 
             # A key or column spec, followed by...
-            if ( $this->cur() instanceOf SQL_Token_Reserved ) {
+            if ( $this->cur() instanceOf Modyllic_Token_Reserved ) {
                 $this->load_key();
             }
             else {
@@ -802,7 +802,7 @@ class SQL_Parser {
             }
             
             # Comments
-            while ( $this->cur() instanceOf SQL_Token_Comment ) {
+            while ( $this->cur() instanceOf Modyllic_Token_Comment ) {
                 $this->ctx->last_index->docs = trim( $this->ctx->last_index->docs . " " . $this->cur()->value() );
                 $this->next();
             }
@@ -816,7 +816,7 @@ class SQL_Parser {
             else if ( $this->cur()->value() == ',' ) {
                 $this->assert_symbol();
                 # and some number of additional comments
-                while ( $this->peek_next() instanceOf SQL_Token_Comment ) {
+                while ( $this->peek_next() instanceOf Modyllic_Token_Comment ) {
                     $this->ctx->last_index->docs = trim( $this->ctx->last_index->docs . " " . $this->next()->value() );
                 }
             }
@@ -826,7 +826,7 @@ class SQL_Parser {
         }
         
         // Load table flags
-        while ( ! $this->peek_next() instanceOf SQL_Token_EOC ) {
+        while ( ! $this->peek_next() instanceOf Modyllic_Token_EOC ) {
             $this->next();
             if ( $this->maybe_table_option() ) { }
             else {
@@ -834,13 +834,13 @@ class SQL_Parser {
             }
         }
         foreach ($this->ctx->columns as &$col) {
-            if ( $col->type instanceOf SQL_String ) {
+            if ( $col->type instanceOf Modyllic_String ) {
                 $col->type->set_default_charset( $this->ctx->charset );
                 $col->type->set_default_collate( $this->ctx->collate );
             }
         }
         foreach ($this->ctx->indexes as &$index) {
-            if ($index instanceOf SQL_Index_Foreign ) {
+            if ($index instanceOf Modyllic_Index_Foreign ) {
                 $this->add_foreign_key_index( '', $index );
             }
         }
@@ -884,14 +884,14 @@ class SQL_Parser {
     function load_column() {
         // ident type [NOT NULL|NULL] [DEFAULT value] [ON UPDATE token] [AUTO_INCREMENT]
         //   [PRIMARY KEY] [COMMENT string] [ALIASES (token,...)]
-        $column = $this->ctx->add_column(new SQL_Column( $this->assert_ident() ));
+        $column = $this->ctx->add_column(new Modyllic_Column( $this->assert_ident() ));
         $column->type = $this->get_type();
         
         $is_unique = FALSE;
         
         if ( $column->type->name == 'SERIAL' ) {
             // SERIAL is an alias for BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE.
-            $column->type = new SQL_BigInt('BIGINT');
+            $column->type = new Modyllic_BigInt('BIGINT');
             $column->type->unsigned = TRUE;
             $column->null = FALSE;
             $column->auto_increment = TRUE;
@@ -899,14 +899,14 @@ class SQL_Parser {
             $is_unique = TRUE;
         }
         
-        if ( $column->type instanceOf SQL_Timestamp ) {
+        if ( $column->type instanceOf Modyllic_Timestamp ) {
             $column->default = 'CURRENT_TIMESTAMP';
             $column->on_update = 'CURRENT_TIMESTAMP';
         }
 
         $is_primary = FALSE;
         while ( ! in_array($this->next()->value(), $this->column_term) ) {
-            if ( $this->cur() instanceOf SQL_Token_Comment ) {
+            if ( $this->cur() instanceOf Modyllic_Token_Comment ) {
                 $column->docs .= trim( $column->docs . ' ' . $this->cur()->value() );
                 continue;
             }
@@ -949,7 +949,7 @@ class SQL_Parser {
                 $column->aliases += $this->get_array();
             }
             else if ( $this->cur()->token() == 'REFERENCES' ) {
-                $key = new SQL_Index_Foreign();
+                $key = new Modyllic_Index_Foreign();
                 if ( $this->peek_next()->token() == 'WEAKLY' ) {
                     $this->get_reserved();
                     $key->weak = TRUE;
@@ -968,7 +968,7 @@ class SQL_Parser {
                         $this->get_reserved();
                         $key->reference['on_update'] = $this->get_reserved();
                     }
-                    else if ( $this->peek_next() instanceOf SQL_Token_Comment ) {
+                    else if ( $this->peek_next() instanceOf Modyllic_Token_Comment ) {
                         $column->docs .= trim( $column->docs . ' ' . $this->next()->value() );
                     }
                     else {
@@ -986,13 +986,13 @@ class SQL_Parser {
             }
         }
         if ( $is_primary ) {
-            $index = new SQL_Index('!PRIMARY KEY');
+            $index = new Modyllic_Index('!PRIMARY KEY');
             $index->primary = TRUE;
             $index->columns = array($column->name => FALSE);
             $this->add_index( $index );
         }
         else if ( $is_unique ) {
-            $index = new SQL_Index($column->name);
+            $index = new Modyllic_Index($column->name);
             $index->unique = TRUE;
             $index->columns = array($column->name => FALSE);
             $this->add_index( $index );
@@ -1006,7 +1006,7 @@ class SQL_Parser {
         //   | [UNIQUE|FULLTEXT] KEY ident (ident,...) [USING {BTREE|HASH}]
         $token = $this->assert_reserved();
         if ( $token == 'CONSTRAINT' or $token == 'FOREIGN KEY' ) {
-            $key = new SQL_Index_Foreign();
+            $key = new Modyllic_Index_Foreign();
             if ( $token == 'CONSTRAINT' ) {
                 $key->cname = $this->get_ident();
                 $token = $this->get_reserved();
@@ -1046,7 +1046,7 @@ class SQL_Parser {
                 else if ( $this->cur()->token() == 'ON UPDATE' ) {
                     $key->reference['on_update'] = $this->get_reserved();
                 }
-                else if ( $this->cur() instanceOf SQL_Token_Comment ) {
+                else if ( $this->cur() instanceOf Modyllic_Token_Comment ) {
                     $key->docs .= trim( $key->docs . ' ' . $this->cur()->value() );
                 }
                 else {
@@ -1060,7 +1060,7 @@ class SQL_Parser {
             }
         }
         else {
-            $key = new SQL_Index();
+            $key = new Modyllic_Index();
             while ( 1 ) {
                 $this->assert_reserved();
                 if ( $token == 'PRIMARY KEY' ) {
@@ -1108,7 +1108,7 @@ class SQL_Parser {
         $columns = array();
         $last_col = null;
         while ( $this->next()->value() != ')' ) {
-            if ( $this->cur() instanceOf SQL_Token_EOC ) {
+            if ( $this->cur() instanceOf Modyllic_Token_EOC ) {
                 throw $this->error( "Hit end of command while looking for $end" );
             }
             if ( $this->cur()->value() != ',' ) {
@@ -1166,7 +1166,7 @@ class SQL_Parser {
             // Scan to see if another key would meet our needs
             $matched = FALSE;
             foreach ( $this->ctx->indexes as &$otherKey ) {
-                if ( $otherKey instanceOf SQL_Index_Foreign ) { continue; }
+                if ( $otherKey instanceOf Modyllic_Index_Foreign ) { continue; }
                 if ( count($key->columns) <= count($otherKey->columns) ) {
                     $matched = TRUE;
                     foreach ( $key->columns as $idx=>&$colname ) {
@@ -1183,7 +1183,7 @@ class SQL_Parser {
                 $name = $this->ctx->gen_index_name($first);
             }
             if ( ! $matched ) {
-                $regkey = new SQL_Index($name);
+                $regkey = new Modyllic_Index($name);
                 $regkey->columns = $key->columns;
                 $this->add_index( $regkey );
             }
@@ -1223,7 +1223,7 @@ class SQL_Parser {
      * @returns the value of the identifier
      */
     function assert_ident() {
-        if ( ! $this->cur() instanceOf SQL_Token_Ident ) {
+        if ( ! $this->cur() instanceOf Modyllic_Token_Ident ) {
             throw $this->error( "Expected identifier, got ".$this->cur()->debug() );
         }
         return $this->cur()->value();
@@ -1243,7 +1243,7 @@ class SQL_Parser {
      * @returns the number
      */
     function assert_num() {
-        if ( ! $this->cur() instanceOf SQL_Token_Num ) {
+        if ( ! $this->cur() instanceOf Modyllic_Token_Num ) {
             throw $this->error( "Expected number, got ".$this->cur()->debug() );
         }
         return $this->cur()->value();
@@ -1267,7 +1267,7 @@ class SQL_Parser {
      * @returns the symbol
      */
     function assert_symbol($valid_symbols = null) {
-        if ( ! $this->cur() instanceOf SQL_Token_Symbol ) {
+        if ( ! $this->cur() instanceOf Modyllic_Token_Symbol ) {
             throw $this->error( "Expected SYMBOL, got ".$this->cur()->debug() );
         }
         
@@ -1295,7 +1295,7 @@ class SQL_Parser {
      * @returns the string
      */
     function assert_string() {
-        if ( ! $this->cur() instanceOf SQL_Token_String ) {
+        if ( ! $this->cur() instanceOf Modyllic_Token_String ) {
             throw $this->error( "Expected string, got ".$this->cur()->debug() );
         }
         return $this->cur()->value();
@@ -1315,7 +1315,7 @@ class SQL_Parser {
      * @returns the token form of the reserved word (all caps)
      */
     function assert_reserved( $t1=null ) {
-        if ( ! $this->cur() instanceOf SQL_Token_Reserved ) {
+        if ( ! $this->cur() instanceOf Modyllic_Token_Reserved ) {
             throw $this->error( "Expected reserved word, got ".$this->cur()->debug() );
         }
         if ( is_null($t1) ) { return $this->cur()->token(); }
@@ -1340,7 +1340,7 @@ class SQL_Parser {
         // We inject and then return next so that the this will become
         // the current token.  If we just returned the new token it wouldn't
         // do that.
-        $this->tok->inject( new SQL_Token_List($this->tok->pos,$value) );
+        $this->tok->inject( new Modyllic_Token_List($this->tok->pos,$value) );
         return $this->next()->value();
     }
     
@@ -1361,27 +1361,27 @@ class SQL_Parser {
         // We inject and then return next so that the this will become
         // the current token.  If we just returned the new token it wouldn't
         // do that.
-        $this->tok->inject( new SQL_Token_List($this->tok->pos,$value) );
+        $this->tok->inject( new Modyllic_Token_List($this->tok->pos,$value) );
         return $this->next()->value();
     }
 
     /**
      * Takes all of the tokens up till the $end and returns them as a
-     * SQL_Token_List.  However, unlike get_list, this returns an array
+     * Modyllic_Token_List.  However, unlike get_list, this returns an array
      * of the tokens found, ignoring whitespace and commas.  Note that
      * multiple commas will not result in a blank entry.  They will be
      * treated like a single comma.
      *
      * @param string $end (Default: ")")
-     * @returns array of SQL_Token
+     * @returns array of Modyllic_Token
      */
     function get_token_array( $end=")" ) {
         $value = array();
         while ( $this->next()->value() != $end ) {
-            if ( $this->cur() instanceOf SQL_Token_EOC ) {
+            if ( $this->cur() instanceOf Modyllic_Token_EOC ) {
                 throw $this->error( "Hit end of command while looking for $end" );
             }
-            if ( ! $this->cur() instanceOf SQL_Token_Symbol or 
+            if ( ! $this->cur() instanceOf Modyllic_Token_Symbol or 
                  $this->cur()->value() != "," ) {
                 $value[] = $this->cur();
             }
@@ -1389,7 +1389,7 @@ class SQL_Parser {
         // We inject and then return next so that the this will become
         // the current token.  If we just returned the new token it wouldn't
         // do that.
-        $this->tok->inject( new SQL_Token_List($this->tok->pos,$value) );
+        $this->tok->inject( new Modyllic_Token_List($this->tok->pos,$value) );
         return $this->next()->value();
     }
     
@@ -1403,14 +1403,14 @@ class SQL_Parser {
         }
         $line = $this->tok->line();
         $col  = $this->tok->col();
-        return new SQL_Exception( $this->filename, $line + 1, $col + 1, $this->tok->context(), $message );
+        return new Modyllic_Exception( $this->filename, $line + 1, $col + 1, $this->tok->context(), $message );
     }
 }
 
 /**
  * Our exception class, it takes a bunch of useful debugging information
  */
-class SQL_Exception extends Exception {
+class Modyllic_Exception extends Exception {
     /**
      * @param string $filename 
      * @param int $line

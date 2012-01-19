@@ -2,11 +2,11 @@
 /**
  * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
  *
- * @package OLB::SQL
+ * @package Modyllic
  * @author bturner@online-buddies.com
  */
 
-class SQL_Generator_NativeSQL extends SQL_Generator_SQL {
+class Modyllic_Generator_NativeSQL extends Modyllic_Generator_SQL {
     // We include weak constraints as well as regular ones
     function ignore_index( $index ) {
         return FALSE;
@@ -35,7 +35,7 @@ class SQL_Generator_NativeSQL extends SQL_Generator_SQL {
         }
     }
     function foreign_key($index) {
-        if ( $index->weak != SQL_Index_Foreign::WEAK_DEFAULT ) {
+        if ( $index->weak != Modyllic_Index_Foreign::WEAK_DEFAULT ) {
             $this->add( " WEAKLY REFERENCES %id", $index->references['table'] );
         }
         else {
@@ -51,12 +51,12 @@ class SQL_Generator_NativeSQL extends SQL_Generator_SQL {
         }
     }
     function routine_attrs( $routine ) {
-        if ( $routine->args_type != SQL_Routine::ARGS_TYPE_DEFAULT ) {
+        if ( $routine->args_type != Modyllic_Routine::ARGS_TYPE_DEFAULT ) {
             $this->extend("ARGS %lit",$routine->args_type);
         }
-        if ( $routine instanceOf SQL_Proc ) {
+        if ( $routine instanceOf Modyllic_Proc ) {
             switch ($routine->returns["type"]) {
-            case SQL_Proc::RETURNS_TYPE_DEFAULT:
+            case Modyllic_Proc::RETURNS_TYPE_DEFAULT:
                 break;
             case "COLUMN":
             case "LIST":
@@ -70,15 +70,15 @@ class SQL_Generator_NativeSQL extends SQL_Generator_SQL {
             }
         }
         switch ( $routine->txns ) {
-            case SQL_Routine::TXNS_DEFAULT:
+            case Modyllic_Routine::TXNS_DEFAULT:
                 break;
-            case SQL_Routine::TXNS_HAS:
+            case Modyllic_Routine::TXNS_HAS:
                 $this->extend("CONTAINS TRANSACTIONS");
                 break;
-            case SQL_Routine::TXNS_CALL:
+            case Modyllic_Routine::TXNS_CALL:
                 $this->extend("CALL IN TRANSACTION");
                 break;
-            case SQL_Routine::TXNS_NONE:
+            case Modyllic_Routine::TXNS_NONE:
                 $this->extend("NO TRANSACTIONS");
                 break;
         }

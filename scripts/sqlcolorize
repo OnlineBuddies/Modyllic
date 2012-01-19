@@ -1,9 +1,13 @@
 #!/usr/bin/env php
 <?php
-@include_once dirname(realpath(__FILE__))."/../lib/SQL.php";
-if ( ! class_exists('SQL',FALSE) ) {
-    require_once "SQL.php";
-}
+/**
+ * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
+ *
+ * @package OLB::SQL
+ * @author bturner@online-buddies.com
+ */
+
+require_once "Modyllic/SQL.php";
 
 $filename = "php://stdin";
 if ( count($argv)==2 ) {
@@ -16,34 +20,34 @@ else if (count($argv)>2) {
 }
 $sql = file_get_contents($filename);
 $sql = preg_replace('/\r/','',$sql);
-$tok = new SQL_Tokenizer($sql);
+$tok = new Modyllic_Tokenizer($sql);
 $tok->set_delimiter( ';' );
 $color = CLEAR();
 print $color;
-while ( !$tok->next(true) instanceOf SQL_Token_EOF ) {
-    if ( $tok->cur instanceOf SQL_Token_Reserved ) {
+while ( !$tok->next(true) instanceOf Modyllic_Token_EOF ) {
+    if ( $tok->cur instanceOf Modyllic_Token_Reserved ) {
         $newcolor = BRIGHT_RED();
     }
-    else if ( $tok->cur instanceOf SQL_Token_Num ) {
+    else if ( $tok->cur instanceOf Modyllic_Token_Num ) {
         $newcolor = BRIGHT_CYAN();
     }
-    else if ( $tok->cur instanceOf SQL_Token_String ) {
+    else if ( $tok->cur instanceOf Modyllic_Token_String ) {
         $newcolor = CYAN();
     }
-    else if ( $tok->cur instanceOf SQL_Token_Symbol ) {
+    else if ( $tok->cur instanceOf Modyllic_Token_Symbol ) {
         $newcolor = BRIGHT_RED();
     }
-    else if ( $tok->cur instanceOf SQL_Token_Ident and ! $tok->cur instanceOf SQL_Token_Quoted_Ident and
-              SQL::is_reserved($tok->cur->value()) ) {
+    else if ( $tok->cur instanceOf Modyllic_Token_Ident and ! $tok->cur instanceOf Modyllic_Token_Quoted_Ident and
+              Modyllic_SQL::is_reserved($tok->cur->value()) ) {
         $newcolor = BRIGHT_RED();
     }
-    else if ( $tok->cur instanceOf SQL_Token_Comment ) {
+    else if ( $tok->cur instanceOf Modyllic_Token_Comment ) {
         $newcolor = GREEN();
     }
-    else if ( $tok->cur instanceOf SQL_Token_Delim ) {
+    else if ( $tok->cur instanceOf Modyllic_Token_Delim ) {
         $newcolor = BRIGHT_WHITE();
     }
-    else if ( $tok->cur instanceOf SQL_Token_Error ) {
+    else if ( $tok->cur instanceOf Modyllic_Token_Error ) {
         $newcolor = RED();
     }
     else {
