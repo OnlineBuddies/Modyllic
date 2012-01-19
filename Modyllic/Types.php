@@ -445,7 +445,7 @@ class Modyllic_String extends Modyllic_Type {
         if ( isset($this->length) ) {
             $value = substr( $value, 0, $this->length );
         }
-        return SQL::quote_str( $value );
+        return Modyllic_SQL::quote_str( $value );
     }
     function charset_collation($other=null) {
         $other_charset = isset($other)? $other->charset(): $this->default_charset;
