@@ -2,7 +2,7 @@
 /**
  * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
  *
- * @package OLB::SQL
+ * @package Modyllic
  * @author bturner@online-buddies.com
  */
 
@@ -11,14 +11,14 @@ require_once dirname(__FILE__)."/Generator.php";
 /**
  * This figures out how one schema differs from another
  */
-class SQL_Diff {
+class Modyllic_Diff {
     public $from;
     public $to;
     public $changeset;
 
     /**
-     * @param SQL_Schema $from
-     * @param SQL_Schema $to
+     * @param Modyllic_Schema $from
+     * @param Modyllic_Schema $to
      */
     function __construct($from, $to) {
         $this->from = $from;
@@ -27,14 +27,14 @@ class SQL_Diff {
     }
     
     /**
-     * @returns SQL_Changeset
+     * @returns Modyllic_Changeset
      */
     function changeset() {
         return $this->changeset;
     }
     
     private function calculate_changeset() {
-        $this->changeset = new SQL_Changeset();
+        $this->changeset = new Modyllic_Changeset();
         
         $this->changeset->schema->name = $this->to->name;
         $this->changeset->schema->from = $this->from;
@@ -83,7 +83,7 @@ class SQL_Diff {
             }
             $fromevt = $this->from->events[$name];
             if ( ! $toevt->equalTo($fromevt) ) {
-                $updevt = new SQL_Event_Changeset();
+                $updevt = new Modyllic_Event_Changeset();
                 $updevt->name = $name;
                 $updevt->from = $fromevt;
                 if ( $toevt->schedule != $fromevt->schedule ) {
@@ -150,7 +150,7 @@ class SQL_Diff {
             if ( ! isset($this->from->tables[$tablename]) ) { continue; }
             $fromtable = $this->from->tables[$tablename];
             
-            $tablediff = new SQL_Table_Changeset($tablename);
+            $tablediff = new Modyllic_Table_Changeset($tablename);
             
             $tablediff->from = $fromtable;
             
@@ -325,7 +325,7 @@ class SQL_Diff {
 /**
  * This is the actual differences between two schema
  */
-class SQL_Changeset {
+class Modyllic_Changeset {
     public $add;
     public $remove;
     public $update;
@@ -351,12 +351,12 @@ class SQL_Changeset {
             "events" => array(),
             "views"  => array(),
             );
-        $this->schema = new SQL_Schema_Changeset();
+        $this->schema = new Modyllic_Schema_Changeset();
     }
     
     /**
      * Note that a table was added
-     * @param SQL_Table $table
+     * @param Modyllic_Table $table
      */
     function add_table( $table ) {
         $this->add['tables'][$table->name] = $table;
@@ -364,7 +364,7 @@ class SQL_Changeset {
     
     /**
      * Note that a table was removed
-     * @param SQL_Table $table
+     * @param Modyllic_Table $table
      */
     function remove_table( $table ) {
         $this->remove['tables'][$table->name] = $table;
@@ -372,7 +372,7 @@ class SQL_Changeset {
     
     /**
      * Note that a table was updated (and how)
-     * @param SQL_Table_Changeset $table
+     * @param Modyllic_Table_Changeset $table
      */
     function update_table( $table ) {
         $this->update['tables'][$table->name] = $table;
@@ -380,7 +380,7 @@ class SQL_Changeset {
     
     /**
      * Note that a routine was added
-     * @param SQL_Routine $routine
+     * @param Modyllic_Routine $routine
      */
     function add_routine( $routine ) {
         $this->add['routines'][$routine->name] = $routine;
@@ -388,7 +388,7 @@ class SQL_Changeset {
     
     /**
      * Note that a routine was removed
-     * @param SQL_Routine $routine
+     * @param Modyllic_Routine $routine
      */
     function remove_routine( $routine ) {
         $this->remove['routines'][$routine->name] = $routine;
@@ -396,28 +396,28 @@ class SQL_Changeset {
     
     /**
      * Note that a routine was updated
-     * @param SQL_Routine $routine
+     * @param Modyllic_Routine $routine
      */
     function update_routine( $routine ) {
         $this->update['routines'][$routine->name] = $routine;
     }
     
     /**
-     * @param SQL_Event $event
+     * @param Modyllic_Event $event
      */
     function add_event( $event ) {
         $this->add['events'][$event->name] = $event;
     }
     
     /**
-     * @param SQL_Event_Changeset $event
+     * @param Modyllic_Event_Changeset $event
      */
     function update_event( $event ) {
         $this->update['events'][$event->name] = $event;
     }
     
     /**
-     * @param SQL_Event $event
+     * @param Modyllic_Event $event
      */
     function remove_event( $event ) {
         $this->remove['events'][$event->name] = $event;
@@ -441,7 +441,7 @@ class SQL_Changeset {
 /**
  * This stores just schema global attributes
  */
-class SQL_Schema_Changeset {
+class Modyllic_Schema_Changeset {
     public $name;
     public $charset;
     public $collate;
@@ -458,7 +458,7 @@ class SQL_Schema_Changeset {
 /**
  * This represents how one particular table differs
  */
-class SQL_Table_Changeset {
+class Modyllic_Table_Changeset {
     public $name;
     public $add;
     public $remove;
@@ -486,12 +486,12 @@ class SQL_Table_Changeset {
             "columns" => array(),
             "data"    => array(),
             );
-        $this->options = new SQL_Table_Options();
+        $this->options = new Modyllic_Table_Options();
     }
 
     /**
      * Note that a column was added
-     * @param SQL_Column $column
+     * @param Modyllic_Column $column
      */
     function add_column($column) {
         $this->add['columns'][$column->name] = $column;
@@ -499,7 +499,7 @@ class SQL_Table_Changeset {
     
     /**
      * Note that a column was removed
-     * @param SQL_Column $column
+     * @param Modyllic_Column $column
      */
     function remove_column($column) {
         $this->remove['columns'][$column->name] = $column;
@@ -507,7 +507,7 @@ class SQL_Table_Changeset {
     
     /**
      * Note that a column was updated
-     * @param SQL_Column $column
+     * @param Modyllic_Column $column
      */
     function update_column($column) {
         $this->update['columns'][$column->name] = $column;
@@ -515,7 +515,7 @@ class SQL_Table_Changeset {
     
     /**
      * Note that an index was added
-     * @param SQL_Index $index
+     * @param Modyllic_Index $index
      */
     function add_index($index) {
         $this->add['indexes'][] = $index;
@@ -523,7 +523,7 @@ class SQL_Table_Changeset {
     
     /**
      * Note that an index was removed
-     * @param SQL_Index $index
+     * @param Modyllic_Index $index
      */
     function remove_index($index) {
         $this->remove['indexes'][] = $index;
@@ -578,7 +578,7 @@ class SQL_Table_Changeset {
     }
 }
 
-class SQL_Table_Options {
+class Modyllic_Table_Options {
     public $charset;
     public $collate;
     public $engine;
@@ -591,7 +591,7 @@ class SQL_Table_Options {
     }
 }
 
-class SQL_Event_Changeset extends SQL_Diffable {
+class Modyllic_Event_Changeset extends Modyllic_Diffable {
     public $name;
     public $schedule;
     public $preserve;

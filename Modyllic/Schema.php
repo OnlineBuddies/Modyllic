@@ -2,7 +2,7 @@
 /**
  * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
  *
- * @package OLB::SQL
+ * @package Modyllic
  * @author bturner@online-buddies.com
  */
 
@@ -13,14 +13,14 @@ require_once dirname(__FILE__)."/Types.php";
  * providing previous values for the diff engine.  In a perfect world this
  * would be a runtime trait applied by the diff engine.
  */
-class SQL_Diffable {
+class Modyllic_Diffable {
     public $from;
 }
 
 /**
  * A collection of SQL entities comprising a complete schema
  */
-class SQL_Schema extends SQL_Diffable {
+class Modyllic_Schema extends Modyllic_Diffable {
     public $tables = array();
     public $routines = array();
     public $views = array();
@@ -63,7 +63,7 @@ class SQL_Schema extends SQL_Diffable {
     }
     
     /**
-     * @param SQL_Table $table
+     * @param Modyllic_Table $table
      */
     function add_table( $table ) {
         if ( $this->finalized ) {
@@ -74,7 +74,7 @@ class SQL_Schema extends SQL_Diffable {
     }
         
     /**
-     * @param SQL_Routine $routine
+     * @param Modyllic_Routine $routine
      */
     function add_routine( $routine ) {
         if ( $this->finalized ) {
@@ -85,7 +85,7 @@ class SQL_Schema extends SQL_Diffable {
     }
     
     /**
-     * @param SQL_Event $event
+     * @param Modyllic_Event $event
      */
     function add_event( $event ) {
         if ( $this->finalized ) {
@@ -96,7 +96,7 @@ class SQL_Schema extends SQL_Diffable {
     }
     
     /**
-     * @param SQL_View $view
+     * @param Modyllic_View $view
      */
     function add_view( $view ) {
         if ( $this->finalized ) {
@@ -107,7 +107,7 @@ class SQL_Schema extends SQL_Diffable {
     }
     
     function unquote_sql_str($sql) {
-        $tok = new SQL_Tokenizer( $sql );
+        $tok = new Modyllic_Tokenizer( $sql );
         return $tok->next()->unquote();
     }
     
@@ -171,7 +171,7 @@ class SQL_Schema extends SQL_Diffable {
     }
 
     /**
-     * @param SQL_Schema $other
+     * @param Modyllic_Schema $other
      */
     function schemaDefEqualTo( $other ) {
         if ( $this->charset != $other->charset ) { return FALSE; }
@@ -201,7 +201,7 @@ class SQL_Schema extends SQL_Diffable {
     }
 }
 
-class SQL_View extends SQL_Diffable {
+class Modyllic_View extends Modyllic_Diffable {
     public $name;
     public $def;
     /**
@@ -219,7 +219,7 @@ class SQL_View extends SQL_Diffable {
 /**
  * A collection of columns, indexes and other information comprising a table
  */
-class SQL_Table extends SQL_Diffable {
+class Modyllic_Table extends Modyllic_Diffable {
     public $name;
     public $columns = array();
     public $indexes = array();
@@ -241,7 +241,7 @@ class SQL_Table extends SQL_Diffable {
 
 
     /**
-     * @param SQL_Column $column
+     * @param Modyllic_Column $column
      */
     function add_column($column) {
         if ( isset($this->last_column) ) {
@@ -252,7 +252,7 @@ class SQL_Table extends SQL_Diffable {
         return $column;
     }
     /**
-     * @param SQL_Index $index
+     * @param Modyllic_Index $index
      */
     function add_index($index) {
         $name = $index->getName();
@@ -278,7 +278,7 @@ class SQL_Table extends SQL_Diffable {
     }
     
     /**
-     * @param SQL_Table $other
+     * @param Modyllic_Table $other
      * @returns bool True if $other is equivalent to $this
      */
     function equalTo( $other ) {
@@ -363,7 +363,7 @@ class SQL_Table extends SQL_Diffable {
 /**
  * A collection of attributes describing a column in a table
  */
-class SQL_Column extends SQL_Diffable {
+class Modyllic_Column extends Modyllic_Diffable {
     public $name;
     public $aliases = array();
     public $previously;
@@ -384,7 +384,7 @@ class SQL_Column extends SQL_Diffable {
 
 
     /**
-     * @param SQL_Column $other
+     * @param Modyllic_Column $other
      * @returns bool True if $other is equivalent to $this
      */
     function equalTo($other) {
@@ -402,7 +402,7 @@ class SQL_Column extends SQL_Diffable {
 /**
  * A collection of attributes describing an index on a table
  */
-class SQL_Index extends SQL_Diffable {
+class Modyllic_Index extends Modyllic_Diffable {
     public $name  = "";
     public $docs = "";
     public $spatial = FALSE;
@@ -424,7 +424,7 @@ class SQL_Index extends SQL_Diffable {
     }
     
     /**
-     * @param SQL_Index $other
+     * @param Modyllic_Index $other
      * @returns bool True if $other is equivalent to $this
      */
     function equalTo($other) {
@@ -439,7 +439,7 @@ class SQL_Index extends SQL_Diffable {
     }
 }
 
-class SQL_Index_Foreign extends SQL_Index {
+class Modyllic_Index_Foreign extends Modyllic_Index {
     public $cname = "";
     const WEAK_DEFAULT = FALSE;
     public $weak     = self::WEAK_DEFAULT;
@@ -467,7 +467,7 @@ class SQL_Index_Foreign extends SQL_Index {
     }
 }
 
-class SQL_CodeBody extends SQL_Diffable {
+class Modyllic_CodeBody extends Modyllic_Diffable {
     public $body = "BEGIN\nEND";
     /**
      * @returns string Strips any comments from the body of the routine--
@@ -498,7 +498,7 @@ class SQL_CodeBody extends SQL_Diffable {
 /**
  * A collection of attributes describing an event
  */
-class SQL_Event extends SQL_CodeBody {
+class Modyllic_Event extends Modyllic_CodeBody {
     public $name;
     public $schedule;
     public $preserve = FALSE;
@@ -524,7 +524,7 @@ class SQL_Event extends SQL_CodeBody {
 /**
  * A collection of attributes describing a stored routine
  */
-class SQL_Routine extends SQL_CodeBody {
+class Modyllic_Routine extends Modyllic_CodeBody {
     public $name;
     public $args = array();
     const ARGS_TYPE_DEFAULT = "LIST";
@@ -549,7 +549,7 @@ class SQL_Routine extends SQL_CodeBody {
     }
 
     /**
-     * @param SQL_Routine $other
+     * @param Modyllic_Routine $other
      * @returns bool True if $other is equivalent to $this
      */
     function equalTo($other) {
@@ -571,7 +571,7 @@ class SQL_Routine extends SQL_CodeBody {
 /**
  * A stored procedure, which is exactly like the base routine class
  */
-class SQL_Proc extends SQL_Routine {
+class Modyllic_Proc extends Modyllic_Routine {
     const RETURNS_TYPE_DEFAULT = "NONE";
     public $returns = array("type"=>self::RETURNS_TYPE_DEFAULT);
     function equalTo($other) {
@@ -584,7 +584,7 @@ class SQL_Proc extends SQL_Routine {
 /**
  * A collection of attributes describing a stored function
  */
-class SQL_Func extends SQL_Routine {
+class Modyllic_Func extends Modyllic_Routine {
     function equalTo($other) {
         if ( ! parent::equalTo( $other ) ) { return FALSE; }
         if ( ! $this->returns->equalTo( $other->returns ) ) { return FALSE; }
@@ -596,7 +596,7 @@ class SQL_Func extends SQL_Routine {
  * A collection of attributes describing an argument to a stored procedure
  * or function.
  */
-class SQL_Arg extends SQL_Diffable {
+class Modyllic_Arg extends Modyllic_Diffable {
     public $name;
     public $type;
     public $dir = "IN";

@@ -7,16 +7,13 @@
  * @author bturner@online-buddies.com
  */
 
-@include_once dirname(realpath(__FILE__))."/../lib/SQL.php";
-if ( ! class_exists('SQL',FALSE) ) {
-    require_once "SQL.php";
-}
+require_once "Modyllic/SQL.php";
 
-$load = SQL_Commandline::args( "sqldump", "spec", $argv );
+$load = Modyllic_Commandline::args( "sqldump", "spec", $argv );
 
-$schema = SQL_Commandline::schema($load['spec']);
-SQL_Commandline::warn("\r".str_repeat(" ",70)."\r");
+$schema = Modyllic_Commandline::schema($load['spec']);
+Modyllic_Commandline::warn("\r".str_repeat(" ",70)."\r");
 
-$gen = new SQL_Generator_NativeSQL();
+$gen = new Modyllic_Generator_NativeSQL();
 error_log("");
 print $gen->create_sql( $schema );

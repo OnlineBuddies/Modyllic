@@ -2,7 +2,7 @@
 /**
  * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
  *
- * @package OLB::SQL
+ * @package Modyllic
  * @author bturner@online-buddies.com
  */
 
@@ -10,7 +10,7 @@
  * Helper class for commandline tools
  */
 
-class SQL_Commandline {
+class Modyllic_Commandline {
     static function warn( $msg ) {
         $stderr = fopen('php://stderr','w');
         fwrite($stderr, $msg);
@@ -22,29 +22,29 @@ class SQL_Commandline {
         $star_count = ($pos*40 / $len);
         $dash_count = 40-$star_count;
         static $source;
-        if ( $source != SQL_Schema_Loader::$source ) {
+        if ( $source != Modyllic_Schema_Loader::$source ) {
             if (isset($source)) {
                 self::warn("\r".str_repeat(" ",58+strlen($source))."\r");
             }
-            $source = SQL_Schema_Loader::$source;
+            $source = Modyllic_Schema_Loader::$source;
         }
         if(!function_exists('posix_isatty') or posix_isatty(0)) self::warn(sprintf("\rLoading %s [%s%s] %2.1f%%", 
-            SQL_Schema_Loader::$source,
+            Modyllic_Schema_Loader::$source,
             str_repeat("*",$star_count), str_repeat("-",$dash_count),
             $percent ));
     }
     static function schema( $load ) {
-        SQL_Tokenizer::on_advance( array( __CLASS__, "status" ) );
+        Modyllic_Tokenizer::on_advance( array( __CLASS__, "status" ) );
         try {
             ksort($load['args']);
-            $schema = call_user_func_array(array("SQL_Schema_Loader",$load['kind']), $load['args'] );
+            $schema = call_user_func_array(array("Modyllic_Schema_Loader",$load['kind']), $load['args'] );
         }
-        catch (SQL_Exception $e) {
+        catch (Modyllic_Exception $e) {
             echo "\r".$e->getMessage()."\n";
 #            echo $e->getTraceAsString()."\n";
             exit(1);
         }
-        catch (SQL_Schema_Loader_Exception $e) {
+        catch (Modyllic_Schema_Loader_Exception $e) {
             echo "\r".$e->getMessage()."\n";
             exit(1);
         }

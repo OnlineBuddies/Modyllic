@@ -7,14 +7,11 @@
  * @author bturner@online-buddies.com
  */
 
-@include_once dirname(realpath(__FILE__))."/../lib/SQL.php";
-if ( ! class_exists('SQL',FALSE) ) {
-    require_once "SQL.php";
-}
+require_once "Modyllic/SQL.php";
 
-$load = SQL_Commandline::args( "sqldrop", "spec", $argv );
+$load = Modyllic_Commandline::args( "sqldrop", "spec", $argv );
 
-$schema = SQL_Commandline::schema($load['spec']);
+$schema = Modyllic_Commandline::schema($load['spec']);
 
-$gen = new SQL_Generator_SQL();
+$gen = new Modyllic_Generator_SQL();
 print $gen->drop_sql( $schema );

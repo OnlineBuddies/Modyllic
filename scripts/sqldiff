@@ -7,22 +7,19 @@
  * @author bturner@online-buddies.com
  */
 
-@include_once dirname(realpath(__FILE__))."/../lib/SQL.php";
-if ( ! class_exists('SQL',FALSE) ) {
-    require_once "SQL.php";
-}
+require_once "Modyllic/SQL.php";
 
-$load = SQL_Commandline::args( "sqldiff", "oldspec newspec outputformat", $argv );
+$load = Modyllic_Commandline::args( "sqldiff", "oldspec newspec outputformat", $argv );
 
-$from = SQL_Commandline::schema($load['oldspec']);
-$to   = SQL_Commandline::schema($load['newspec']);
-SQL_Commandline::warn("\r".str_repeat(" ",70)."\r");
+$from = Modyllic_Commandline::schema($load['oldspec']);
+$to   = Modyllic_Commandline::schema($load['newspec']);
+Modyllic_Commandline::warn("\r".str_repeat(" ",70)."\r");
 
-$diff = new SQL_Diff( $from, $to );
+$diff = new Modyllic_Diff( $from, $to );
 if(!$load['outputformat']['format'] or $load['outputformat']['format'] == 'native') {
-    $gen = new SQL_Generator_NativeSQL();
+    $gen = new Modyllic_Generator_NativeSQL();
 } else if($load['outputformat']['format'] == 'plain') {
-    $gen = new SQL_Generator_PlainSQL();
+    $gen = new Modyllic_Generator_PlainSQL();
 } else {
     SQL_Commandline::warn("Unknown output format {$load['outputformat']['format']}\n");
     exit(1);
