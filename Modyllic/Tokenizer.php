@@ -683,6 +683,7 @@ class Modyllic_Tokenizer {
             "ARGS", // Special
             "ASCII",
             "AT",
+            "AVG_ROW_LENGTH",
             "BINARY",
             "BEGIN",
             "BIGINT",
