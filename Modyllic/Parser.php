@@ -879,6 +879,10 @@ class Modyllic_Parser {
             $this->maybe( '=' );
             $this->get_num();
         }
+        else if ( $this->cur()->token() == 'MAX_ROWS' ) {
+            $this->maybe( '=' );
+            $this->get_num();
+        }
         else {
             return false;
         }

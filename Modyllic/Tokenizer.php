@@ -771,6 +771,7 @@ class Modyllic_Tokenizer {
             "LONGBLOB",
             "LONGTEXT",
             "MAP",
+            "MAX_ROWS",
             "MEDIUMBLOB",
             "MEDIUMINT",
             "MEDIUMTEXT",
