@@ -448,8 +448,8 @@ class Modyllic_String extends Modyllic_Type {
         return Modyllic_SQL::quote_str( $value );
     }
     function charset_collation($other=null) {
-        $other_charset = isset($other)? $other->charset(): $this->default_charset;
-        $other_collate = isset($other)? $other->collate(): $this->default_collate;
+        $other_charset = $other instanceOf Modyllic_String? $other->charset(): $this->default_charset;
+        $other_collate = $other instanceOf Modyllic_String? $other->collate(): $this->default_collate;
         $diff_charset = $this->charset() != $other_charset;
         $diff_collate = $this->collate() != $other_collate;
         if ( $diff_charset or $diff_collate ) {
