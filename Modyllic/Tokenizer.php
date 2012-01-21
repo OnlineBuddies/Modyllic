@@ -800,6 +800,7 @@ class Modyllic_Tokenizer {
             "ON SCHEDULE",
             "ON COMPLETION",
             "OUT",
+            "PACK_KEYS",
             "PREPARE",
             "PRESERVE",
             "PRIMARY KEY",
