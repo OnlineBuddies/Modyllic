@@ -1,6 +1,7 @@
-PHP_INCLUDE_PATH:=$(shell echo '<?php echo get_include_path();'|php)
-PHP='php -d include_path=".:'$(PHP_INCLUDE_PATH)'"'
-PROVE=prove --exec $(PHP)
+CWD := $(shell pwd)
+PHP_INCLUDE_PATH := $(shell echo '<?php echo get_include_path();'|php)
+PHP := 'php -d include_path="$(CWD):$(PHP_INCLUDE_PATH)"'
+PROVE := prove --exec $(PHP)
 
 default:
 
