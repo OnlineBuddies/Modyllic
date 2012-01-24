@@ -1,3 +1,7 @@
+PHP_INCLUDE_PATH=`echo '<?php echo get_include_path();'|php`
+PHP='php -d include_path=".:'$(PHP_INCLUDE_PATH)'"'
+PROVE=prove --exec $(PHP)
+
 default:
 
 .PHONY: test install
@@ -9,10 +13,10 @@ uninstall:
 	pear uninstall __uri/Modyllic
 
 test: check
-	prove --exec 'php -d include_path=lib' --ext '.phpt' test
+	$(PROVE) test
 
 test-verbose: check
-	prove --exec 'php -d include_path=lib' --ext '.phpt' -v test
+	$(PROVE) -v test
 
 check:
 	@[ -f testlib/testmore.php ] || (echo "You must initialize submodules with 'git submodule update --init' first"; exit 1)
