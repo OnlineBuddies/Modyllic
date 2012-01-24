@@ -683,6 +683,7 @@ class Modyllic_Tokenizer {
             "ARGS", // Special
             "ASCII",
             "AT",
+            "AVG_ROW_LENGTH",
             "BINARY",
             "BEGIN",
             "BIGINT",
@@ -771,6 +772,7 @@ class Modyllic_Tokenizer {
             "LONGBLOB",
             "LONGTEXT",
             "MAP",
+            "MAX_ROWS",
             "MEDIUMBLOB",
             "MEDIUMINT",
             "MEDIUMTEXT",
@@ -800,6 +802,7 @@ class Modyllic_Tokenizer {
             "ON SCHEDULE",
             "ON COMPLETION",
             "OUT",
+            "PACK_KEYS",
             "PREPARE",
             "PRESERVE",
             "PRIMARY KEY",
