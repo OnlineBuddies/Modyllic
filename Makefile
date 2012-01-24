@@ -1,4 +1,4 @@
-PHP_INCLUDE_PATH=`echo '<?php echo get_include_path();'|php`
+PHP_INCLUDE_PATH:=$(shell echo '<?php echo get_include_path();'|php)
 PHP='php -d include_path=".:'$(PHP_INCLUDE_PATH)'"'
 PROVE=prove --exec $(PHP)
 
