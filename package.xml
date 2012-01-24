@@ -38,6 +38,7 @@ release note
    <file name="Modyllic/Tokenizer.php" role="php" />
    <file name="Modyllic/Types.php" role="php" />
    <file name="Modyllic/Generator/NativeSQL.php" role="php" />
+   <file name="Modyllic/Generator/PlainSQL.php" role="php" />
    <file name="Modyllic/Generator/PHP.php" role="php" />
    <file name="Modyllic/Generator/SQL.php" role="php" />
    <file name="Modyllic/Generator/StrictSQL.php" role="php" />
