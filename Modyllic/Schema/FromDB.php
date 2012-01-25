@@ -6,6 +6,11 @@
  * @author bturner@online-buddies.com
  */
 
+require_once "Modyllic/SQL.php";
+require_once "Modyllic/Parser.php";
+require_once "Modyllic/Schema.php";
+require_once "Modyllic/Schema/Loader.php";
+
 /**
  * Class that knows how to construct a schema from a MySQL database
  */

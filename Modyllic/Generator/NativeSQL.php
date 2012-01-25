@@ -6,6 +6,9 @@
  * @author bturner@online-buddies.com
  */
 
+require_once "Modyllic/Generator/SQL.php";
+require_once "Modyllic/Schema.php";
+
 class Modyllic_Generator_NativeSQL extends Modyllic_Generator_SQL {
     // We include weak constraints as well as regular ones
     function ignore_index( $index ) {
