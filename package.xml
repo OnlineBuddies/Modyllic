@@ -56,8 +56,10 @@
    <file baseinstalldir="/" name="scripts/sqlpreparse" role="script" />
    <file baseinstalldir="/" name="scripts/sqlprofile" role="script" />
    <file baseinstalldir="/" name="scripts/sqltophp" role="script" />
-   <file name="test/SQL.phpt" role="data" />
-   <file name="test/SQL_Tokenizer.phpt" role="data" />
+   <file name="test/General_Functional.t" role="data" />
+   <file name="test/SQL_Tokenizer.t" role="data" />
+   <file name="test/Quote.t" role="data" />
+   <file name="test/Types.t" role="data" />
    <file name="testlib/README.md" role="data" />
    <file name="testlib/testmore.php" role="data" />
    <file name="testlib/test/inc_false.php" role="data" />
