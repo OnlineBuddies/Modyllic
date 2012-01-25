@@ -47,9 +47,9 @@ class Modyllic_Type {
             case "BINARY":
                 return new Modyllic_Binary($type);
             case "VARCHAR":
-                return new Modyllic_Varchar($type);
+                return new Modyllic_VarChar($type);
             case "VARBINARY":
-                return new Modyllic_Varbinary($type);
+                return new Modyllic_VarBinary($type);
             case "TINYTEXT":
                 return new Modyllic_Text($type,255); // 2^8 -1
             case "TINYBLOB":
