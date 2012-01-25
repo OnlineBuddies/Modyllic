@@ -41,6 +41,7 @@ class Modyllic_Schema_FromDB {
      * @returns Modyllic_Schema
      */
     function get_schema($dbname) {
+        $this->dbh->exec("USE information_schema");
         $dbschema = $this->selectrow( "SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM SCHEMATA WHERE SCHEMA_NAME=?", array($dbname) );
         if ( ! $dbschema ) {
             throw new Exception("Database $dbname does not exist");
@@ -86,7 +87,7 @@ class Modyllic_Schema_FromDB {
             }
         }
         
-        $schema->finalize();
+        $schema->load_sqlmeta();
 
         // Look for data to load...
         foreach ($schema->tables as $name=>$table) {
