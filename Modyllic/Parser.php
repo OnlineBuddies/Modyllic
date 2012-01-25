@@ -875,6 +875,18 @@ class Modyllic_Parser {
             $this->maybe( '=' );
             $this->get_string();
         }
+        else if ( $this->cur()->token() == 'PACK_KEYS' ) {
+            $this->maybe( '=' );
+            $this->get_num();
+        }
+        else if ( $this->cur()->token() == 'MAX_ROWS' ) {
+            $this->maybe( '=' );
+            $this->get_num();
+        }
+        else if ( $this->cur()->token() == 'AVG_ROW_LENGTH' ) {
+            $this->maybe( '=' );
+            $this->get_num();
+        }
         else {
             return false;
         }
