@@ -10,6 +10,9 @@
  * Helper class for commandline tools
  */
 
+require_once "Console/CommandLine.php";
+require_once "Modyllic/ProgressBar.php";
+
 class Modyllic_Commandline {
     static function warn( $msg ) {
         $stderr = fopen('php://stderr','w');
