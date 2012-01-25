@@ -634,7 +634,7 @@ class Modyllic_Generator_SQL {
                 $meta["returns"] = $routine->returns;
             }
         }
-        if ( $routine->txns != Modyllic_ROUTINE::TXNS_DEFAULT ) {
+        if ( $routine->txns != Modyllic_Routine::TXNS_DEFAULT ) {
             $meta["txns"] = $routine->txns;
         }
         return $meta;

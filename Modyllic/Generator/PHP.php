@@ -581,7 +581,7 @@ class Modyllic_Generator_PHP {
         }
     }
     function end_txns($routine) {
-        if ($routine->txns == Modyllic_ROUTINE::TXNS_CALL ) {
+        if ($routine->txns == Modyllic_Routine::TXNS_CALL ) {
             $this->begin_cmd( 'if ( ')
                    ->func_var( 'isset', 'commitTransaction' )
                  ->end_cmd(' ) {')
