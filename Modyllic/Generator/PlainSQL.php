@@ -1,9 +1,9 @@
 <?php
 /**
- * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
+ * Copyright © 2012 Online Buddies, Inc. - All Rights Reserved
  *
- * @package OLB::SQL
- * @author bturner@online-buddies.com
+ * @package Modyllic
+ * @author astewart@online-buddies.com
  */
 
 class Modyllic_Generator_PlainSQL extends Modyllic_Generator_SQL {
