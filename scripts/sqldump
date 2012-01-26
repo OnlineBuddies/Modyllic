@@ -9,11 +9,21 @@
 
 require_once "Modyllic/SQL.php";
 
-$load = Modyllic_Commandline::args( "sqldump", "spec", $argv );
+$args = Modyllic_Commandline::getArgs(array(
+    'description' => 'Load one or more schema and print them out',
+    'options' => array(
+        'dialect' => array(
+            'short_name'  => '-d',
+            'long_name'   => '--dialect',
+            'description' => 'dialect to output in',
+            'action'      => 'Dialect',
+            'default'     => 'Modyllic_Generator_NativeSQL' ) ),
+    'arguments' => array(
+        'spec' => array('multiple'=>true) )));
 
-$schema = Modyllic_Commandline::schema($load['spec']);
-Modyllic_Commandline::warn("\r".str_repeat(" ",70)."\r");
+$schema = Modyllic_Commandline::schema($args->args['spec']);
 
-$gen = new Modyllic_Generator_NativeSQL();
-error_log("");
+$class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
+$gen = new $class();
+
 print $gen->create_sql( $schema );

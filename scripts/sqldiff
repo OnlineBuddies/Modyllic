@@ -9,19 +9,70 @@
 
 require_once "Modyllic/SQL.php";
 
-$load = Modyllic_Commandline::args( "sqldiff", "oldspec newspec outputformat", $argv );
+$args = Modyllic_Commandline::getArgs(array(
+    'description' => 'Generate a PHP helper class for the stored procs in the schema',
+    'options' => array(
+        'fromschema' => array(
+            'short_name'  => '-f',
+            'long_name'   => '--from',
+            'action'      => 'StoreArray',
+            ),
+        'toschema' => array(
+            'short_name'  => '-t',
+            'long_name'   => '--to',
+            'action'      => 'StoreArray',
+            ),
+        'dialect' => array(
+            'short_name'  => '-d',
+            'long_name'   => '--dialect',
+            'description' => 'dialect to output in',
+            'action'      => 'Dialect',
+            'default'     => 'Modyllic_Generator_NativeSQL' ) ),
+    'arguments' => array(
+        'fromschema' => array('optional'=>true),
+        'toschema' => array('optional'=>true)
+        )));
 
-$from = Modyllic_Commandline::schema($load['oldspec']);
-$to   = Modyllic_Commandline::schema($load['newspec']);
-Modyllic_Commandline::warn("\r".str_repeat(" ",70)."\r");
+if ( (isset($args->options['fromschema']) or isset($args->options['toschema'])) and isset($args->args['fromschema']) ) {
+    $parser = Modyllic_Commandline::getParser();
+    $parser->displayError( "You can't specify a schema both positionally and via options" );
+}
+
+$fromschema = array();
+if ( isset($args->args['fromschema']) ) {
+    $fromschema[] = $args->args['fromschema'];
+}
+if ( isset($args->options['fromschema']) ) {
+    $fromschema += $args->options['fromschema'];
+}
+if ( count($fromschema) == 0 ) {
+    $parser = Modyllic_Commandline::getParser();
+    $parser->displayError( 'You must specify a from schema to compare');
+}
+
+$toschema = array();
+if ( isset($args->args['toschema']) ) {
+    $toschema[] = $args->args['toschema'];
+}
+if ( isset($args->options['toschema']) ) {
+    $toschema += $args->options['toschema'];
+}
+if ( count($fromschema) == 0 ) {
+    $parser = Modyllic_Commandline::getParser();
+    $parser->displayError( 'You must specify a to schema to compare');
+}
+
+$from = Modyllic_Commandline::schema($fromschema);
+$to   = Modyllic_Commandline::schema($toschema);
 
 $diff = new Modyllic_Diff( $from, $to );
-if(!$load['outputformat']['format'] or $load['outputformat']['format'] == 'native') {
-    $gen = new Modyllic_Generator_NativeSQL();
-} else if($load['outputformat']['format'] == 'plain') {
-    $gen = new Modyllic_Generator_PlainSQL();
-} else {
-    Modyllic_Commandline::warn("Unknown output format {$load['outputformat']['format']}\n");
-    exit(1);
+
+if ( ! $diff->changeset->has_changes() ) {
+    print "-- No changes detected.\n";
+    exit(0);
 }
+
+$class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
+$gen = new $class();
+
 print $gen->alter_sql($diff);

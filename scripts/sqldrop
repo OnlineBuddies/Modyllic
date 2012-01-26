@@ -9,9 +9,21 @@
 
 require_once "Modyllic/SQL.php";
 
-$load = Modyllic_Commandline::args( "sqldrop", "spec", $argv );
+$args = Modyllic_Commandline::getArgs(array(
+    'description' => 'Display drop statements for a schema',
+    'options' => array(
+        'dialect' => array(
+            'short_name'  => '-d',
+            'long_name'   => '--dialect',
+            'description' => 'dialect to output in',
+            'action'      => 'Dialect',
+            'default'     => 'Modyllic_Generator_NativeSQL' ) ),
+    'arguments' => array(
+        'spec' => array('multiple'=>true) )));
 
-$schema = Modyllic_Commandline::schema($load['spec']);
+$schema = Modyllic_Commandline::schema($args->args['spec']);
 
-$gen = new Modyllic_Generator_SQL();
+$class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
+$gen = new $class();
+
 print $gen->drop_sql( $schema );

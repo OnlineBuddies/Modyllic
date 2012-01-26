@@ -32,7 +32,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
     const DEFAULT_COLLATE = "utf8_general_ci";
     public $collate = self::DEFAULT_COLLATE;
     public $docs = "";
-    private $finalized = FALSE;
     public $sqlmeta_exists = FALSE;
     
     function merge( $schema ) {
@@ -66,9 +65,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
      * @param Modyllic_Table $table
      */
     function add_table( $table ) {
-        if ( $this->finalized ) {
-            throw new Exception("Can't make changes to the schema after it's finalized");
-        }
         $this->tables[$table->name] = $table;
         return $table;
     }
@@ -77,9 +73,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
      * @param Modyllic_Routine $routine
      */
     function add_routine( $routine ) {
-        if ( $this->finalized ) {
-            throw new Exception("Can't make changes to the schema after it's finalized");
-        }
         $this->routines[$routine->name] = $routine;
         return $routine;
     }
@@ -88,9 +81,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
      * @param Modyllic_Event $event
      */
     function add_event( $event ) {
-        if ( $this->finalized ) {
-            throw new Exception("Can't make changes to the schema after it's finalized");
-        }
         $this->events[$event->name] = $event;
         return $event;
     }
@@ -99,9 +89,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
      * @param Modyllic_View $view
      */
     function add_view( $view ) {
-        if ( $this->finalized ) {
-            throw new Exception("Can't make changes to the schema after it's finalized");
-        }
         $this->views[$view->name] = $view;
         return $view;
     }
@@ -114,10 +101,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     /**
      * Generates a meta table entry that wasn't in the schema
      */
-    function finalize() {
-        if ( $this->finalized ) {
-            return;
-        }
+    function load_sqlmeta() {
         # If we already have an SQLMETA table then this is a load directly
         # from a database (or a dump from a database).  We'll want to 
         # convert that back into our usual metadata.
@@ -167,7 +151,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
             $schema->sqlmeta_exists = true;
             unset($this->tables['SQLMETA']);
         }
-        $this->finalized = TRUE;
     }
 
     /**
