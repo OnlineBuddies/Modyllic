@@ -64,7 +64,7 @@ class Modyllic_Schema_Loader {
             if ( is_dir($source) ) {
                 $filelist = glob("$source/*.sql",GLOB_NOSORT);
                 natsort($filelist);
-                Modyllic_Status::$sourceIndex += count($filelist);
+                Modyllic_Status::$sourceCount += count($filelist) - 1;
                 $subschema = self::from_files($filelist);
             }
             else if ( file_exists($source) ) {
