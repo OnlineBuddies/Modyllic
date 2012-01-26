@@ -28,6 +28,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     public $events = array();
     const DEFAULT_NAME = "database";
     public $name = self::DEFAULT_NAME;
+    public $nameIsDefault = true;
     const DEFAULT_CHARSET = "utf8";
     public $charset = self::DEFAULT_CHARSET;
     const DEFAULT_COLLATE = "utf8_general_ci";
@@ -36,8 +37,9 @@ class Modyllic_Schema extends Modyllic_Diffable {
     public $sqlmeta_exists = FALSE;
     
     function merge( $schema ) {
-        if ( $this->name == self::DEFAULT_NAME ) {
+        if ( $this->nameIsDefault ) {
             $this->name = $schema->name;
+            $this->nameIsDefault = $schema->nameIsDefault;
         }
         if ( $this->charset == self::DEFAULT_CHARSET ) {
             $this->charset = $schema->charset;
