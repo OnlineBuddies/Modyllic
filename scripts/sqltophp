@@ -8,7 +8,7 @@
  */
 
 require_once "Modyllic/Commandline.php";
-require_once "Modyllic/Generator.php";
+require_once "Modyllic/Generator/PHP.php";
 
 $args = Modyllic_Commandline::getArgs(array(
     'description' => 'Generate a PHP helper class for the stored procs in the schema',
