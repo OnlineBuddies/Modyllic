@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/Generator.php";
+require_once "Modyllic/Schema.php";
 
 /**
  * This figures out how one schema differs from another

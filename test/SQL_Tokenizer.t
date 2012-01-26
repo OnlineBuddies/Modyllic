@@ -45,7 +45,7 @@ $comment_tests = array(
 
 plan( count($num_tests)*2 + count($str_tests)*3 + count($ident_tests)*4 + count($comment_tests)*2 + 13 );
 
-require_ok("Modyllic/SQL.php");
+require_ok("Modyllic/Tokenizer.php");
 
 foreach ( $num_tests as $name=>$test ) {
     $tok = new Modyllic_Tokenizer($test['sql']);

@@ -11,7 +11,7 @@ require_once dirname(__FILE__)."/../testlib/testmore.php";
 
 plan(20);
 
-require_ok("Modyllic/SQL.php");
+require_ok("Modyllic/Parser.php");
 
 $parser = new Modyllic_Parser();
 

@@ -10,6 +10,8 @@
  * Helper class for commandline tools
  */
 
+require_once "Modyllic/Tokenizer.php";
+require_once "Modyllic/Schema/Loader.php";
 require_once "Modyllic/Status.php";
 require_once "Modyllic/Generator.php";
 

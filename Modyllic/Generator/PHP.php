@@ -6,6 +6,8 @@
  * @author bturner@online-buddies.com
  */
 
+require_once "Modyllic/SQL.php";
+
 class Modyllic_Generator_PHP {
     protected $php;
     protected $indent_by = 4;

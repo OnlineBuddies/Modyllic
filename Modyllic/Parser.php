@@ -6,8 +6,8 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/Tokenizer.php";
-require_once dirname(__FILE__)."/Schema.php";
+require_once "Modyllic/Tokenizer.php";
+require_once "Modyllic/Schema.php";
 
 /**
  * Our SQL parser, this is intimately involved

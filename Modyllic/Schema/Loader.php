@@ -6,8 +6,9 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/../Parser.php";
-require_once dirname(__FILE__)."/FromDB.php";
+require_once "Modyllic/Parser.php";
+require_once "Modyllic/Schema.php";
+require_once "Modyllic/Schema/FromDB.php";
 
 require_once "Modyllic/Status.php";
 

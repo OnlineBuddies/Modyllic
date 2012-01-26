@@ -6,11 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/Schema/Loader.php";
-require_once dirname(__FILE__)."/Generator.php";
-require_once dirname(__FILE__)."/Diff.php";
-require_once dirname(__FILE__)."/Commandline.php";
-
 class Modyllic_SQL {
     /**
      * Quote an SQL identifier, but only if we need to.
