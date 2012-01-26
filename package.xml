@@ -50,6 +50,7 @@
    <file name="Modyllic/Schema/FromDB.php" role="php" />
    <file name="Modyllic/Schema/Loader.php" role="php" />
    <file baseinstalldir="/" name="scripts/migrate" role="script" />
+   <file baseinstalldir="/" name="scripts/sqlconvert" role="script" />
    <file baseinstalldir="/" name="scripts/sqlcolorize" role="script" />
    <file baseinstalldir="/" name="scripts/sqldiff" role="script" />
    <file baseinstalldir="/" name="scripts/sqldrop" role="script" />
@@ -97,6 +98,7 @@
   <filelist>
    <install as="migrate" name="scripts/migrate" />
    <install as="sqlcolorize" name="scripts/sqlcolorize" />
+   <install as="sqlconvert" name="scripts/sqlconvert" />
    <install as="sqldiff" name="scripts/sqldiff" />
    <install as="sqldrop" name="scripts/sqldrop" />
    <install as="sqldump" name="scripts/sqldump" />
