@@ -95,6 +95,7 @@ class Modyllic_Generator_SQL {
 // DATABASE
     
     function create_database($schema) {
+        if ($schema->nameIsDefault) return $this;
         $this->begin_cmd( "CREATE DATABASE %id", $schema->name );
         $this->extend( "DEFAULT CHARACTER SET=%lit", $schema->charset );
         $this->extend( "DEFAULT COLLATE=%lit", $schema->collate );
@@ -125,6 +126,7 @@ class Modyllic_Generator_SQL {
     }
     
     function drop_database($schema) {
+        if ($schema->nameIsDefault) return $this;
         $this->cmd( "DROP DATABASE %id", $schema->name );
         return $this;
     }
