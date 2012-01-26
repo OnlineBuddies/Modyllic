@@ -1118,7 +1118,6 @@ class Modyllic_Parser {
     
     function index_columns() {
         $columns = array();
-        $last_col = null;
         while ( $this->next()->value() != ')' ) {
             if ( $this->cur() instanceOf Modyllic_Token_EOC ) {
                 throw $this->error( "Hit end of command while looking for $end" );
@@ -1126,7 +1125,7 @@ class Modyllic_Parser {
             if ( $this->cur()->value() != ',' ) {
                 $colname = $this->cur()->value();
                 if ( $this->maybe('(') ) {
-                    $columns[$last_col] = $this->get_num();
+                    $columns[$colname] = $this->get_num();
                     $this->get_symbol(')');
                 }
                 else {
