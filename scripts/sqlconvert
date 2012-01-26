@@ -1,0 +1,29 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Copyright © 2012 Online Buddies, Inc. - All Rights Reserved
+ *
+ * @package Modyllic
+ * @author astewart@online-buddies.com
+ */
+
+require_once "Modyllic/SQL.php";
+
+$args = Modyllic_Commandline::getArgs(array(
+    'description' => 'Convert schema dialects',
+    'options' => array(
+        'dialect' => array(
+            'short_name'  => '-d',
+            'long_name'   => '--dialect',
+            'description' => 'dialect to output in',
+            'action'      => 'Dialect',
+            'default'     => 'Modyllic_Generator_NativeSQL' ) ),
+    'arguments' => array(
+        'spec' => array('multiple'=>true) )));
+
+$schema = Modyllic_Commandline::schema($args->args['spec']);
+
+$class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
+$gen = new $class();
+
+print $gen->create_sql( $schema );
