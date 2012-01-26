@@ -826,7 +826,7 @@ class Modyllic_Generator_SQL {
     }
 
     function drop_procedure( $proc ) {
-        $this->cmd( "DROP PROCEDURE %id", $proc->name );
+        $this->cmd( "DROP PROCEDURE IF EXISTS %id", $proc->name );
         return $this;
     }
     
