@@ -11,45 +11,79 @@
  */
 
 require_once "Modyllic/Status.php";
+require_once "Modyllic/Generator.php";
 
 require_once "Console/CommandLine.php";
 require_once "Console/CommandLine/Action.php";
 
-// This is our "Array" type action, often used for specs
-class Modyllic_Console_CommandLine_ActionArray extends Console_CommandLine_Action {
+// A Modyllic generator dialect
+class Modyllic_Console_CommandLine_ActionDialect extends Console_CommandLine_Action {
     public function execute($value=false, $params=array()) {
-        $result = $this->getResult();
-        if ( !isset($result) ) {
-            $result = array();
-        }
-        $result[] = $value;
-        $this->setResult( $result );
+        $this->setResult( Modyllic_Generator::dialectToClass($value) );
     }
 }
 
 // then we can register our action
-Console_CommandLine::registerAction('Array', 'Modyllic_Console_CommandLine_ActionArray');
+Console_CommandLine::registerAction('Dialect', 'Modyllic_Console_CommandLine_ActionDialect');
 
 class Modyllic_Commandline {
-    static function warn( $msg ) {
-        $stderr = fopen('php://stderr','w');
-        fwrite($stderr, $msg);
-        fclose($stderr);
+    
+    static function getParser() {
+        static $parser;
+        if ( !isset($parser) ) {
+            $parser = new Console_CommandLine();
+        }
+        return $parser;
     }
+    
+    static function getArgs( $argSpec ) {
+        $parser = self::getParser();
+        $parser->addOption('verbose', array(
+            'short_name'  => '-v',
+            'long_name'   => '--verbose',
+            'description' => 'report each stage of execution to stderr',
+            'action'      => 'Counter',
+            'default'     => 0,
+            ));
+        $parser->addOption('progress', array(
+            'long_name'   => '--progress',
+            'description' => 'output a progress meter to stderr',
+            'action'      => 'StoreTrue',
+            'default'     => false,
+            ));
+        if ( isset($argSpec['description']) ) {
+            $parser->description = $argSpec['description'];
+        }
+        if ( isset($argSpec['options']) ) {
+            foreach ($argSpec['options'] as $name=>$opt) {
+                $parser->addOption( $name, $opt );
+            }
+        }
+        if ( isset($argSpec['arguments']) ) {
+            foreach ($argSpec['arguments'] as $name=>$opt) {
+                $parser->addArgument( $name, $opt );
+            }
+        }
+        try {
+            $args = $parser->parse();
+        }
+        catch (Exception $e) {
+            $parser->displayError($e->getMessage());
+        }
 
-    static function status( $pos, $len ) {
-        Modyllic_Status::status( Modyllic_Schema_Loader::$source, 1, 1, $pos, $len );
+        Modyllic_Status::$verbose = $args->options['verbose'];
+        Modyllic_Status::$progress = $args->options['progress'];
+        return $args;
     }
-
-    static function schema( $load ) {
-        Modyllic_Tokenizer::on_advance( array( __CLASS__, "status" ) );
+    
+    static function schema( array $load ) {
+        Modyllic_Tokenizer::on_advance( array( "Modyllic_Status", "status" ) );
         try {
             $schema = Modyllic_Schema_Loader::load( $load );
         }
         catch (Modyllic_Exception $e) {
             Modyllic_Status::clear_progress();
             Modyllic_Status::warn($e->getMessage()."\n");
-#            echo $e->getTraceAsString()."\n";
             exit(1);
         }
         catch (Modyllic_Schema_Loader_Exception $e) {
@@ -61,6 +95,7 @@ class Modyllic_Commandline {
             Modyllic_Status::clear_progress();
             throw $e;
         }
+        Modyllic_Status::clear_progress();
         return $schema;
     }
 

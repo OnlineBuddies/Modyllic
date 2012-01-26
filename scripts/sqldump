@@ -9,61 +9,21 @@
 
 require_once "Modyllic/SQL.php";
 
-$parser = new Console_CommandLine();
-$parser->description = "Load one or more schema and print them out";
-$parser->addOption('verbose', array(
-    'short_name'  => '-v',
-    'long_name'   => '--verbose',
-    'description' => 'report each stage of execution to stderr',
-    'action'      => 'Counter',
-    'default'     => 0,
-    ));
-$parser->addOption('progress', array(
-    'long_name'   => '--progress',
-    'description' => 'output a progress meter to stderr',
-    'action'      => 'StoreTrue',
-    'default'     => false,
-    ));
-$parser->addOption('out', array(
-    'short_name'  => '-o',
-    'long_name'   => '--out',
-    'description' => 'dialect to output in',
-    'action'      => 'StoreString',
-    'default'     => 'native',
-    ));
-$parser->addArgument('spec', array('multiple'=>true));
-try {
-    $args = $parser->parse();
-    $out = $args->options['out'];
-    $capsql = preg_replace( "/sql/", "/SQL/", $out );
-    $classes_to_try = array(
-        "Modyllic_Generator_{ucfirst($out)}SQL",
-        "Modyllic_Generator_{ucfirst($out)}",
-        "Modyllic_Generator_{ucfirst($capsql)}",
-        "Modyllic_Generator_{$capsql}",
-        "Modyllic_Generator_{$out}SQL",
-        "Modyllic_Generator_{$out}",
-        $out,
-        );
-    foreach ($classes_to_try as $class) {
-        $file = preg_replace("/_/","/", $class) . ".php";
-        @include_once $file;
-        if ( class_exists($class) ) {
-            $gen = new $class();
-        }
-    }
-    if ( ! isset($gen) ) {
-        throw new Exception("Could not find SQL dialect $out");
-    }
-}
-catch (Exception $e) {
-    $parser->displayError($e->getMessage());
-}
-
-Modyllic_Status::$verbose = $args->options['verbose'];
-Modyllic_Status::$progress = $args->options['progress'];
+$args = Modyllic_Commandline::getArgs(array(
+    'description' => 'Load one or more schema and print them out',
+    'options' => array(
+        'dialect' => array(
+            'short_name'  => '-d',
+            'long_name'   => '--dialect',
+            'description' => 'dialect to output in',
+            'action'      => 'Dialect',
+            'default'     => 'Modyllic_Generator_NativeSQL' ) ),
+    'arguments' => array(
+        'spec' => array('multiple'=>true) )));
 
 $schema = Modyllic_Commandline::schema($args->args['spec']);
-Modyllic_Status::clear_progress();
+
+$class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
+$gen = new $class();
 
 print $gen->create_sql( $schema );

@@ -56,7 +56,7 @@ class Modyllic_Schema_FromDB {
         
         $table_sth = $this->query( "SELECT TABLE_NAME FROM TABLES WHERE TABLE_SCHEMA=? AND TABLE_TYPE='BASE TABLE'", array($dbname) );
         while ( $table_row = $table_sth->fetch(PDO::FETCH_ASSOC) ) {
-            Modyllic_Schema_Loader::$source = "$dbname.".$table_row['TABLE_NAME'];
+            Modyllic_Status::$sourceName = "$dbname.".$table_row['TABLE_NAME'];
             $table = $this->selectrow( "SHOW CREATE TABLE `$dbname`.`".$table_row['TABLE_NAME']."`" );
             $parser->partial( $schema, $table['Create Table'], "$dbname.".$table_row['TABLE_NAME'] );
         }
@@ -64,7 +64,7 @@ class Modyllic_Schema_FromDB {
         
         $routine_sth = $this->query( "SELECT ROUTINE_TYPE, ROUTINE_NAME FROM ROUTINES WHERE ROUTINE_SCHEMA=?", array($dbname) );
         while ( $routine = $routine_sth->fetch(PDO::FETCH_ASSOC) ) {
-            Modyllic_Schema_Loader::$source = "$dbname.".$routine['ROUTINE_NAME'];
+            Modyllic_Status::$sourceName = "$dbname.".$routine['ROUTINE_NAME'];
             if ( $routine['ROUTINE_TYPE'] == 'PROCEDURE' ) {
                 $proc = $this->selectrow("SHOW CREATE PROCEDURE `$dbname`.`".$routine['ROUTINE_NAME']."`" );
                 $parser->partial( $schema, $proc['Create Procedure'], "$dbname.".$routine['ROUTINE_NAME'] );

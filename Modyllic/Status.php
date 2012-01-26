@@ -25,19 +25,30 @@ class Modyllic_Status {
     static function warn( $msg ) {
         fwrite(STDERR, $msg);
     }
+    
+    static function verbose( $msg ) {
+        if ( self::$verbose ) {
+            self::warn($msg);
+        }
+    }
+
     static function clear_progress() {
         if ( self::$progress ) {
             self::warn("\r".str_repeat(" ",self::$width-1)."\r");
         }
     }
 
-    static function status( $filename, $filenum, $filecount, $pos, $len ) {
-        if ( self::$verbose and self::$in_file != $filename ) {
-             if ( self::$progress and self::$in_file != "" ) {
+    static $sourceName = "";
+    static $sourceIndex = 1;
+    static $sourceCount = 1;
+
+    static function status( $pos, $len ) {
+        if ( self::$in_file != self::$sourceName ) {
+             if ( self::$in_file != "" ) {
                  self::clear_progress();
              }
-             self::warn("Loading $filename...\n");
-             self::$in_file = $filename;
+             self::verbose("Loading ".self::$sourceName."...\n");
+             self::$in_file = self::$sourceName;
         }
 
         if ( ! self::$progress ) {
@@ -58,17 +69,19 @@ class Modyllic_Status {
             self::$progress = false;
             return;
         }
+        
+        $filename = self::$sourceName;
 
         # if we can fit the entire filename on the line then we size the progress bar
-        if ( $min_width+strlen($filename) < (self::$width-1) ) {
+        if ( $min_width+strlen(self::$sourceName) < (self::$width-1) ) {
             $progress_size = self::$width - ($min_width+strlen($filename)+1);
         }
         else {
             $filename = substr($filename, 0, self::$width - ($min_width+1) );
         }
 
-        $percent_per_file = 1 / $filecount;
-        $already_done = ($filenum-1) * $percent_per_file;
+        $percent_per_file = 1 / self::$sourceCount;
+        $already_done = (self::$sourceIndex-1) * $percent_per_file;
         $in_file = $pos / $len;
         $overall = $already_done + $percent_per_file*$in_file;
 
@@ -77,7 +90,7 @@ class Modyllic_Status {
 
         $fill = str_repeat("*",$fill_count);
         $blank = str_repeat("-",$blank_count);
-
+        
         self::warn(sprintf("\rLoading %s [%s%s] %2.1f%%", $filename, $fill, $blank, $overall*100 ));
     }
 }

@@ -9,49 +9,68 @@
 require_once dirname(__FILE__)."/../Parser.php";
 require_once dirname(__FILE__)."/FromDB.php";
 
+require_once "Modyllic/Status.php";
+
 class Modyllic_Schema_Loader_Exception extends Exception {}
 
 /**
  * Factory class for creating Schema objects from various sources
  */
 class Modyllic_Schema_Loader {
-    static $source;
+
+    static function is_dsn($source) {
+        return preg_match("/^(\w+):(.*)/",$source);
+    }
+    static function parse_dsn($source) {
+        if ( preg_match("/^(\w+):(.*)/",$source,$matches) ) {
+            $driver = $matches[1];
+            $username = null;
+            $password = null;
+            $dbname = null;
+            $opts = array();
+            foreach ( explode(';',$matches[2]) as $opt_pair ) {
+                list($name,$value) = explode('=',$opt_pair);
+                if ( $name == 'username' ) {
+                    $username = $value;
+                }
+                else if ( $name == 'password' ) {
+                    $password = $value;
+                }
+                else if ( $name == 'dbname' ) {
+                    $dbname = $value;
+                }
+                else {
+                    $opts[] = $opt_pair;
+                }
+            }
+            if ( ! isset($dbname) ) {
+                throw new Modyllic_Schema_Loader_Exception("Could not identify database in DSN: $source");
+            }
+            $dsn = $driver.':'.implode(';',$opts);
+            return array( $dsn, $dbname, $username, $password );
+        }
+        else {
+            throw new Modyllic_Schema_Loader_Exception("Invalid DSN: $source");
+        }
+    }
     
     static function load(array $sources) {
         $schema = new Modyllic_Schema();
+        Modyllic_Status::$sourceCount = count($sources);
+        Modyllic_Status::$sourceIndex = 0;
         foreach ($sources as $source) {
+            Modyllic_Status::$sourceName = $source;
             if ( is_dir($source) ) {
-                $subschema = self::from_dir($file);
+                $filelist = glob("$dir/*.sql",GLOB_NOSORT);
+                natsort($filelist);
+                Modyllic_Status::$sourceIndex += count($filelist);
+                $subschema = self::from_files($filelist);
             }
             else if ( file_exists($source) ) {
                 $subschema = self::from_files(array($source));
             }
-            else if ( preg_match("/^(\w+):(.*)/",$source,$matches) ) {
-                $driver = $matches[1];
-                $username = null;
-                $password = null;
-                $dbname = null;
-                $opts = array();
-                foreach ( explode(';',$matches[2]) as $opt_pair ) {
-                    list($name,$value) = explode('=',$opt_pair);
-                    if ( $name == 'username' ) {
-                        $username = $value;
-                    }
-                    else if ( $name == 'password' ) {
-                        $password = $value;
-                    }
-                    else if ( $name == 'dbname' ) {
-                        $dbname = $value;
-                    }
-                    else {
-                        $opts[] = $opt_pair;
-                    }
-                }
-                if ( ! isset($dbname) ) {
-                    throw new Modyllic_Schema_Loader_Exception("Could not identify database in DSN: $source");
-                }
-                $dsn = $driver.':'.implode(';',$opts);
-                $subschema = self::from_db( $dsn, $dbname, $username, $password );
+            else if ( self::is_dsn($source) ) {
+                $subschema = call_user_func_array( array(__CLASS__,'from_db'), self::parse_dsn($source) );
             }
             else {
                 throw new Modyllic_Schema_Loader_Exception("Could not load $source, file or directory not found");
@@ -66,6 +85,8 @@ class Modyllic_Schema_Loader {
         $parser = new Modyllic_Parser();
         $schema = new Modyllic_Schema();
         foreach ($files as $file) {
+            Modyllic_Status::$sourceName = $file;
+            Modyllic_Status::$sourceIndex ++;
             $file_bits = explode(".",$file);
             array_pop($file_bits);
             $sqlc_file = implode(".",$file_bits).".sqlc";
@@ -75,7 +96,6 @@ class Modyllic_Schema_Loader {
                 throw new Modyllic_Schema_Loader_Exception("$file: File not found.");
             }
             else if ( !$sqlc or $sqlc[9] < $sql[9] ) {
-                self::$source = $file;
                 if ( ($data = @file_get_contents($file)) === FALSE ) {
                     throw new Modyllic_Schema_Loader_Exception("Error opening $file");
                 }
@@ -94,17 +114,6 @@ class Modyllic_Schema_Loader {
     }
     
     /**
-     * Load a schema from a directory of SQL files
-     * @param string $filename
-     * @returns Modyllic_Schema
-     */
-    static function from_dir($dir) {
-        $raw = glob("$dir/*.sql",GLOB_NOSORT);
-        natsort($raw);
-        return self::from_files($raw);
-    }
-    
-    /**
      * Load a schema from a MySQL database's INFORMATION_SCHEMA database
      * 
      * @param string $host
@@ -114,10 +123,11 @@ class Modyllic_Schema_Loader {
      * @returns Modyllic_Schema
      */
     static function from_db($dsn,$dbname,$user=null,$pass=null) {
-        self::$source = $dsn;
+        Modyllic_Status::$sourceName = $dsn;
         $dbh = new PDO( $dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES=>TRUE ) );
         $loader = new Modyllic_Schema_FromDB( $dbh );
         $schema = $loader->get_schema( $dbname );
+        Modyllic_Status::$sourceIndex ++;
         return $schema;
     }
 }
