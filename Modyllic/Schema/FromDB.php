@@ -41,6 +41,7 @@ class Modyllic_Schema_FromDB {
      * @returns Modyllic_Schema
      */
     function get_schema($dbname) {
+        $this->dbh->exec("USE information_schema");
         $dbschema = $this->selectrow( "SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM SCHEMATA WHERE SCHEMA_NAME=?", array($dbname) );
         if ( ! $dbschema ) {
             throw new Exception("Database $dbname does not exist");
@@ -55,7 +56,7 @@ class Modyllic_Schema_FromDB {
         
         $table_sth = $this->query( "SELECT TABLE_NAME FROM TABLES WHERE TABLE_SCHEMA=? AND TABLE_TYPE='BASE TABLE'", array($dbname) );
         while ( $table_row = $table_sth->fetch(PDO::FETCH_ASSOC) ) {
-            Modyllic_Schema_Loader::$source = "$dbname.".$table_row['TABLE_NAME'];
+            Modyllic_Status::$sourceName = "$dbname.".$table_row['TABLE_NAME'];
             $table = $this->selectrow( "SHOW CREATE TABLE `$dbname`.`".$table_row['TABLE_NAME']."`" );
             $parser->partial( $schema, $table['Create Table'], "$dbname.".$table_row['TABLE_NAME'] );
         }
@@ -63,7 +64,7 @@ class Modyllic_Schema_FromDB {
         
         $routine_sth = $this->query( "SELECT ROUTINE_TYPE, ROUTINE_NAME FROM ROUTINES WHERE ROUTINE_SCHEMA=?", array($dbname) );
         while ( $routine = $routine_sth->fetch(PDO::FETCH_ASSOC) ) {
-            Modyllic_Schema_Loader::$source = "$dbname.".$routine['ROUTINE_NAME'];
+            Modyllic_Status::$sourceName = "$dbname.".$routine['ROUTINE_NAME'];
             if ( $routine['ROUTINE_TYPE'] == 'PROCEDURE' ) {
                 $proc = $this->selectrow("SHOW CREATE PROCEDURE `$dbname`.`".$routine['ROUTINE_NAME']."`" );
                 $parser->partial( $schema, $proc['Create Procedure'], "$dbname.".$routine['ROUTINE_NAME'] );
@@ -86,7 +87,7 @@ class Modyllic_Schema_FromDB {
             }
         }
         
-        $schema->finalize();
+        $schema->load_sqlmeta();
 
         // Look for data to load...
         foreach ($schema->tables as $name=>$table) {

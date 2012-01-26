@@ -9,16 +9,21 @@
 
 require_once "Modyllic/SQL.php";
 
+// note the hard coded paths from my laptop >.>
+/// @todo fixme
 require_once '/opt/php/xhprof/xhprof_lib/utils/xhprof_lib.php';
 require_once '/opt/php/xhprof/xhprof_lib/utils/xhprof_runs.php';
         
-$load = Modyllic_Commandline::args( "create", "spec", $argv );
+$args = Modyllic_Commandline::getArgs(array(
+    'description' => 'Loads a schema with xhprof enabled',
+    'arguments' => array(
+        'spec' => array('multiple'=>true) )));
 
 $ignore = array('call_user_func', 'call_user_func_array');
 
 xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY, $ignore);
 
-$schema = Modyllic_Commandline::schema($load['spec']);
+$schema = Modyllic_Commandline::schema($args->args['spec']);
 
 $xhprof_data = xhprof_disable();
 $xhprof_runs = new XHProfRuns_Default();

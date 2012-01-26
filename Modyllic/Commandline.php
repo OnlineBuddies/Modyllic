@@ -10,164 +10,93 @@
  * Helper class for commandline tools
  */
 
+require_once "Modyllic/Status.php";
+require_once "Modyllic/Generator.php";
+
+require_once "Console/CommandLine.php";
+require_once "Console/CommandLine/Action.php";
+
+// A Modyllic generator dialect
+class Modyllic_Console_CommandLine_ActionDialect extends Console_CommandLine_Action {
+    public function execute($value=false, $params=array()) {
+        $this->setResult( Modyllic_Generator::dialectToClass($value) );
+    }
+}
+
+// then we can register our action
+Console_CommandLine::registerAction('Dialect', 'Modyllic_Console_CommandLine_ActionDialect');
+
 class Modyllic_Commandline {
-    static function warn( $msg ) {
-        $stderr = fopen('php://stderr','w');
-        fwrite($stderr, $msg);
-        fclose($stderr);
-    }
-    static function status( $pos, $len ) {
-        if ( $len == 0 ) { return; }
-        $percent = ($pos*100 / $len);
-        $star_count = ($pos*40 / $len);
-        $dash_count = 40-$star_count;
-        static $source;
-        if ( $source != Modyllic_Schema_Loader::$source ) {
-            if (isset($source)) {
-                self::warn("\r".str_repeat(" ",58+strlen($source))."\r");
-            }
-            $source = Modyllic_Schema_Loader::$source;
+    
+    static function getParser() {
+        static $parser;
+        if ( !isset($parser) ) {
+            $parser = new Console_CommandLine();
         }
-        if(!function_exists('posix_isatty') or posix_isatty(0)) self::warn(sprintf("\rLoading %s [%s%s] %2.1f%%", 
-            Modyllic_Schema_Loader::$source,
-            str_repeat("*",$star_count), str_repeat("-",$dash_count),
-            $percent ));
+        return $parser;
     }
-    static function schema( $load ) {
-        Modyllic_Tokenizer::on_advance( array( __CLASS__, "status" ) );
+    
+    static function getArgs( $argSpec ) {
+        $parser = self::getParser();
+        $parser->addOption('verbose', array(
+            'short_name'  => '-v',
+            'long_name'   => '--verbose',
+            'description' => 'report each stage of execution to stderr',
+            'action'      => 'Counter',
+            'default'     => 0,
+            ));
+        $parser->addOption('progress', array(
+            'long_name'   => '--progress',
+            'description' => 'output a progress meter to stderr',
+            'action'      => 'StoreTrue',
+            'default'     => false,
+            ));
+        if ( isset($argSpec['description']) ) {
+            $parser->description = $argSpec['description'];
+        }
+        if ( isset($argSpec['options']) ) {
+            foreach ($argSpec['options'] as $name=>$opt) {
+                $parser->addOption( $name, $opt );
+            }
+        }
+        if ( isset($argSpec['arguments']) ) {
+            foreach ($argSpec['arguments'] as $name=>$opt) {
+                $parser->addArgument( $name, $opt );
+            }
+        }
         try {
-            ksort($load['args']);
-            $schema = call_user_func_array(array("Modyllic_Schema_Loader",$load['kind']), $load['args'] );
+            $args = $parser->parse();
+        }
+        catch (Exception $e) {
+            $parser->displayError($e->getMessage());
+        }
+
+        Modyllic_Status::$verbose = $args->options['verbose'];
+        Modyllic_Status::$progress = $args->options['progress'];
+        return $args;
+    }
+    
+    static function schema( array $load ) {
+        Modyllic_Tokenizer::on_advance( array( "Modyllic_Status", "status" ) );
+        try {
+            $schema = Modyllic_Schema_Loader::load( $load );
         }
         catch (Modyllic_Exception $e) {
-            echo "\r".$e->getMessage()."\n";
-#            echo $e->getTraceAsString()."\n";
+            Modyllic_Status::clear_progress();
+            Modyllic_Status::warn($e->getMessage()."\n");
             exit(1);
         }
         catch (Modyllic_Schema_Loader_Exception $e) {
-            echo "\r".$e->getMessage()."\n";
+            Modyllic_Status::clear_progress();
+            Modyllic_Status::warn($e->getMessage()."\n");
             exit(1);
         }
+        catch (Exception $e) {
+            Modyllic_Status::clear_progress();
+            throw $e;
+        }
+        Modyllic_Status::clear_progress();
         return $schema;
     }
-    
-    static function next_step(&$steps) {
-        if ( count($steps) ) {
-            return array_shift($steps);
-        }
-        else {
-            return "done";
-        }
-    }
 
-    static function args( $cmd, $specs, $argv, $optspec=array() ) {
-        array_shift($argv); // shift off the filename part
-        
-        $steps = explode(" ",$specs);
-        $which = self::next_step($steps);
-        $load = array();
-        foreach ( $optspec as &$opt ) {
-            $load[$opt] = 0;
-        }
-        $extra = array();
-
-        while ( count($argv) ) {
-            $arg = array_shift($argv);
-            if ( in_array($arg, $optspec) ) {
-                $load[$arg] ++;
-                continue;
-            }
-            switch ($which) {
-            case "done":
-                $extra[] = array_shift($argv);
-                continue;
-            case "spec":
-            case "oldspec":
-            case "newspec":
-                switch ($arg) {
-                case "-h":
-                    if ( isset($load[$which]['args'][0]) ) {
-                        $which = self::next_step($steps);
-                    }
-                    $load[$which]['kind'] = "from_db";
-                    $load[$which]['args'][0] = array_shift($argv);
-                    break;
-                case "-u":
-                    if ( isset($load[$which]['args'][2]) ) {
-                        $which = self::next_step($steps);
-                    }
-                    $load[$which]['kind'] = "from_db";
-                    $load[$which]['args'][2] = array_shift($argv);
-                    break;
-                case "-p":
-                    if ( isset($load[$which]['args'][3]) ) {
-                        $which = self::next_step($steps);
-                    }
-                    $load[$which]['kind'] = "from_db";
-                    $load[$which]['args'][3] = array_shift($argv);
-                    break;
-                case "-d":
-                    if ( isset($load[$which]['args'][1]) ) {
-                        $which = self::next_step($steps);
-                    }
-                    $load[$which]['kind'] = "from_db";
-                    $load[$which]['args'][1] = array_shift($argv );
-                    break;
-                case "-f":
-                    if ( isset($load[$which]['kind']) ) {
-                        $which = self::next_step($steps);
-                    }
-                    $load[$which]['kind'] = "from_file";
-                    $load[$which]['args'] = array(array_shift($argv)); 
-                    $which = self::next_step($steps);
-                    break;
-                default:
-                    // Special case for MySQL style passwords
-                    if ( $arg[0] == "-" and $arg[1] == "p" ) {
-                        $load[$which]['kind'] = "from_db";
-                        $load[$which]['args'][3] = substr($arg, 2);
-                        break;
-                    }
-                    // Unknown arguments terminate early
-                    if ( $arg[0] == "-" ) {
-                        $extra[] = $arg;
-                        $which="done";
-                        break;
-                    }
-                    else if ( ! isset($load[$which]['kind']) ) {
-                        $load[$which]['kind'] = "from_file";
-                        $load[$which]['args'] = array($arg);
-                    }
-                    else if ( $load[$which]['kind'] == "from_db" ) {
-                        $load[$which]['args'][1] = $arg;
-                    }
-                    $which = self::next_step($steps);
-                    break;
-                }
-                break;
-            case "outputformat":
-                $load[$which]['format'] = $arg;
-                $which = self::next_step($steps);
-                break;
-            default:
-                $load[$which]['args'][] = $arg;
-                if(!count($argv)) $which = 'done';
-                continue;
-            }
-        }
-
-        if ( $which != 'done' or count($extra) or count($steps) or !count($load) ) {
-            echo "Form: $cmd";
-            if ( count($optspec) ) {
-                echo " [" . implode("] [",$optspec) . "]";
-            }
-            echo " $specs\n";
-            echo "Where a spec is either:\n";
-            echo "    [-f] filename\n";
-            echo "or\n";
-            echo "    [-h hostname] [-u username] [-p password] [-d] dbname\n";
-            exit(1);
-        }
-        return $load;
-    }
 }

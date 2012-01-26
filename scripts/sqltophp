@@ -9,12 +9,23 @@
 
 require_once "Modyllic/SQL.php";
 
-$load = Modyllic_Commandline::args( "sqltophp", "spec class", $argv );
+$args = Modyllic_Commandline::getArgs(array(
+    'description' => 'Generate a PHP helper class for the stored procs in the schema',
+    'options' => array(
+        'class' => array(
+            'short_name'  => '-c',
+            'long_name'   => '--class',
+            'description' => 'classname to use in the generated PHP, defaults to the database name',
+            'action'      => 'StoreString',
+            ) ),
+    'arguments' => array(
+        'spec' => array('multiple'=>true) )));
 
-$schema = Modyllic_Commandline::schema($load['spec']);
+$schema = Modyllic_Commandline::schema($args->args['spec']);
 
-$class = @$load['class']['args'][0];
+$class = $args->options['class'];
 if (!$class) { $class = ucfirst($schema->name); }
+
 $generator = new Modyllic_Generator_PHP();
 
 print $generator->helpers($schema,$class);

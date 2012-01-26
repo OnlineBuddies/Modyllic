@@ -9,14 +9,43 @@
 
 require_once "Modyllic/SQL.php";
 
-$load = Modyllic_Commandline::args( "migrate", "oldspec newspec", $argv, array("--create") );
+$args = Modyllic_Commandline::getArgs(array(
+    'description' => 'Generate a PHP helper class for the stored procs in the schema',
+    'options' => array(
+        'fromschema' => array(
+            'short_name'  => '-f',
+            'long_name'   => '--from',
+            'action'      => 'StoreString',
+            'description' => 'The DSN of the database to update',
+            ),
+        'toschema' => array(
+            'short_name'  => '-t',
+            'long_name'   => '--to',
+            'action'      => 'StoreArray',
+            'description' => 'The schema to update the database to match',
+            ),
+        'create' => array(
+            'long_name'   => '--create',
+            'description' => 'create the database if its missing',
+            'action'      => 'StoreTrue',
+            ) ),
+        ));
 
-if ( $load['oldspec']['kind'] != 'from_db' ) {
-    print "migrate can only be used when your oldspec is a database.\n";
-    exit(1);
+if ( ! isset($args->options['fromschema']) ) {
+    $parser = Modyllic_Commandline::getParser();
+    $parser->displayError( 'the fromschema is required');
+}
+if ( ! isset($args->options['toschema']) ) {
+    $parser = Modyllic_Commandline::getParser();
+    $parser->displayError( 'the toschema is required');
 }
 
-list( $host, $dbname, $user, $pass ) = $load['oldspec']['args'];
+if ( ! Modyllic_Schema_Loader::is_dsn($args->options['fromschema']) ) {
+    $parser = Modyllic_Commandline::getParser();
+    $parser->displayError( 'the fromschema must be a database');
+}
+
+list( $dsn, $dbname, $user, $pass ) = Modyllic_Schema_Loader::parse_dsn($args->options['fromschema']);
 
 $base_dsn = "mysql:";
 if ( isset($host) ) {
@@ -28,7 +57,7 @@ try {
 }
 catch (Exception $e) {
     if ( strpos( $e->getMessage(), "Unknown database" ) !== FALSE ) {
-        if ( $load['--create'] ) {
+        if ( $args->options['create'] ) {
             $dbh = new PDO( $base_dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
             $dbh->exec("CREATE DATABASE ".Modyllic_SQL::quote_ident($dbname));
         }
@@ -42,17 +71,12 @@ catch (Exception $e) {
     }
 }
 
-print "-- Loading database $dbname...";
-$from = Modyllic_Commandline::schema($load['oldspec']);
-print " done.\n";
+$from = Modyllic_Commandline::schema( array($args->options['fromschema']) );
 
-print "-- Loading updated schema...";
-$to   = Modyllic_Commandline::schema($load['newspec']);
-print " done.\n";
+$to   = Modyllic_Commandline::schema($args->options['toschema']);
 
-print "-- Comparing...";
+Modyllic_Status::verbose("Comparing...\n");
 $diff = new Modyllic_Diff( $from, $to );
-print " done.\n";
 
 if ( ! $diff->changeset->has_changes() ) {
     print "-- No changes detected.\n";
@@ -60,30 +84,29 @@ if ( ! $diff->changeset->has_changes() ) {
 }
 
 $dbh->exec("USE ".Modyllic_SQL::quote_ident($dbname));
-$generator = new Modyllic_Generator_SQL();
-foreach ( $generator->sql_header() as $sql ) {
+
+$gen = new Modyllic_Generator_SQL();
+foreach ( $gen->sql_header() as $sql ) {
     $dbh->exec( $sql );
 }
-$generator->alter($diff);
-$cmds = count($generator->sql_commands());
+$gen->alter($diff);
+$cmds = count($gen->sql_commands());
 try {
     $ii = 0;
-    foreach ($generator->sql_commands() as $cmd) {
-        ++ $ii;
-        status("-- Loading SQL...",$ii,$cmds);
+    Modyllic_Status::$sourceName = "changes into database";
+    Modyllic_Status::$sourceCount = 1;
+    Modyllic_Status::$sourceIndex = 1;
+    foreach ($gen->sql_commands() as $cmd) {
+        Modyllic_Status::status( ++$ii, $cmds );
         $dbh->exec($cmd);
     }
 }
 catch (PDOException $e) {
-    print "\r                        \r";
+    Modyllic_Status::clear_progress();
     print $e->getMessage()."\n";
     print "Full context of command:\n";
     print $cmd."\n";
     exit(1);
 }
-print "\r                        \r-- Database updated.\n";
-
-function status($message,$sofar,$total) {
-    $percent = round( ($sofar * 100) / $total );
-    print "\r$message $percent%";
-}
+Modyllic_Status::clear_progress();
+Modyllic_Status::verbose("Database updated");

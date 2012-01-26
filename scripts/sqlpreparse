@@ -9,8 +9,11 @@
 
 require_once "Modyllic/SQL.php";
 
-$load = Modyllic_Commandline::args( "sqlpreparse", "spec", $argv );
+$args = Modyllic_Commandline::getArgs(array(
+    'description' => 'Preparse the SQL and generate something that can be loaded instantly.',
+    'arguments' => array(
+        'spec' => array('multiple'=>true) )));
 
-$schema = Modyllic_Commandline::schema($load['spec']);
+$schema = Modyllic_Commandline::schema($args->args['spec']);
 
 print serialize($schema);
