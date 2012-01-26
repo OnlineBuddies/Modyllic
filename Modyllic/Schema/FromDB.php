@@ -51,6 +51,7 @@ class Modyllic_Schema_FromDB {
         $schema = new Modyllic_Schema();
         
         $schema->name = $dbschema['SCHEMA_NAME'];
+        $schema->nameIsDefault = false;
         $schema->charset = $dbschema['DEFAULT_CHARACTER_SET_NAME'];
         $schema->collate = $dbschema['DEFAULT_COLLATION_NAME'];
         
