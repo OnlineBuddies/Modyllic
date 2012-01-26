@@ -6,6 +6,8 @@
  * @author bturner@online-buddies.com
  */
 
+require_once "Modyllic/SQL.php";
+
 /**
  * These are what are returned by the tokenizer
  */

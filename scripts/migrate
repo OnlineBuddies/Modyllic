@@ -7,6 +7,9 @@
  * @author bturner@online-buddies.com
  */
 
+require_once "Modyllic/Commandline.php";
+require_once "Modyllic/Generator.php";
+require_once "Modyllic/Diff.php";
 require_once "Modyllic/SQL.php";
 
 $args = Modyllic_Commandline::getArgs(array(

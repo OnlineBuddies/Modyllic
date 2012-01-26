@@ -6,7 +6,8 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/Types.php";
+require_once "Modyllic/SQL.php";
+require_once "Modyllic/Types.php";
 
 /**
  * A base class for various schema objects.  Handles generic things like

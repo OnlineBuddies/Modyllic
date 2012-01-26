@@ -7,7 +7,8 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/SQL.php";
+require_once "Modyllic/Commandline.php";
+require_once "Modyllic/Generator.php";
 
 // note the hard coded paths from my laptop >.>
 /// @todo fixme
