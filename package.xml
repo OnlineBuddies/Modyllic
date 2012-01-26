@@ -39,6 +39,7 @@
    <file name="Modyllic/Generator.php" role="php" />
    <file name="Modyllic/Parser.php" role="php" />
    <file name="Modyllic/Schema.php" role="php" />
+   <file name="Modyllic/Status.php" role="php" />
    <file name="Modyllic/Tokenizer.php" role="php" />
    <file name="Modyllic/Types.php" role="php" />
    <file name="Modyllic/Generator/NativeSQL.php" role="php" />
