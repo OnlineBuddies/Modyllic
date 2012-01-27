@@ -11,7 +11,7 @@
  */
 
 require_once "Modyllic/Tokenizer.php";
-require_once "Modyllic/Schema/Loader.php";
+require_once "Modyllic/Loader.php";
 require_once "Modyllic/Status.php";
 require_once "Modyllic/Generator.php";
 
@@ -81,14 +81,14 @@ class Modyllic_Commandline {
     static function schema( array $load ) {
         Modyllic_Tokenizer::on_advance( array( "Modyllic_Status", "status" ) );
         try {
-            $schema = Modyllic_Schema_Loader::load( $load );
+            $schema = Modyllic_Loader::load( $load );
         }
         catch (Modyllic_Exception $e) {
             Modyllic_Status::clear_progress();
             Modyllic_Status::warn($e->getMessage()."\n");
             exit(1);
         }
-        catch (Modyllic_Schema_Loader_Exception $e) {
+        catch (Modyllic_Loader_Exception $e) {
             Modyllic_Status::clear_progress();
             Modyllic_Status::warn($e->getMessage()."\n");
             exit(1);
