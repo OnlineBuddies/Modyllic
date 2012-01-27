@@ -35,7 +35,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     public $collate = self::DEFAULT_COLLATE;
     public $docs = "";
     public $sqlmeta_exists = FALSE;
-    
+
     function merge( $schema ) {
         if ( $this->nameIsDefault ) {
             $this->name = $schema->name;
@@ -66,7 +66,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
             $this->sqlmeta_exists = $schema->sqlmeta_exists;
         }
     }
-    
+
     /**
      * @param Modyllic_Table $table
      */
@@ -74,7 +74,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $this->tables[$table->name] = $table;
         return $table;
     }
-        
+
     /**
      * @param Modyllic_Routine $routine
      */
@@ -82,7 +82,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $this->routines[$routine->name] = $routine;
         return $routine;
     }
-    
+
     /**
      * @param Modyllic_Event $event
      */
@@ -90,7 +90,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $this->events[$event->name] = $event;
         return $event;
     }
-    
+
     /**
      * @param Modyllic_View $view
      */
@@ -98,18 +98,18 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $this->views[$view->name] = $view;
         return $view;
     }
-    
+
     function unquote_sql_str($sql) {
         $tok = new Modyllic_Tokenizer( $sql );
         return $tok->next()->unquote();
     }
-    
+
     /**
      * Generates a meta table entry that wasn't in the schema
      */
     function load_sqlmeta() {
         # If we already have an SQLMETA table then this is a load directly
-        # from a database (or a dump from a database).  We'll want to 
+        # from a database (or a dump from a database).  We'll want to
         # convert that back into our usual metadata.
         if ( isset($this->tables['SQLMETA']) and isset($this->tables['SQLMETA']->data) ) {
             $this->sqlmeta_exists = TRUE;
@@ -167,7 +167,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
         if ( $this->collate != $other->collate ) { return FALSE; }
         return TRUE;
     }
-    
+
     function equalTo( $other ) {
         if ( ! $this->schemaDefEqualTo($other) ) { return FALSE; }
         if ( count($this->tables) != count($other->tables) ) { return FALSE; }
@@ -252,7 +252,7 @@ class Modyllic_Table extends Modyllic_Diffable {
         $this->last_index = $index;
         return $index;
     }
-    
+
     /**
      * @param string $prefix Get's an index name
      * @returns string
@@ -265,7 +265,7 @@ class Modyllic_Table extends Modyllic_Diffable {
         }
         return $name;
     }
-    
+
     /**
      * @param Modyllic_Table $other
      * @returns bool True if $other is equivalent to $this
@@ -285,7 +285,7 @@ class Modyllic_Table extends Modyllic_Diffable {
         }
         return TRUE;
     }
-    
+
     /**
      * Clears the data associated with this table.  Also initializes it,
      * allowing data to be inserted into it.
@@ -314,7 +314,7 @@ class Modyllic_Table extends Modyllic_Diffable {
         }
         $this->data[] = $row;
     }
-    
+
     /**
      * Get the primary key.  If there is no primary key then we require all
      * columns to uniquely identify a row.
@@ -333,7 +333,7 @@ class Modyllic_Table extends Modyllic_Diffable {
         }
         return $pk;
     }
-    
+
     /**
      * For a given row, return the key/value pairs needed to match it, based
      * on the primary key for this table.
@@ -346,7 +346,7 @@ class Modyllic_Table extends Modyllic_Diffable {
         }
         return $where;
     }
-    
+
 }
 
 /**
@@ -411,7 +411,7 @@ class Modyllic_Index extends Modyllic_Diffable {
     function getName() {
         return $this->name;
     }
-    
+
     /**
      * @param Modyllic_Index $other
      * @returns bool True if $other is equivalent to $this
@@ -443,11 +443,11 @@ class Modyllic_Index_Foreign extends Modyllic_Index {
         $this->references['on_delete'] = "";
         $this->references['on_update'] = "";
     }
-    
+
     function getName() {
         return "~".$this->cname;
     }
-    
+
     function equalTo($other) {
         if ( ! parent::equalTo($other) )               { return FALSE; }
         if ( $this->references != $other->references ) { return FALSE; }
@@ -475,13 +475,13 @@ class Modyllic_CodeBody extends Modyllic_Diffable {
         $stripped = preg_replace('/\n+/', "\n", $stripped);
         return $stripped;
     }
-    
+
     function equalTo($other) {
         if ( get_class($other) != get_class($this) )   { return FALSE; }
         if ( $this->_body_no_comments() != $other->_body_no_comments() ) { return FALSE; }
         return TRUE;
     }
-    
+
 }
 
 /**
@@ -500,7 +500,7 @@ class Modyllic_Event extends Modyllic_CodeBody {
     function __construct($name) {
         $this->name = $name;
     }
-    
+
     function equalTo($other) {
         if ( ! parent::equalTo($other) ) { return FALSE; }
         if ( $this->schedule != $other->schedule ) { return FALSE; }
@@ -529,7 +529,7 @@ class Modyllic_Routine extends Modyllic_CodeBody {
     const TXNS_DEFAULT = self::TXNS_NONE;
     public $txns = self::TXNS_DEFAULT;
     public $docs = '';
-    
+
     /**
      * @param string $name
      */

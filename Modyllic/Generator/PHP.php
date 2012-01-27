@@ -15,7 +15,7 @@ class Modyllic_Generator_PHP {
     protected $level = 0;
     protected $in_cmd = 0;
     protected $filters = array();
-    
+
     protected function indent() {
         $this->add( str_repeat( $this->indent_with, $this->indent_by * $this->level ) );
         return $this;
@@ -60,7 +60,7 @@ class Modyllic_Generator_PHP {
         array_shift($this->filters);
         return $this;
     }
-    
+
     protected function begin_block($str="",$term="") {
         $this->cmd( $str, $term );
         $this->level ++;
@@ -71,7 +71,7 @@ class Modyllic_Generator_PHP {
         $this->cmd($str,$term);
         return $this;
     }
-    
+
     protected function begin_group() {
         $this->begin_cmd('(');
         return $this;
@@ -80,20 +80,20 @@ class Modyllic_Generator_PHP {
         $this->end_cmd(')',';');
         return $this;
     }
-    
+
     protected function add_str($str) {
-        $this->begin_str() 
-               ->add($str) 
+        $this->begin_str()
+               ->add($str)
              ->end_str();
         return $this;
     }
-    
+
     protected function begin_str() {
         $this->add("'");
         $this->push_filter( "addslashes" );
         return $this;
     }
-    
+
     protected function end_str() {
         $this->pop_filter();
         $this->add("'");
@@ -101,18 +101,18 @@ class Modyllic_Generator_PHP {
     }
 
     protected function add_dstr($str) {
-        $this->begin_dstr() 
-               ->add($str) 
+        $this->begin_dstr()
+               ->add($str)
              ->end_dstr();
         return $this;
     }
-    
+
     protected function begin_dstr() {
         $this->add('"');
         $this->push_filter( "addslashes" );
         return $this;
     }
-    
+
     protected function end_dstr() {
         $this->pop_filter();
         $this->add('"');
@@ -280,7 +280,7 @@ class Modyllic_Generator_PHP {
     }
     protected function begin_else() {
         $this->end_if()
-             ->cmd('else {') 
+             ->cmd('else {')
              ->begin_block();
         return $this;
     }
@@ -442,7 +442,7 @@ class Modyllic_Generator_PHP {
         $this->add('TRUE');
         return $this;
     }
-    
+
     function sep() {
         $this->add(', ');
         return $this;
@@ -495,7 +495,7 @@ class Modyllic_Generator_PHP {
         $this->add('@');
         return $this;
     }
-    
+
     /**
      * Generate PHP helper methods from a schema
      *
@@ -506,7 +506,7 @@ class Modyllic_Generator_PHP {
     function helpers($schema, $class) {
         $this->preamble( $class );
         $this->begin_class( $class );
-        
+
         foreach ( $schema->routines as $name=>$routine ) {
             if ( $name[0] == "_" ) {
                 // Names that start with _ are used only by other routines and are not exported
@@ -579,7 +579,7 @@ class Modyllic_Generator_PHP {
                        ->add('true')
                    ->end_assign()
                  ->end_block('}');
-                 
+
         }
     }
     function end_txns($routine) {
@@ -597,7 +597,7 @@ class Modyllic_Generator_PHP {
     }
     function call($routine) {
         $this->begin_txns($routine);
-        
+
         $this->begin_assign('sth')
                ->dbh()
                ->begin_method( 'prepare' )
@@ -606,7 +606,7 @@ class Modyllic_Generator_PHP {
                  ->end_str()
                ->end_method()
              ->end_assign();
-        
+
         $this->bind_params($routine);
         $this->method('sth','execute');
         $this->returns($routine);
@@ -1027,7 +1027,7 @@ class Modyllic_Generator_PHP {
         }
         return $this;
     }
-    
+
     function func_call_sql($routine) {
         $this->begin_sql_cmd( "SELECT" )
                ->begin_sql_func( $routine->name )
@@ -1045,7 +1045,7 @@ class Modyllic_Generator_PHP {
              ->end_sql_cmd();
         return $this;
     }
-    
+
     function args_sql($routine) {
         $argc = 0;
         foreach ($routine->args as $arg) {
@@ -1056,13 +1056,13 @@ class Modyllic_Generator_PHP {
         }
         return $this;
     }
-    
+
     function arg_sql($arg) {
         $this->add(':'.$arg->name);
         return $this;
     }
-    
-    
+
+
     function bind_params($routine) {
         foreach ($routine->args as $arg) {
             $pdo_type = 'PDO::PARAM_STR';
@@ -1078,7 +1078,7 @@ class Modyllic_Generator_PHP {
             else if ($arg->type instanceOf Modyllic_Float) {
                 $php_type = "float";
             }
-            else if ($arg->type instanceOf Modyllic_VarBinary or 
+            else if ($arg->type instanceOf Modyllic_VarBinary or
                      $arg->type instanceOf Modyllic_Binary or
                      $arg->type instanceOf Modyllic_Blob) {
                 $php_type = "binary";
@@ -1308,7 +1308,7 @@ class Modyllic_Generator_PHP {
         else {
             $this->index('row',$routine->returns['value']);
         }
-          $this->end_cmd('',';')  
+          $this->end_cmd('',';')
              ->end_while();
         $this->method('sth','closeCursor');
         $this->end_txns($routine);
