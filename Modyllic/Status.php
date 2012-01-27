@@ -39,8 +39,8 @@ class Modyllic_Status {
     }
 
     static $sourceName = "";
-    static $sourceIndex = 1;
-    static $sourceCount = 1;
+    static $sourceIndex = 0;
+    static $sourceCount = 0;
 
     static function status( $pos, $len ) {
         if ( self::$in_file != self::$sourceName ) {
