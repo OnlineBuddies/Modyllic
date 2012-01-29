@@ -62,6 +62,9 @@ class Modyllic_Schema extends Modyllic_Diffable {
         foreach ($schema->events as &$event) {
             $this->add_event($event);
         }
+        if ($schema->sqlmeta_exists) {
+            $this->sqlmeta_exists = $schema->sqlmeta_exists;
+        }
     }
     
     /**
