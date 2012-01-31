@@ -192,7 +192,7 @@ class Modyllic_Decimal extends Modyllic_Numeric {
         parent::__construct($type);
         $this->scale = $this->default_scale;
     }
-    
+
     function toSql() {
         $sql = $this->name;
         if ( $this->length != $this->default_length  or $this->scale != $this->default_scale ) {
@@ -330,7 +330,7 @@ class Modyllic_Year extends Modyllic_Type {
         parent::__construct($type);
         $this->length = $this->default_length;
     }
-    
+
     function toSql() {
         $sql = $this->name;
         if ( $this->length != $this->default_length ) {
@@ -385,14 +385,14 @@ class Modyllic_String extends Modyllic_Type {
     private $charset;
     private $collate;
     public $length;
-    
+
     function set_default_charset($value) {
         $this->default_charset = $value;
     }
     function set_default_collate($value) {
         $this->default_collate = $value;
     }
-    
+
     function charset($value=null) {
         $args = func_num_args();
         if ( $args ) {
@@ -402,7 +402,7 @@ class Modyllic_String extends Modyllic_Type {
             return isset($this->charset) ? $this->charset : $this->default_charset;
         }
     }
-    
+
     function collate($value=null) {
         $args = func_num_args();
         if ( $args ) {
@@ -412,7 +412,7 @@ class Modyllic_String extends Modyllic_Type {
             return isset($this->collate) ? $this->collate : $this->default_collate;
         }
     }
-    
+
     function equalTo($other) {
         if ( ! parent::equalTo($other) ) { return FALSE; }
         if ( $this->charset() != $other->charset() ) { return FALSE; }
@@ -424,8 +424,8 @@ class Modyllic_String extends Modyllic_Type {
         $this->charset( $old->charset() );
         $this->collate( $old->collate() );
     }
-    
-    
+
+
     function normalize($str) {
         if ( $str instanceOf Modyllic_Token_Reserved ) {
             return $str->value();

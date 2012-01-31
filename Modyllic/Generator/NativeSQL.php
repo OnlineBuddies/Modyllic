@@ -14,7 +14,7 @@ class Modyllic_Generator_NativeSQL extends Modyllic_Generator_SQL {
     function ignore_index( $index ) {
         return FALSE;
     }
-    
+
     function create_sqlmeta() {}
     function insert_meta($kind,$which,array $what) {}
     function delete_meta($kind,$which) {}
