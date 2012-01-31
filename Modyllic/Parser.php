@@ -21,7 +21,7 @@ class Modyllic_Parser {
                   // Be it table, routine or event
 
     private $tok; // An instance of the tokenizer
-    
+
     /**
      * This parses the SQL in $sql returns an Modyllic_Schema object.
      *
@@ -33,7 +33,7 @@ class Modyllic_Parser {
 
         return $this->partial( new Modyllic_Schema(), $sql, $filename, ";" );
     }
-    
+
     /**
      * A partial parse, this differs from a full parse in two key ways, first,
      * it doesn't make it's own Modyllic_Schema object and second, it allows you to
@@ -52,7 +52,7 @@ class Modyllic_Parser {
         $this->tok->set_delimiter( $delim );
 
         $this->schema = $schema;
-        
+
         try {
             while ( 1 ) {
                 $this->parse_command();
@@ -77,7 +77,7 @@ class Modyllic_Parser {
         }
         return $this->schema;
     }
-    
+
     private $cmddocs;
 
     /**
@@ -90,7 +90,7 @@ class Modyllic_Parser {
         }
         return $next;
     }
-    
+
     /**
      * Returns the last token returned by next()-- eg, the current token
      * being processed.
@@ -98,7 +98,7 @@ class Modyllic_Parser {
     function cur() {
         return $this->tok->cur;
     }
-    
+
     /**
      * Returns all of the remainder of the current command as a string.
      */
@@ -107,7 +107,7 @@ class Modyllic_Parser {
     }
     /**
      * Proxy to the tokenizer's next method
-     */ 
+     */
     function peek_next($whitespace=false) {
         return $this->tok->peek_next($whitespace);
     }
@@ -127,7 +127,7 @@ class Modyllic_Parser {
             $this->tok->inject($this->cur());
             return;
         }
-        
+
         // We look for our command name as a cmd_NAME method on the current class
         $this->assert_reserved();
         $method = str_replace(" ","_", "cmd_". $this->cur()->token() );
@@ -141,8 +141,8 @@ class Modyllic_Parser {
 
     function cmd_CREATE() {
         // CREATE <OPTS> <THING>
-        // <OPTS> = [DEFINER = CURRENT_USER|username@hostname] 
-        //          [ALGORITHM=UNDEFINED|MERGE|TEMPTABLE] 
+        // <OPTS> = [DEFINER = CURRENT_USER|username@hostname]
+        //          [ALGORITHM=UNDEFINED|MERGE|TEMPTABLE]
         //          [SQL SECURITY=DEFINER|INVOKER]
         // <THING> = <RESERVED>
 
@@ -172,7 +172,7 @@ class Modyllic_Parser {
                 break;
             }
         }
-            
+
         // The rest here works pretty much the way parse_command works, finding and calling a method
         $method = str_replace(" ","_", "cmd_CREATE_$name");
         if ( is_callable( array($this,$method) ) ) {
@@ -182,7 +182,7 @@ class Modyllic_Parser {
             throw $this->error( "Unsupported SQL command CREATE ".$this->cur()->debug());
         }
     }
-    
+
     function cmd_TRUNCATE() {
         // TRUNCATE [TABLE] tbl_name
         $this->maybe('TABLE');
@@ -192,12 +192,12 @@ class Modyllic_Parser {
         }
         $this->schema->tables[$table_name]->clear_data();
     }
-    
+
     function cmd_INSERT_INTO() {
         // INSERT INTO tbl_name row_data
         // row_data:
         //     (col_name,...) VALUES (value,...)
-        //   | SET col_name=value, ... 
+        //   | SET col_name=value, ...
         $table_name = $this->get_ident();
         if ( ! isset($this->schema->tables[$table_name]) ) {
             throw $this->error( "Can't INSERT INTO table $table_name before it is CREATEd" );
@@ -230,7 +230,7 @@ class Modyllic_Parser {
         }
         $table->add_row( $row );
     }
-    
+
     function cmd_USE() {
         $name = $this->get_ident();
         if ( $this->schema->name == Modyllic_Schema::DEFAULT_NAME ) {
@@ -287,7 +287,7 @@ class Modyllic_Parser {
                 throw $this->error( "Don't know how to drop a $what" );
         }
     }
-    
+
     function cmd_SET() {
         // Ignore sets, again, only from dumps
         $this->rest();
@@ -298,7 +298,7 @@ class Modyllic_Parser {
     function cmd_CALL() {
         error_log("-- Ignoring CALL ".$this->rest());
     }
-    
+
     function cmd_ALTER() {
         $name = $this->get_ident();
         $method = str_replace(" ","_", "cmd_ALTER_$name");
@@ -309,11 +309,11 @@ class Modyllic_Parser {
             throw $this->error( "Unsupported SQL command ALTER ".$this->cur()->debug());
         }
     }
-    
+
     function cmd_ALTER_SCHEMA() {
         cmd_ALTER_DATABASE();
     }
-    
+
     function cmd_ALTER_DATABASE() {
         $name = $this->get_ident();
         if ( $this->schema->name == Modyllic_Schema::DEFAULT_NAME ) {
@@ -324,7 +324,7 @@ class Modyllic_Parser {
         }
         $this->get_create_specification();
     }
-    
+
     function cmd_ALTER_TABLE() {
         $table_name = $this->get_ident();
         if ( isset($this->schema->tables[$table_name]) ) {
@@ -386,7 +386,7 @@ class Modyllic_Parser {
             }
         }
     }
-    
+
     function cmd_CREATE_SCHEMA() {
         cmd_CREATE_DATABASE();
     }
@@ -400,11 +400,11 @@ class Modyllic_Parser {
         $this->schema->name = $this->get_ident();
         $this->get_create_specification();
     }
-    
+
     function updated_collate( $old, $new, $collate ) {
         return preg_replace( "/^\Q$old\E/", $new, $collate );
     }
-    
+
     function get_create_specification() {
         while ( ! $this->peek_next() instanceOf Modyllic_Token_EOC ) {
             $attr = $this->get_reserved(array("DEFAULT", "CHARACTER SET", "CHARSET", "COLLATE"));
@@ -422,7 +422,7 @@ class Modyllic_Parser {
             }
         }
     }
-    
+
     function cmd_ALTER_EVENT() {
         $name = $this->get_ident();
         if ( ! isset( $this->schema->events[$name] ) ) {
@@ -452,7 +452,7 @@ class Modyllic_Parser {
             $this->get_event_body();
         }
     }
-    
+
     function cmd_CREATE_EVENT() {
         $this->ctx = $this->schema->add_event( new Modyllic_Event( $this->get_ident() ) );
         $this->get_reserved('ON SCHEDULE');
@@ -468,7 +468,7 @@ class Modyllic_Parser {
         $this->get_event_body();
         $this->ctx = null;
     }
-    
+
     function get_event_body() {
         if ( $this->peek_next()->token() == "BEGIN" ) {
             $this->ctx->body = "\n".trim($this->rest());
@@ -480,7 +480,7 @@ class Modyllic_Parser {
             $this->ctx->body = "\nBEGIN\n    " . trim($this->rest()) . ";\nEND";
         }
     }
-    
+
     function get_schedule() {
         // ON SCHEDULE schedule
         // schedule:
@@ -489,23 +489,23 @@ class Modyllic_Parser {
         //   [STARTS timestamp [+ INTERVAL interval] ...]
         //   [ENDS timestamp [+ INTERVAL interval] ...]
         $this->ctx->schedule = '';
-        $term = array( 
+        $term = array(
             "DO", "ON COMPLETION", "ENABLE", "DISABLE",
             "DISABLE ON SLAVE",
             );
         if ( $this->peek_next()->token() == "AT" ) {
-            $this->ctx->schedule .= $this->get_reserved() . 
+            $this->ctx->schedule .= $this->get_reserved() .
                               $this->get_expression( $term );
         }
         else if ( $this->peek_next()->token() == "EVERY" ) {
             $this->ctx->schedule .= $this->get_reserved() .
                               $this->get_expression( $term + array("STARTS","ENDS") );
             if ( $this->peek_next()->token() == "STARTS" ) {
-                $this->ctx->schedule .= " " . $this->get_reserved() . 
+                $this->ctx->schedule .= " " . $this->get_reserved() .
                                   $this->get_expression( $term + array("ENDS") );
             }
             if ( $this->peek_next()->token() == "ENDS" ) {
-                $this->ctx->schedule .= " " . $this->get_reserved() . 
+                $this->ctx->schedule .= " " . $this->get_reserved() .
                                   $this->get_expression( $term );
             }
         }
@@ -513,7 +513,7 @@ class Modyllic_Parser {
             throw $this->error("Expected AT or EVERY in event schedule");
         }
     }
-    
+
     function get_completion() {
         // [ON COMPLETION [NOT] PRESERVE]
         $in_schedule = FALSE;
@@ -527,7 +527,7 @@ class Modyllic_Parser {
         }
         $this->assert_reserved("PRESERVE");
     }
-    
+
     function get_expression($term) {
         $expr = " ";
         while ( ! $this->peek_next(true) instanceOf Modyllic_Token_EOC and
@@ -536,7 +536,7 @@ class Modyllic_Parser {
         }
         return $expr;
     }
-    
+
     function cmd_CREATE_VIEW() {
         $name = $this->get_ident();
         if ( isset($this->schema->tables[$name]) ) {
@@ -546,9 +546,9 @@ class Modyllic_Parser {
         ## Minimal support for views currently
         $view->def = $this->rest();
     }
-    
+
     function cmd_CREATE_PROCEDURE() {
-        // CREATE PROCEDURE sp_name ([proc_parameter[,...]]) 
+        // CREATE PROCEDURE sp_name ([proc_parameter[,...]])
         // [RETURNS {ROW|COLUMN colname|MAP (key,val)|STH|TABLE|NONE}]
         // [characteristic ...] routine_body
         $proc = $this->schema->add_routine( new Modyllic_Proc( $this->get_ident() ) );
@@ -584,7 +584,7 @@ class Modyllic_Parser {
         }
         $this->load_routine_body($proc);
     }
-    
+
     function cmd_CREATE_FUNCTION() {
         // CREATE FUNCTION sp_name ([proc_parameter[,...]]) RETURNS type [characteristic ...] routine_body
         $func = $this->schema->add_routine( new Modyllic_Func( $this->get_ident() ) );
@@ -597,13 +597,13 @@ class Modyllic_Parser {
         }
         $this->load_routine_body($func);
     }
-    
+
     function load_routine_body($routine) {
         // [characteristic ...] BEGIN routine_body END
         // characteristic:
         //   | [NOT] DETERMINISTIC
         //   | { CONTAINS SQL | NO SQL | READS SQL DATA | MODIFIES SQL DATA }
-        while ( $this->peek_next()->token() != 'BEGIN' and 
+        while ( $this->peek_next()->token() != 'BEGIN' and
                 $this->peek_next()->token() != 'RETURN' and
                 $this->peek_next()->token() != 'CALL' ) {
             switch ($this->get_reserved()) {
@@ -648,7 +648,7 @@ class Modyllic_Parser {
             $routine->body = "BEGIN\n    " . trim($this->rest()) . "\nEND";
         }
     }
-    
+
     private $column_term = array( ',', ')' );
 
     function get_args() {
@@ -695,7 +695,7 @@ class Modyllic_Parser {
         }
         return $args;
     }
-    
+
     function get_type() {
         // reserved[(token ...)>] [SIGNED|UNSIGNED] [ZEROFILL] [BINARY|ASCII|UNICODE] [{CHARACTER SET|CHARSET} ident] [COLLATE ident]
         $type = Modyllic_Type::create( $this->get_reserved() );
@@ -756,27 +756,27 @@ class Modyllic_Parser {
                 break;
             }
         }
-        
+
         if ( ( $type instanceOf Modyllic_VarChar or $type instanceOf Modyllic_Text ) and strtolower($type->charset()) == 'binary' ) {
             $type = $type->binary();
         }
         else if ( $binary ) {
             $type->collate( $type->charset() . "_bin" );
         }
-        
+
         if ( ! $type->isValid() ) {
 #            throw $this->error( "Syntax error in type declaration of ".$type->toSql() );
         }
-        
+
         return $type;
     }
 
     function cmd_CREATE_TABLE() {
         // CREATE TABLE ident ( create_definition,... ) table_option...
         // table_option:
-        //     [ENGINE=<IDENT>] 
-        //   | [[DEFAULT] {CHARACTER SET|CHARSET}=ident] 
-        //   | [[DEFAULT] COLLATE=ident] 
+        //     [ENGINE=<IDENT>]
+        //   | [[DEFAULT] {CHARACTER SET|CHARSET}=ident]
+        //   | [[DEFAULT] COLLATE=ident]
         //   | [AUTO_INCREMENT=number]
         //   | [COMMENT=string]
         $table = $this->get_ident();
@@ -789,7 +789,7 @@ class Modyllic_Parser {
         $this->ctx->charset = $this->schema->charset;
         $this->ctx->collate = $this->schema->collate;
         $this->ctx->docs = $this->cmddocs;
-        
+
         // Load tablespec
         while (! $this->next() instanceOf Modyllic_Token_EOC ) {
 
@@ -800,13 +800,13 @@ class Modyllic_Parser {
             else {
                 $this->load_column();
             }
-            
+
             # Comments
             while ( $this->cur() instanceOf Modyllic_Token_Comment ) {
                 $this->ctx->last_index->docs = trim( $this->ctx->last_index->docs . " " . $this->cur()->value() );
                 $this->next();
             }
-            
+
             # end of keys and columns
             if ( $this->cur()->value() == ')' ) {
                 $this->assert_symbol();
@@ -824,7 +824,7 @@ class Modyllic_Parser {
                 throw $this->error("Unknown token between columns ".$this->cur()->debug().", expected ',' or ')'.");
             }
         }
-        
+
         // Load table flags
         while ( ! $this->peek_next() instanceOf Modyllic_Token_EOC ) {
             $this->next();
@@ -846,7 +846,7 @@ class Modyllic_Parser {
         }
         $this->ctx = null;
     }
-    
+
     function maybe_table_option() {
         if ( $this->cur()->token() == 'DEFAULT' ) {
             $this->get_reserved(array( 'CHARSET', 'CHARACTER SET', 'COLLATE' ));
@@ -892,15 +892,15 @@ class Modyllic_Parser {
         }
         return true;
     }
-    
+
     function load_column() {
         // ident type [NOT NULL|NULL] [DEFAULT value] [ON UPDATE token] [AUTO_INCREMENT]
         //   [PRIMARY KEY] [COMMENT string] [ALIASES (token,...)]
         $column = $this->ctx->add_column(new Modyllic_Column( $this->assert_ident() ));
         $column->type = $this->get_type();
-        
+
         $is_unique = FALSE;
-        
+
         if ( $column->type->name == 'SERIAL' ) {
             // SERIAL is an alias for BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE.
             $column->type = new Modyllic_BigInt('BIGINT');
@@ -910,7 +910,7 @@ class Modyllic_Parser {
             $column->default = null; # No default
             $is_unique = TRUE;
         }
-        
+
         if ( $column->type instanceOf Modyllic_Timestamp ) {
             $column->default = 'CURRENT_TIMESTAMP';
             $column->on_update = 'CURRENT_TIMESTAMP';
@@ -1030,13 +1030,13 @@ class Modyllic_Parser {
             if ( $this->peek_next()->value() != '(' ) {
                 $name = $this->get_ident();
             }
-            
+
             // If you set a constraint name it overrides any regular index
             // part you specified.
             if ( $key->cname ) {
                 $name = $key->cname;
             }
-            
+
             // after the name, the column list is mandetory
             $this->get_symbol('(');
             $key->columns = $this->index_columns();
@@ -1047,10 +1047,10 @@ class Modyllic_Parser {
                 $key->weak = TRUE;
             }
             $key->references['table'] = $this->get_ident();
-            
+
             $this->get_symbol('(');
             $key->references['columns'] = $this->get_array();
-            
+
             while ( ! in_array( $this->next()->value(), $this->column_term ) ) {
                 if ( $this->cur()->token() == 'ON DELETE' ) {
                     $key->references['on_delete'] = $this->get_reserved();
@@ -1106,7 +1106,7 @@ class Modyllic_Parser {
             if ( ! $key->name ) {
                 $key->name = $this->gen_index_name($key);
             }
-            
+
             if ( $this->peek_next()->token() == 'USING' ) {
                 $this->get_reserved();
                 $key->using = $this->get_reserved(array('BTREE','HASH'));
@@ -1115,7 +1115,7 @@ class Modyllic_Parser {
         }
         $this->add_index( $key );
     }
-    
+
     function index_columns() {
         $columns = array();
         while ( $this->next()->value() != ')' ) {
@@ -1135,7 +1135,7 @@ class Modyllic_Parser {
         }
         return $columns;
     }
-    
+
     function add_index($key) {
         // If a semantically identical key already exists, replace it.
         $match = null;
@@ -1150,7 +1150,7 @@ class Modyllic_Parser {
         }
         $this->ctx->add_index( $key );
     }
-    
+
     function gen_constraint_name($key) {
         return $this->ctx->gen_index_name( $this->ctx->name . "_ibfk", TRUE );
     }
@@ -1200,7 +1200,7 @@ class Modyllic_Parser {
             }
         }
     }
-    
+
     /**
      * If the next token has a value of $thing then advance to it and return
      * true, else return false.
@@ -1219,7 +1219,7 @@ class Modyllic_Parser {
             return FALSE;
         }
     }
-    
+
     /**
      * Fetch the next token and ensure that it's an identifier
      * @returns the value of the identifier
@@ -1263,7 +1263,7 @@ class Modyllic_Parser {
     /**
      * Fetch the next token and ensure that it's a symbol (and that it's one
      * of $valid_symbols)
-     * @param string|array $valid_symbols 
+     * @param string|array $valid_symbols
      * @returns the symbol
      */
     function get_symbol($valid_symbols = null) {
@@ -1274,24 +1274,24 @@ class Modyllic_Parser {
     /**
      * Assert that the current token is a a symbol (and that it's one of
      * $valid_symbols)
-     * @param string|array $valid_symbols 
+     * @param string|array $valid_symbols
      * @returns the symbol
      */
     function assert_symbol($valid_symbols = null) {
         if ( ! $this->cur() instanceOf Modyllic_Token_Symbol ) {
             throw $this->error( "Expected SYMBOL, got ".$this->cur()->debug() );
         }
-        
+
         if ( is_null($valid_symbols) ) {  return $this->cur()->value(); }
 
         if ( ! is_array($valid_symbols) ) { $valid_symbols = array($valid_symbols); }
-        
+
         if ( ! in_array( $this->cur()->value(), $valid_symbols ) ) {
             throw $this->error( "Expected one of '".implode("', '",$valid_symbols)."', got ".$this->cur()->debug() );
         }
         return $this->cur()->value();
     }
-    
+
     /*
      * Fetch the next token and ensure that it's a string
      * @returns the string
@@ -1330,15 +1330,15 @@ class Modyllic_Parser {
             throw $this->error( "Expected reserved word, got ".$this->cur()->debug() );
         }
         if ( is_null($t1) ) { return $this->cur()->token(); }
-        
+
         if ( ! is_array($t1) ) { $t1 = array($t1); }
-        
+
         if ( ! in_array($this->cur()->token(),$t1) ) {
             throw $this->error( "Expected '".implode("', '",$t1)."', got ". $this->cur()->debug() );
         }
         return $this->cur()->token();
     }
-    
+
     /**
      * Like get_array, but returns a comma separated list in a string rather
      * then an array.
@@ -1354,11 +1354,11 @@ class Modyllic_Parser {
         $this->tok->inject( new Modyllic_Token_List($this->tok->pos,$value) );
         return $this->next()->value();
     }
-    
+
     function _value_map( $token ) {
         return $token->value();
     }
-    
+
     /**
      * This is like get_token_array but returns the values of the tokens rather then the
      * tokens themselves.
@@ -1392,7 +1392,7 @@ class Modyllic_Parser {
             if ( $this->cur() instanceOf Modyllic_Token_EOC ) {
                 throw $this->error( "Hit end of command while looking for $end" );
             }
-            if ( ! $this->cur() instanceOf Modyllic_Token_Symbol or 
+            if ( ! $this->cur() instanceOf Modyllic_Token_Symbol or
                  $this->cur()->value() != "," ) {
                 $value[] = $this->cur();
             }
@@ -1403,7 +1403,7 @@ class Modyllic_Parser {
         $this->tok->inject( new Modyllic_Token_List($this->tok->pos,$value) );
         return $this->next()->value();
     }
-    
+
     /**
      * Throw an exception with information about where in the parse it failed.
      */
@@ -1423,7 +1423,7 @@ class Modyllic_Parser {
  */
 class Modyllic_Exception extends Exception {
     /**
-     * @param string $filename 
+     * @param string $filename
      * @param int $line
      * @param int $col
      * @param string $context

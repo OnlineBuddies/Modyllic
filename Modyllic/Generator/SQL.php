@@ -24,7 +24,7 @@ class Modyllic_Generator_SQL {
             return $this;
         }
         $this->alter_database( $diff->changeset->schema );
-        
+
         if ( $diff->changeset->create_sqlmeta ) {
             $this->create_sqlmeta();
         }
@@ -33,12 +33,12 @@ class Modyllic_Generator_SQL {
         $this->drop_routines( $diff->changeset->remove['routines'] );
         $this->drop_views( $diff->changeset->remove['views'] );
         $this->drop_tables( $diff->changeset->remove['tables'] );
-        
+
         $this->create_tables( $diff->changeset->add['tables'], $diff->changeset->schema );
         $this->create_views( $diff->changeset->add['views'] );
         $this->create_routines( $diff->changeset->add['routines'] );
         $this->create_events( $diff->changeset->add['events'] );
-        
+
         $this->alter_tables( $diff->changeset->update['tables'] );
         $this->alter_views( $diff->changeset->update['views'] );
         $this->alter_routines( $diff->changeset->update['routines'] );
@@ -47,7 +47,7 @@ class Modyllic_Generator_SQL {
     }
 
 // CREATE
-    
+
     function create_sql( Modyllic_Schema $schema, $delim=";;", $sep=TRUE  ) {
         $this->create( $schema );
         return $this->sql_document( $delim, $sep );
@@ -62,7 +62,7 @@ class Modyllic_Generator_SQL {
         $this->create_events( $schema->events );
         return $this;
     }
-    
+
     function create_sqlmeta() {
         $this->begin_cmd();
         $this->extend( "-- This is used to store metadata used by the schema management tool" );
@@ -80,12 +80,12 @@ class Modyllic_Generator_SQL {
     }
 
 // DROP
-    
+
     function drop_sql( Modyllic_Schema $schema, $delim=";", $sep=FALSE  ) {
         $this->drop($schema);
         return $this->sql_document( $delim, $sep );
     }
-    
+
     function drop( Modyllic_Schema $schema ) {
         $this->drop_events( $schema->events );
         $this->drop_routines( $schema->routines );
@@ -96,7 +96,7 @@ class Modyllic_Generator_SQL {
     }
 
 // DATABASE
-    
+
     function create_database($schema) {
         if ($schema->nameIsDefault) return $this;
         $this->begin_cmd( "CREATE DATABASE %id", $schema->name );
@@ -127,13 +127,13 @@ class Modyllic_Generator_SQL {
         $this->end_cmd();
         return $this;
     }
-    
+
     function drop_database($schema) {
         if ($schema->nameIsDefault) return $this;
         $this->cmd( "DROP DATABASE %id", $schema->name );
         return $this;
     }
-    
+
 // TABLES
 
     function create_tables( $tables, $schema ) {
@@ -142,7 +142,7 @@ class Modyllic_Generator_SQL {
         }
         return $this;
     }
-    
+
     function alter_tables( $tables ) {
         foreach ( $tables as $table ) {
             $this->alter_table($table);
@@ -158,14 +158,14 @@ class Modyllic_Generator_SQL {
     }
 
 // VIEWS
-    
+
     function create_views( $views ) {
         foreach ( $views as $view ) {
             $this->create_view($view);
         }
         return $this;
     }
-    
+
     function alter_views( $views ) {
         foreach ( $views as $view ) {
             $this->alter_view($view);
@@ -188,7 +188,7 @@ class Modyllic_Generator_SQL {
         }
         return $this;
     }
-    
+
     function alter_routines( $routines ) {
         foreach ( $routines as $routine ) {
             $this->alter_routine($routine);
@@ -211,7 +211,7 @@ class Modyllic_Generator_SQL {
         }
         return $this;
     }
-    
+
     function alter_events( $events ) {
         foreach ( $events as $event ) {
             $this->alter_event($event);
@@ -225,7 +225,7 @@ class Modyllic_Generator_SQL {
         }
         return $this;
     }
-    
+
 // TABLE
 
     function table_meta($table) {
@@ -266,7 +266,7 @@ class Modyllic_Generator_SQL {
         $this->reindent("  ", true);
         $this->table_options( $table, $schema );
         $this->end_cmd();
-        
+
         $this->create_table_data( $table );
         $this->insert_meta( "TABLE", $table->name, $this->table_meta($table) );
         foreach ( $table->columns as $column ) {
@@ -277,10 +277,10 @@ class Modyllic_Generator_SQL {
         }
         return $this;
     }
-    
+
     function alter_table( $table ) {
         if ( $table->has_schema_changes() ) {
-            if ( $table->options->has_changes() or 
+            if ( $table->options->has_changes() or
                  count($table->add['columns'])+count($table->remove['columns'])+count($table->update['columns'])+
                  count($table->add['indexes'])+count($table->remove['indexes']) > 0 ) {
                 $this->begin_cmd( "ALTER TABLE %id ", $table->name );
@@ -306,7 +306,7 @@ class Modyllic_Generator_SQL {
                 $this->end_list();
                 $this->end_cmd();
             }
-            
+
             $tometa = $this->table_meta($table);
             $frommeta = $this->table_meta($table);
             if ( $tometa != $frommeta ) {
@@ -374,7 +374,7 @@ class Modyllic_Generator_SQL {
         }
         return $this;
     }
-    
+
     function drop_table( $table ) {
         $this->cmd( "DROP TABLE %id", $table->name );
         if ( count($this->table_meta($table)) > 0 ) {
@@ -388,16 +388,16 @@ class Modyllic_Generator_SQL {
         }
         return $this;
     }
-    
+
     function column_meta($col) {
-        if ( count($col->aliases) ) { 
+        if ( count($col->aliases) ) {
             return array( "aliases" => $col->aliases );
         }
         else {
             return array();
         }
     }
-    
+
     function add_column( $column ) {
         $this->partial("ADD COLUMN " );
         $this->create_column($column);
@@ -458,7 +458,7 @@ class Modyllic_Generator_SQL {
 
     function index_meta($index) {
         if ( $index instanceOf Modyllic_Index_Foreign ) {
-            if ( $index->weak != Modyllic_Index_Foreign::WEAK_DEFAULT ) { 
+            if ( $index->weak != Modyllic_Index_Foreign::WEAK_DEFAULT ) {
                 return array( "weak" => $index->weak );
             }
             else {
@@ -469,7 +469,7 @@ class Modyllic_Generator_SQL {
             return array();
         }
     }
-    
+
     function add_index( $index ) {
         $this->create_index($index, "ADD ");
         return $this;
@@ -500,7 +500,7 @@ class Modyllic_Generator_SQL {
             return FALSE;
         }
     }
-    
+
     function create_index( $index, $prefix=null ) {
         if ( $this->ignore_index( $index ) ) {
             return;
@@ -553,7 +553,7 @@ class Modyllic_Generator_SQL {
         }
         return $this;
     }
-    
+
     function foreign_key($index) {
         $this->add( " REFERENCES %id", $index->references['table'] );
         $this->add( " (" . implode(",",array_map(array("SQL","quote_ident"),array_map("trim",
@@ -565,7 +565,7 @@ class Modyllic_Generator_SQL {
            $this->add( " ON UPDATE %lit", $index->references['on_update'] );
         }
     }
-    
+
     function table_options($table,$schema=null) {
         if ( isset( $table->engine ) ) {
             $this->extend( "ENGINE=".$table->engine );
@@ -591,7 +591,7 @@ class Modyllic_Generator_SQL {
         $this->end_cmd();
         return $this;
     }
-    
+
     function create_table_data($table) {
         if ( $table->static ) {
             $this->cmd( "TRUNCATE TABLE %id", $table->name );
@@ -610,7 +610,7 @@ class Modyllic_Generator_SQL {
     }
 
 // VIEW
-    
+
     function create_view( $view ) {
         $this->cmd( "CREATE VIEW %id %lit", $view->name, $view->def );
         return $this;
@@ -621,14 +621,14 @@ class Modyllic_Generator_SQL {
         $this->create_view($view);
         return $this;
     }
-    
+
     function drop_view( $view ) {
         $this->cmd( "DROP VIEW %id", $view->name );
         return $this;
     }
 
 // ROUTINE
-    
+
     function routine_meta($routine) {
         $meta = array();
         if ( $routine->args_type != Modyllic_Routine::ARGS_TYPE_DEFAULT ) {
@@ -660,7 +660,7 @@ class Modyllic_Generator_SQL {
         }
         return $this;
     }
-    
+
     function alter_routine( $routine ) {
         $this->drop_routine( $routine->from, FALSE );
         $this->create_routine( $routine, FALSE );
@@ -734,7 +734,7 @@ class Modyllic_Generator_SQL {
         }
         return $this;
     }
-    
+
     function routine_arg( $arg, $indent="" ) {
         if ( $arg->dir != "IN" ) {
             $dir = $arg->dir . " ";
@@ -776,7 +776,7 @@ class Modyllic_Generator_SQL {
     }
 
 // FUNCTION
-    
+
     function create_function( $func ) {
         $this->begin_cmd();
         $this->routine_docs( $func );
@@ -789,7 +789,7 @@ class Modyllic_Generator_SQL {
         $this->end_cmd();
         return $this;
     }
-   
+
     function function_returns( $func ) {
         $this->extend( "RETURNS %lit", $func->returns->toSql() );
         return $this;
@@ -803,7 +803,7 @@ class Modyllic_Generator_SQL {
         $this->cmd( "DROP FUNCTION %id", $func->name );
         return $this;
     }
-    
+
 
 // PROCEDURE
 
@@ -834,7 +834,7 @@ class Modyllic_Generator_SQL {
         $this->cmd( "DROP PROCEDURE IF EXISTS %id", $proc->name );
         return $this;
     }
-    
+
 // EVENT
 
     function create_event( $event ) {
@@ -851,7 +851,7 @@ class Modyllic_Generator_SQL {
         }
         return $this;
     }
-    
+
     function alter_event( $event ) {
         $this->begin_cmd( "ALTER EVENT %id", $event->name );
         if ( isset($event->schedule) ) {
@@ -891,12 +891,12 @@ class Modyllic_Generator_SQL {
                 $kind, $which, json_encode($what) );
         }
     }
-    
+
     function delete_meta($kind,$which) {
         $this->cmd( "DELETE FROM SQLMETA WHERE kind=%str AND which=%str",
             $kind, $which );
     }
-    
+
     function update_meta($kind,$which,$what) {
         if ( count($what) > 0 ) {
             $this->cmd( "UPDATE SQLMETA SET value=%str WHERE kind=%str AND which=%str",
@@ -906,9 +906,9 @@ class Modyllic_Generator_SQL {
             $this->delete_meta($kind,$which);
         }
     }
-    
 
-    
+
+
 // SQL document wrapper
 
     function sql_document($delim=";", $sep=FALSE) {
@@ -925,7 +925,7 @@ class Modyllic_Generator_SQL {
         $sql .= implode(";\n",$this->sql_footer()) . ";\n";
         return $sql;
     }
-    
+
     function sql_dump($delim=";", $sep=FALSE) {
         $sql = "";
         if ( $delim != "\n" ) {
@@ -937,7 +937,7 @@ class Modyllic_Generator_SQL {
         $sql .= implode( $delim, $this->commands ) . $delim;
         return $sql;
     }
-    
+
     function sql_commands() {
         return $this->commands;
     }
@@ -987,7 +987,7 @@ class Modyllic_Generator_SQL {
         if ( !is_array($args) ) {
             $args = func_get_args();
             array_shift($args); // Remove $str from the arg list
-        } 
+        }
         if ( count($args) ) {
             $str = $this->_format( $str, $args );
         }
@@ -1061,7 +1061,7 @@ class Modyllic_Generator_SQL {
         if ( !is_array($args) ) {
             $args = func_get_args();
             array_shift($args); // Remove $str from the arg list
-        } 
+        }
         $this->begin_cmd( $str, $args );
         $this->end_cmd();
         return $this;
@@ -1077,7 +1077,7 @@ class Modyllic_Generator_SQL {
             if ( !is_array($args) ) {
                 $args = func_get_args();
                 array_shift($args); // Remove $str from the arg list
-            } 
+            }
             $this->add( $this->_format( $str, $args ) );
             $this->indent();
         }
@@ -1089,7 +1089,7 @@ class Modyllic_Generator_SQL {
             if ( !is_array($args) ) {
                 $args = func_get_args();
                 array_shift($args); // Remove $str from the arg list
-            } 
+            }
             $this->add($str, $args);
         }
         if ( $this->level > $this->cmd_level ) {
@@ -1132,7 +1132,7 @@ class Modyllic_Generator_SQL {
         if ( !is_array($args) ) {
             $args = func_get_args();
             array_shift($args); // Remove $str from the arg list
-        } 
+        }
         $this->add($str, $args);
         $this->partial = FALSE;
         return $this;
@@ -1152,7 +1152,7 @@ class Modyllic_Generator_SQL {
         if ( !is_array($args) ) {
             $args = func_get_args();
             array_shift($args); // Remove $str from the arg list
-        } 
+        }
         $this->extend($str,$args);
         $this->partial = TRUE;
         return $this;
