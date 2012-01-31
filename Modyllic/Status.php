@@ -25,7 +25,7 @@ class Modyllic_Status {
     static function warn( $msg ) {
         fwrite(STDERR, $msg);
     }
-    
+
     static function verbose( $msg ) {
         if ( self::$verbose ) {
             self::warn($msg);
@@ -69,7 +69,7 @@ class Modyllic_Status {
             self::$progress = false;
             return;
         }
-        
+
         $filename = self::$sourceName;
 
         # if we can fit the entire filename on the line then we size the progress bar
@@ -90,7 +90,7 @@ class Modyllic_Status {
 
         $fill = str_repeat("*",$fill_count);
         $blank = str_repeat("-",$blank_count);
-        
+
         self::warn(sprintf("\rLoading %s [%s%s] %2.1f%%", $filename, $fill, $blank, $overall*100 ));
     }
 }

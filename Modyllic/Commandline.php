@@ -29,7 +29,7 @@ class Modyllic_Console_CommandLine_ActionDialect extends Console_CommandLine_Act
 Console_CommandLine::registerAction('Dialect', 'Modyllic_Console_CommandLine_ActionDialect');
 
 class Modyllic_Commandline {
-    
+
     static function getParser() {
         static $parser;
         if ( !isset($parser) ) {
@@ -37,7 +37,7 @@ class Modyllic_Commandline {
         }
         return $parser;
     }
-    
+
     static function getArgs( $argSpec ) {
         $parser = self::getParser();
         $parser->addOption('verbose', array(
@@ -77,7 +77,7 @@ class Modyllic_Commandline {
         Modyllic_Status::$progress = $args->options['progress'];
         return $args;
     }
-    
+
     static function schema( array $load ) {
         Modyllic_Tokenizer::on_advance( array( "Modyllic_Status", "status" ) );
         try {

@@ -21,7 +21,7 @@ class Modyllic_SQL {
             return "$quote$str$quote";
         }
     }
-    
+
     /**
      * Quote an SQL string
      * @param string $str
@@ -30,7 +30,7 @@ class Modyllic_SQL {
     static function quote_str($str,$quote="'") {
         $str = str_replace('\\', '\\\\',   $str );
         $str = str_replace(chr(0),"\\0", $str );
-        
+
         $str = str_replace('\\\\%', '\\%', $str );
         $str = str_replace('\\\\_', '\\_', $str );
         $str = str_replace(chr(8),  "\\b", $str );
@@ -41,7 +41,7 @@ class Modyllic_SQL {
         $str = str_replace($quote,"$quote$quote", $str );
         return "$quote$str$quote";
     }
-    
+
 
     /**
      * @param string $word
@@ -309,7 +309,7 @@ class Modyllic_SQL {
         );
         return isset($mysql_reserved[strtoupper($word)]);
     }
-    
+
     // Unquoted identifiers are either:  http://dev.mysql.com/doc/refman/5.5/en/identifiers.html
     // An alpha+dollar+underscore followed by any number of digit+alpha+dollar+underscore
     // OR
@@ -319,7 +319,7 @@ class Modyllic_SQL {
     /**
      * @param string $word
      * @returns bool True if $word is a valid unquoted identifier
-     */    
+     */
     static function valid_ident($word) {
         return preg_match('/^('.Modyllic_SQL::$valid_ident_re.')$/',$word);
     }
