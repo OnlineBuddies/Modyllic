@@ -8,10 +8,10 @@ default:
 .PHONY: test install
 
 install:
-	pear install package.xml
+	pear channel-discover onlinebuddies.github.com/pear ; pear install package.xml
 
 uninstall:
-	pear uninstall __uri/Modyllic
+	pear uninstall OnlineBuddies/Modyllic
 
 test: check
 	$(PROVE) test

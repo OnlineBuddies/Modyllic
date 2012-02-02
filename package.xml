@@ -4,8 +4,7 @@
     http://pear.php.net/dtd/package-2.0
     http://pear.php.net/dtd/package-2.0.xsd">
  <name>Modyllic</name>
- <!-- we need a uri for this thing -->
- <uri>http://path/to/package</uri>
+ <channel>onlinebuddies.github.com/pear</channel>
  <summary>Schema management and DDL diff</summary>
  <description>Modyllic, PHP SQL Parser and schema management tool</description>
  <lead>
@@ -16,12 +15,12 @@
   <active>yes</active>
  </lead>
  <!-- these were generated when I first made this, settings these by hand is horrible, there must be a better way -->
- <date>2012-01-10</date>
- <time>11:41:05</time>
+ <date>2012-02-02</date>
+ <time>13:00:00</time>
  <!-- arbitrary version number -->
  <version>
-  <release>0.9.0</release>
-  <api>0.9.0</api>
+  <release>0.1.1</release>
+  <api>0.1.0</api>
  </version>
  <stability>
   <release>beta</release>
@@ -29,7 +28,7 @@
  </stability>
  <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
  <notes>
- Initial release.
+ ...
  </notes>
  <contents>
   <dir name="/">
@@ -111,8 +110,8 @@
  <changelog>
   <release>
    <version>
-    <release>0.9.0</release>
-    <api>0.9.0</api>
+    <release>0.1.0</release>
+    <api>0.1.0</api>
    </version>
    <stability>
     <release>beta</release>
@@ -122,6 +121,21 @@
    <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
    <notes>
 Initial release.
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.1.1</release>
+    <api>0.1.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2012-02-02</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
+   <notes>
+...
    </notes>
   </release>
  </changelog>
