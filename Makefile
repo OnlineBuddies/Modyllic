@@ -13,11 +13,8 @@ install:
 uninstall:
 	pear uninstall OnlineBuddies/Modyllic
 
-test: check
+test:
 	$(PROVE) test
 
-test-verbose: check
+test-verbose:
 	$(PROVE) -v test
-
-check:
-	@[ -f testlib/testmore.php ] || (echo "You must initialize submodules with 'git submodule update --init' first"; exit 1)
