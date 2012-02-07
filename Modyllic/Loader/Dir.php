@@ -7,9 +7,9 @@
  */
 
 class Modyllic_Loader_Dir {
-    static function load( $dir ) {
+    static function load( $dir, $schema ) {
         $filelist = glob("$dir/*.sql",GLOB_NOSORT);
         natsort($filelist);
-        return Modyllic_Loader::load( $filelist );
+        Modyllic_Loader::load( $filelist, $schema );
     }
 }
