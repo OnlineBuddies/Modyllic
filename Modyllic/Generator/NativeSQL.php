@@ -6,6 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
+require_once "Modyllic/SQL.php";
 require_once "Modyllic/Generator/SQL.php";
 require_once "Modyllic/Schema.php";
 
@@ -44,7 +45,7 @@ class Modyllic_Generator_NativeSQL extends Modyllic_Generator_SQL {
         else {
             $this->add( " REFERENCES %id", $index->references['table'] );
         }
-        $this->add( " (" . implode(",",array_map(array("SQL","quote_ident"),array_map("trim",
+        $this->add( " (" . implode(",",array_map(array("Modyllic_SQL","quote_ident"),array_map("trim",
                             $index->references['columns'] ))) .")" );
         if ( $index->references['on_delete'] ) {
            $this->add( " ON DELETE %lit", $index->references['on_delete'] );

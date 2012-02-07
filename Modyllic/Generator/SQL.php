@@ -556,7 +556,7 @@ class Modyllic_Generator_SQL {
 
     function foreign_key($index) {
         $this->add( " REFERENCES %id", $index->references['table'] );
-        $this->add( " (" . implode(",",array_map(array("SQL","quote_ident"),array_map("trim",
+        $this->add( " (" . implode(",",array_map(array("Modyllic_SQL","quote_ident"),array_map("trim",
                             $index->references['columns'] ))) .")" );
         if ( $index->references['on_delete'] ) {
            $this->add( " ON DELETE %lit", $index->references['on_delete'] );
