@@ -74,7 +74,7 @@ class Modyllic_Loader_DB {
         }
     }
 
-    static function load( $source ) {
+    static function load( $source, $schema ) {
         list( $driver, $dsn, $dbname, $username, $password ) = self::parse_dsn($source);
         Modyllic_Status::$sourceName = $dsn;
 
@@ -82,8 +82,6 @@ class Modyllic_Loader_DB {
 
         $dbh = new PDO( $dsn, $username, $password, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES=>TRUE ) );
 
-        $schema = call_user_func( array($class,'load'), $dbh, $dbname );
-
-        return $schema;
+        call_user_func( array($class,'load'), $dbh, $dbname, $schema );
     }
 }

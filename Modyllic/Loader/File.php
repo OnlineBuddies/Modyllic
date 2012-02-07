@@ -7,7 +7,7 @@
  */
 
 class Modyllic_Loader_File {
-    static function load( $file ) {
+    static function load( $file, $schema ) {
         # A preparsed schemafile will have a .sqlc extension
         $file_bits = explode(".",$file);
         array_pop($file_bits);
@@ -23,16 +23,15 @@ class Modyllic_Loader_File {
                 throw new Modyllic_Loader_Exception("Error opening $file");
             }
             $parser = new Modyllic_Parser();
-            $schema = new Modyllic_Schema();
-            $schema = $parser->partial($schema, $data, $file, ";" );
+            $parser->partial($schema, $data, $file, ";" );
         }
         else {
             if ( ($data = @file_get_contents($sqlc_file)) === FALSE ) {
                 throw new Modyllic_Loader_Exception("Error opening $sqlc_file");
             }
-            $schema = unserialize($data);
+            $subschema = unserialize($data);
+            $schema->merge( $subschema );
         }
-        return $schema;
     }
 
 }
