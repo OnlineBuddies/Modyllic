@@ -21,27 +21,28 @@ class Modyllic_Loader_Exception extends Exception {}
  */
 class Modyllic_Loader {
 
-    static function load(array $sources) {
-        $schema = new Modyllic_Schema();
+    static function load(array $sources,$schema=null) {
+        if ( !isset($schema) ) {
+            $schema = new Modyllic_Schema();
+        }
         Modyllic_Status::$sourceCount += count($sources);
         foreach ($sources as $source) {
             Modyllic_Status::$sourceName = $source;
             Modyllic_Status::$sourceIndex ++;
 
             if ( is_dir($source) ) {
-                $subschema = Modyllic_Loader_Dir::load($source);
+                Modyllic_Loader_Dir::load($source, $schema);
             }
             else if ( file_exists($source) ) {
-                $subschema = Modyllic_Loader_File::load($source);
+                Modyllic_Loader_File::load($source, $schema);
             }
             else if ( Modyllic_Loader_DB::is_dsn($source) ) {
-                $subschema = Modyllic_Loader_DB::load($source);
+                Modyllic_Loader_DB::load($source, $schema);
             }
             else {
                 throw new Modyllic_Loader_Exception("Could not load $source, file or directory not found");
             }
 
-            $schema->merge($subschema);
             Modyllic_Status::status( 1, 1 );
 
         }

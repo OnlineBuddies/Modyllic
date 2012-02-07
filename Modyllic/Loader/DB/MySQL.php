@@ -37,7 +37,7 @@ class Modyllic_Loader_DB_MySQL {
     /**
      * @returns Modyllic_Schema
      */
-    static function load($dbh, $dbname) {
+    static function load($dbh, $dbname, $schema) {
         $dbh->exec("USE information_schema");
         $dbschema = self::selectrow( $dbh, "SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM SCHEMATA WHERE SCHEMA_NAME=?", array($dbname) );
         if ( ! $dbschema ) {
@@ -45,7 +45,6 @@ class Modyllic_Loader_DB_MySQL {
         }
 
         $parser = new Modyllic_Parser();
-        $schema = new Modyllic_Schema();
 
         $schema->name = $dbschema['SCHEMA_NAME'];
         $schema->nameIsDefault = false;
@@ -111,6 +110,5 @@ class Modyllic_Loader_DB_MySQL {
             }
         }
 
-        return $schema;
     }
 }
