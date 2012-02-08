@@ -10,4 +10,4 @@ SchemaSync is a Python project that can generate SQL diffs between two MySQL ins
 
 ### [SQL::Transalator](https://metacpan.org/module/SQL::Translator)
 
-A Perl project that does essentially the same thing.  It's focus is on translating DDL between different database vendors, but it provides a diff tool that can generate alter statements as well.
+A Perl project that does essentially the same thing.  It's focus is on translating DDL between different database vendors, but it provides a diff tool that can generate alter statements as well.  Outside the CPAN it can be found as [the SQL Fairy](http://sqlfairy.sourceforge.net/).
