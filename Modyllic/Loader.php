@@ -49,22 +49,4 @@ class Modyllic_Loader {
         $schema->load_sqlmeta();
         return $schema;
     }
-
-    /**
-     * Load a schema from a MySQL database's INFORMATION_SCHEMA database
-     *
-     * @param string $host
-     * @param string $dbname
-     * @param string $user
-     * @param string $pass
-     * @returns Modyllic_Schema
-     */
-    static function from_db($dsn,$dbname,$user=null,$pass=null) {
-        Modyllic_Status::$sourceName = $dsn;
-        $dbh = new PDO( $dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES=>TRUE ) );
-        $loader = new Modyllic_Schema_FromDB( $dbh );
-        $schema = $loader->get_schema( $dbname );
-        Modyllic_Status::$sourceIndex ++;
-        return $schema;
-    }
 }
