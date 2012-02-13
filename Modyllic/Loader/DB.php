@@ -50,6 +50,7 @@ class Modyllic_Loader_DB {
             $opts = array();
             foreach ( explode(';',$matches[2]) as $opt_pair ) {
                 list($name,$value) = explode('=',$opt_pair);
+                $value = rawurldecode($value);
                 if ( $name == 'username' ) {
                     $username = $value;
                 }
