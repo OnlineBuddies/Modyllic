@@ -11,6 +11,9 @@ tables or procs.  This lets you update a subset of the schema very
 quickly, which will be handy in development if the schema is split up
 into multiple files.
 
+  * Concept of expansion and contraction migration modes:
+  *     http://exortech.com/blog/2009/02/01/weekly-release-blog-11-zero-downtime-database-deployment/
+  * Migration tool level support for migration versions that are only applied when the new version is fully applied.
   * --partial is alias for --no-drop-tables --no-drop-procs
   * Also has: --no-drop-cols
   * And --no-drop is an alias for --no-drop-tables --no-drop-procs and --no-drop-cols
