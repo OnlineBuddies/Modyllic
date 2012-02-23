@@ -19,7 +19,7 @@ To publish a new release, from your Modyllic checkout:
 
 Now in go to your previously checked out copy of the OLB pear repository:
 
-1. pirum add . /path/to/Modyllic-#.#.#.tgz
+1. ./release /path/to/Modyllic-#.#.#.tgz
 2. git add -A (or add the changed/created files by hand)
 3. git commit -m'Release Modyllic-#.#.#'
 4. git push
