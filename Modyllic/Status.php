@@ -10,14 +10,10 @@ class Modyllic_Status {
     static $width = 80;
     static $verbose = 0;
     static $progress = false;
-    static $isatty = false;
     static $in_file = "";
 
     static function init() {
-        if ( function_exists('posix_isatty') and posix_isatty(STDOUT) ) {
-            self::$isatty = true;
-        }
-        if ( ($cols = exec('tput cols')) !== FALSE ) {
+        if ( getenv('TERM') and ($cols = exec('tput cols')) !== FALSE ) {
             self::$width = $cols;
         }
     }
