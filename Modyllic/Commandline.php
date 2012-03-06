@@ -47,6 +47,12 @@ class Modyllic_Commandline {
             'action'      => 'Counter',
             'default'     => 0,
             ));
+        $parser->addOption('debug', array(
+            'long_name'   => '--debug',
+            'description' => 'enables further diagnostic information for debugging the parser (useful for bug reports!)',
+            'action'      => 'StoreTrue',
+            'default'     => false,
+            ));
         $parser->addOption('progress', array(
             'long_name'   => '--progress',
             'description' => 'output a progress meter to stderr',
@@ -75,6 +81,7 @@ class Modyllic_Commandline {
 
         Modyllic_Status::$verbose = $args->options['verbose'];
         Modyllic_Status::$progress = $args->options['progress'];
+        Modyllic_Status::$debug = $args->options['debug'];
         return $args;
     }
 
@@ -86,6 +93,9 @@ class Modyllic_Commandline {
         catch (Modyllic_Exception $e) {
             Modyllic_Status::clear_progress();
             Modyllic_Status::warn($e->getMessage()."\n");
+            if ( Modyllic_Status::$debug ) {
+                Modyllic_Status::warn($e->getTraceAsString()."\n");
+            }
             exit(1);
         }
         catch (Modyllic_Loader_Exception $e) {
