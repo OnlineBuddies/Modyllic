@@ -201,8 +201,7 @@ Initial release.
   </release>
   <release>
    <version>0.1.5</version>
-   </api>0.1.0</api>
-  </release>
+   <api>0.1.0</api>
    <stability>
     <release>beta</release>
     <api>beta</api>
