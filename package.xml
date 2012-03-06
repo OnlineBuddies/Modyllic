@@ -18,7 +18,7 @@
  <time>12:04:00</time>
  <!-- arbitrary version number -->
  <version>
-  <release>0.1.4</release>
+  <release>0.1.5</release>
   <api>0.1.0</api>
  </version>
  <stability>
@@ -197,6 +197,19 @@ Initial release.
 * Fix bugs in primary key handling caused by support for key lengths
 * Fix bug in how dynamically named indexes were emitted. Now use the name for the purposes of diffs but don't emit it
 * Fix the file roles   
+   </notes>
+  </release>
+  <release>
+   <version>0.1.5</release>
+   </api>0.1.0</api>
+  </release>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2999-12-31</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
+   <notes>
    </notes>
   </release>
  </changelog>
