@@ -20,16 +20,16 @@ CREATE TABLE test ( id INT );
 CREATE TABLE test2 ( id INT );
 EOSQL;
 
-$schema1 = $parser->parse( $sql );
+$schema = $parser->parse( $sql );
 
 diag("Tests of the first schema" );
 
-ok( $schema1 instanceOf Modyllic_Schema, "Parse returns an Modyllic_Schema object" );
+ok( $schema instanceOf Modyllic_Schema, "Parse returns an Modyllic_Schema object" );
 
-is( count($schema1->tables), 2, "Parsed two table" );
-is( count($schema1->routines), 0, "Parsed no routines" );
+is( count($schema->tables), 2, "Parsed two table" );
+is( count($schema->routines), 0, "Parsed no routines" );
 
-$test_table = $schema1->tables['test'];
+$test_table = $schema->tables['test'];
 ok( $test_table instanceOf Modyllic_Table, "We got an Modyllic_Schema_Table object for the table test" );
 is( $test_table->name, "test", "The name attribute got set" );
 is( $test_table->engine, "InnoDB", "The default engine got set" );
@@ -48,8 +48,14 @@ ok( is_null($column->on_update), "No on update" );
 is( $column->docs, "", "No docs" );
 is( $column->after, "", "Column is the first column" );
 
-$test_sql = <<<EOSQL
+$sql = <<<EOSQL
 CREATE TABLE test (
-    id INT
+    id INT,
+    KEY (id)
 ) ENGINE=InnoDB
 EOSQL;
+$schema = $parser->parse($sql);
+$table = $schema->tables['test'];
+$index = array_pop($table->indexes);
+is( $index->name, "id", "Generated index name is correct");
+is( $index->dynamic_name, true, "Generated index name is flagged as dynamic");
