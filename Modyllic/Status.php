@@ -10,6 +10,7 @@ class Modyllic_Status {
     static $width = 80;
     static $verbose = 0;
     static $progress = false;
+    static $debug = false;
     static $in_file = "";
 
     static function init() {
@@ -21,7 +22,13 @@ class Modyllic_Status {
     static function warn( $msg ) {
         fwrite(STDERR, $msg);
     }
-
+    
+    static function debug( $msg ) {
+        if ( self::$debug ) {
+            self::warn($msg);
+        }
+    }
+    
     static function verbose( $msg ) {
         if ( self::$verbose ) {
             self::warn($msg);
