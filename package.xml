@@ -14,12 +14,11 @@
   <email>development@online-buddies.com</email>
   <active>yes</active>
  </lead>
- <!-- these were generated when I first made this, settings these by hand is horrible, there must be a better way -->
- <date>2012-02-07</date>
- <time>16:16:00</time>
+ <date>2012-03-06</date>
+ <time>12:04:00</time>
  <!-- arbitrary version number -->
  <version>
-  <release>0.1.2</release>
+  <release>0.1.3</release>
   <api>0.1.0</api>
  </version>
  <stability>
@@ -155,6 +154,24 @@ Initial release.
 * Packaging updates to use our own channel and document releases
 * Class rename bug in SQL generators
 * Loader fix required for static tables, spread across multiple files
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.1.3</release>
+    <api>0.1.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2012-02-29</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
+   <notes>
+* Remove unused method Modyllic_Loader::from_db
+* Correct DSN loading to allow equals signs in values.
+* URL decode DSN values prior to using them.
+* Change terminal detection to only run tput if it can plausibly work.
    </notes>
   </release>
  </changelog>
