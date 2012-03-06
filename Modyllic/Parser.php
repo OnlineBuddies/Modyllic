@@ -233,8 +233,8 @@ class Modyllic_Parser {
 
     function cmd_USE() {
         $name = $this->get_ident();
-        if ( $this->schema->name == Modyllic_Schema::DEFAULT_NAME ) {
-            $this->schema->name = $name;
+        if ( $this->schema->nameIsDefault ) {
+            $this->schema->setName($name);
         }
         if ( $name != $this->schema->name ) {
             throw $this->error( "Can't USE $name when creating ".$this->schema->name );
@@ -316,8 +316,8 @@ class Modyllic_Parser {
 
     function cmd_ALTER_DATABASE() {
         $name = $this->get_ident();
-        if ( $this->schema->name == Modyllic_Schema::DEFAULT_NAME ) {
-            $this->schema->name = $name;
+        if ( $this->schema->nameIsDefault ) {
+            $this->schema->setName( $name );
         }
         if ( $name != $this->schema->name ) {
             throw $this->error( "Can't ALTER $name when creating ".$this->schema->name );
@@ -397,7 +397,7 @@ class Modyllic_Parser {
         //      [DEFAULT] {CHARACTER SET | CHARSET} [=] charset_name
         //    | [DEFAULT] COLLATE [=] collation_name
         $this->maybe('IF NOT EXISTS');
-        $this->schema->name = $this->get_ident();
+        $this->schema->setName( $this->get_ident() );
         $this->get_create_specification();
     }
 
