@@ -11,6 +11,7 @@ require_once "Modyllic/Commandline.php";
 require_once "Modyllic/Generator.php";
 require_once "Modyllic/Diff.php";
 require_once "Modyllic/SQL.php";
+require_once "Modyllic/Loader/DB.php";
 
 $args = Modyllic_Commandline::getArgs(array(
     'description' => 'Generate a PHP helper class for the stored procs in the schema',
@@ -43,24 +44,20 @@ if ( ! isset($args->options['toschema']) ) {
     $parser->displayError( 'the toschema is required');
 }
 
-if ( ! Modyllic_Schema_Loader::is_dsn($args->options['fromschema']) ) {
+if ( ! Modyllic_Loader_DB::is_dsn($args->options['fromschema']) ) {
     $parser = Modyllic_Commandline::getParser();
     $parser->displayError( 'the fromschema must be a database');
 }
 
-list( $dsn, $dbname, $user, $pass ) = Modyllic_Schema_Loader::parse_dsn($args->options['fromschema']);
+list( $driver, $dsn, $dbname, $user, $pass ) = Modyllic_Loader_DB::parse_dsn($args->options['fromschema']);
 
-$base_dsn = "mysql:";
-if ( isset($host) ) {
-    $base_dsn .= "host=$host;";
-}
-$dsn = $base_dsn . "dbname=$dbname";
 try {
     $dbh = new PDO( $dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
 }
 catch (Exception $e) {
     if ( strpos( $e->getMessage(), "Unknown database" ) !== FALSE ) {
         if ( $args->options['create'] ) {
+            $base_dsn = preg_replace("/;?dbname=[^;]+/","",$dsn);
             $dbh = new PDO( $base_dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
             $dbh->exec("CREATE DATABASE ".Modyllic_SQL::quote_ident($dbname));
         }
@@ -74,6 +71,15 @@ catch (Exception $e) {
     }
 }
 
+try {
+    $gen_class = Modyllic_Generator::dialectToClass($driver);
+}
+catch (Exception $e) {
+    /// @todo This should probably just fail out and not default to "SQL".
+    /// Also, SQL is really MySQL
+    $gen_class = Modyllic_Generator::dialectToClass("SQL");
+}
+
 $from = Modyllic_Commandline::schema( array($args->options['fromschema']) );
 
 $to   = Modyllic_Commandline::schema($args->options['toschema']);
@@ -82,13 +88,13 @@ Modyllic_Status::verbose("Comparing...\n");
 $diff = new Modyllic_Diff( $from, $to );
 
 if ( ! $diff->changeset->has_changes() ) {
-    print "-- No changes detected.\n";
+    Modyllic_Status::verbose("No changes detected.\n");
     exit(0);
 }
 
 $dbh->exec("USE ".Modyllic_SQL::quote_ident($dbname));
 
-$gen = new Modyllic_Generator_SQL();
+$gen = new $gen_class();
 foreach ( $gen->sql_header() as $sql ) {
     $dbh->exec( $sql );
 }
@@ -101,6 +107,7 @@ try {
     Modyllic_Status::$sourceIndex = 1;
     foreach ($gen->sql_commands() as $cmd) {
         Modyllic_Status::status( ++$ii, $cmds );
+        Modyllic_Status::verbose( "$cmd\n" );
         $dbh->exec($cmd);
     }
 }
