@@ -394,6 +394,7 @@ class Modyllic_Column extends Modyllic_Diffable {
 class Modyllic_Index extends Modyllic_Diffable {
     public $name  = "";
     public $docs = "";
+    public $dynamic_name = FALSE;
     public $spatial = FALSE;
     public $primary = FALSE;
     public $fulltext = FALSE;

@@ -510,7 +510,7 @@ class Modyllic_Generator_SQL {
         }
         $this->extend();
         if ( $index instanceOf Modyllic_Index_Foreign ) {
-            if ( $index->cname ) {
+            if ( ! $index->dynamic_name and $index->cname ) {
                 $this->add( "CONSTRAINT %id ", $index->cname );
             }
             $this->add( "FOREIGN KEY " );
@@ -530,7 +530,7 @@ class Modyllic_Generator_SQL {
         else {
             $this->add( "KEY " );
         }
-        if ( !$index->primary and $index->name ) {
+        if ( !$index->primary and !$index->dynamic_name and $index->name ) {
             $this->add( "%id ", $index->name );
         }
         $this->add( "(" );

@@ -987,7 +987,8 @@ class Modyllic_Parser {
                         break;
                     }
                 }
-                $key->cname = $this->gen_constraint_name($key);
+                $key->dynamic_name = true;
+                $this->gen_constraint_name($key);
                 $this->add_index( $key );
             }
             else if ( $this->cur()->token() == 'COMMENT' ) {
@@ -1018,100 +1019,113 @@ class Modyllic_Parser {
         //   | [UNIQUE|FULLTEXT] KEY ident (ident,...) [USING {BTREE|HASH}]
         $token = $this->assert_reserved();
         if ( $token == 'CONSTRAINT' or $token == 'FOREIGN KEY' ) {
-            $key = new Modyllic_Index_Foreign();
-            if ( $token == 'CONSTRAINT' ) {
-                $key->cname = $this->get_ident();
-                $token = $this->get_reserved();
-            }
-            $key->foreign = TRUE;
-
-            // The name of the regular index part, optional, before the column list
-            $name = '';
-            if ( $this->peek_next()->value() != '(' ) {
-                $name = $this->get_ident();
-            }
-
-            // If you set a constraint name it overrides any regular index
-            // part you specified.
-            if ( $key->cname ) {
-                $name = $key->cname;
-            }
-
-            // after the name, the column list is mandetory
-            $this->get_symbol('(');
-            $key->columns = $this->index_columns();
-
-            $this->get_reserved( 'REFERENCES' );
-            if ( $this->peek_next()->token() == 'WEAKLY' ) {
-                $this->get_reserved();
-                $key->weak = TRUE;
-            }
-            $key->references['table'] = $this->get_ident();
-
-            $this->get_symbol('(');
-            $key->references['columns'] = $this->get_array();
-
-            while ( ! in_array( $this->next()->value(), $this->column_term ) ) {
-                if ( $this->cur()->token() == 'ON DELETE' ) {
-                    $key->references['on_delete'] = $this->get_reserved();
-                }
-                else if ( $this->cur()->token() == 'ON UPDATE' ) {
-                    $key->reference['on_update'] = $this->get_reserved();
-                }
-                else if ( $this->cur() instanceOf Modyllic_Token_Comment ) {
-                    $key->docs .= trim( $key->docs . ' ' . $this->cur()->value() );
-                }
-                else {
-                    throw $this->error( "Error in foreign key declaration in ".$this->ctx->name.", expecting one of ".
-                        "'".implode("', '", array( 'ON DELETE', 'ON UPDATE' ) + $this->column_term )."' got ".$this->cur()->debug() );
-                }
-            }
-            $this->assert_symbol();
-            if ( ! $key->cname ) {
-                $key->cname = $this->gen_constraint_name($key);
-            }
+            $this->load_foreign_key($token);
         }
         else {
-            $key = new Modyllic_Index();
-            while ( 1 ) {
-                $this->assert_reserved();
-                if ( $token == 'PRIMARY KEY' ) {
-                    $key->primary = TRUE;
-                    $key->name = '!PRIMARY KEY';
-                    break;
-                }
-                else if ( $token == 'UNIQUE' ) {
-                    $key->unique = TRUE;
-                }
-                else if ( $token == 'FULLTEXT' ) {
-                    $key->fulltext = TRUE;
-                }
-                else if ( $token == 'SPATIAL' ) {
-                    $key->spatial = TRUE;
-                }
-                else if ( $token == 'KEY' or $token == 'INDEX' ) {
-                    break;
-                }
-                else {
-                    throw $this->error( "Error in index declaration, expected PRIMARY KEY, UNIQUE, FULLTEXT or KEY, got ".$this->cur()->debug() );
-                }
-                $token = $this->next()->token();
+            $this->load_regular_key($token);
+        }
+    }
+    
+    function load_regular_key($token) {
+        $key = new Modyllic_Index();
+        while ( 1 ) {
+            $this->assert_reserved();
+            if ( $token == 'PRIMARY KEY' ) {
+                $key->primary = TRUE;
+                $key->name = '!PRIMARY KEY';
+                break;
             }
-            if ( $this->peek_next()->value() != '(' ) {
-                $key->name = $this->get_ident();
+            else if ( $token == 'UNIQUE' ) {
+                $key->unique = TRUE;
+                if ( $this->maybe('KEY') ) {
+                    $this->assert_reserved();
+                }
+                break;
             }
-            $this->get_symbol('(');
-            $key->columns = $this->index_columns();
+            else if ( $token == 'FULLTEXT' ) {
+                $key->fulltext = TRUE;
+            }
+            else if ( $token == 'SPATIAL' ) {
+                $key->spatial = TRUE;
+            }
+            else if ( $token == 'KEY' or $token == 'INDEX' ) {
+                break;
+            }
+            else {
+                throw $this->error( "Error in index declaration, expected PRIMARY KEY, UNIQUE, FULLTEXT or KEY, got ".$this->cur()->debug() );
+            }
+            $token = $this->next()->token();
+        }
+        if ( $this->peek_next()->value() != '(' ) {
+            $key->name = $this->get_ident();
+        }
+        $this->get_symbol('(');
+        $key->columns = $this->index_columns();
 
-            if ( ! $key->name ) {
-                $key->name = $this->gen_index_name($key);
-            }
+        if ( $key->name == "" ) {
+            $this->gen_index_name($key);
+        }
 
-            if ( $this->peek_next()->token() == 'USING' ) {
-                $this->get_reserved();
-                $key->using = $this->get_reserved(array('BTREE','HASH'));
+        if ( $this->peek_next()->token() == 'USING' ) {
+            $this->get_reserved();
+            $key->using = $this->get_reserved(array('BTREE','HASH'));
+        }
+        $this->next();
+        $this->add_index( $key );
+    }
+    
+    function load_foreign_key($token) {
+        $key = new Modyllic_Index_Foreign();
+        if ( $token == 'CONSTRAINT' ) {
+            $key->cname = $this->get_ident();
+            $token = $this->get_reserved();
+        }
+        $key->foreign = TRUE;
+
+        // The name of the regular index part, optional, before the column list
+        $name = '';
+        if ( $this->peek_next()->value() != '(' ) {
+            $name = $this->get_ident();
+        }
+
+        // If you set a constraint name it overrides any regular index
+        // part you specified.
+        if ( $key->cname ) {
+            $name = $key->cname;
+        }
+
+        // after the name, the column list is mandetory
+        $this->get_symbol('(');
+        $key->columns = $this->index_columns();
+
+        $this->get_reserved( 'REFERENCES' );
+        if ( $this->peek_next()->token() == 'WEAKLY' ) {
+            $this->get_reserved();
+            $key->weak = TRUE;
+        }
+        $key->references['table'] = $this->get_ident();
+
+        $this->get_symbol('(');
+        $key->references['columns'] = $this->get_array();
+
+        while ( ! in_array( $this->next()->value(), $this->column_term ) ) {
+            if ( $this->cur()->token() == 'ON DELETE' ) {
+                $key->references['on_delete'] = $this->get_reserved();
             }
-            $this->next();
+            else if ( $this->cur()->token() == 'ON UPDATE' ) {
+                $key->reference['on_update'] = $this->get_reserved();
+            }
+            else if ( $this->cur() instanceOf Modyllic_Token_Comment ) {
+                $key->docs .= trim( $key->docs . ' ' . $this->cur()->value() );
+            }
+            else {
+                throw $this->error( "Error in foreign key declaration in ".$this->ctx->name.", expecting one of ".
+                    "'".implode("', '", array( 'ON DELETE', 'ON UPDATE' ) + $this->column_term )."' got ".$this->cur()->debug() );
+            }
+        }
+        $this->assert_symbol();
+        if ( ! $key->cname ) {
+            $this->gen_constraint_name($key);
         }
         $this->add_index( $key );
     }
@@ -1152,10 +1166,13 @@ class Modyllic_Parser {
     }
 
     function gen_constraint_name($key) {
-        return $this->ctx->gen_index_name( $this->ctx->name . "_ibfk", TRUE );
+        $key->cname = $this->ctx->gen_index_name( $this->ctx->name . "_ibfk", TRUE );
+        $key->dynamic_name = true;
     }
+
     function gen_index_name($key) {
-        return $this->ctx->gen_index_name( $key->columns[0] );
+        $key->name = $this->ctx->gen_index_name( array_shift(array_keys($key->columns)) );
+        $key->dynamic_name = true;
     }
 
     function add_foreign_key_index( $name, $key ) {
@@ -1189,13 +1206,12 @@ class Modyllic_Parser {
                     if ($matched) { break; }
                 }
             }
-            if ( ! $name ) {
-                $first = array_shift( array_keys($key->columns) );
-                $name = $this->ctx->gen_index_name($first);
-            }
             if ( ! $matched ) {
                 $regkey = new Modyllic_Index($name);
                 $regkey->columns = $key->columns;
+                if ( ! $regkey->name ) {
+                    $this->gen_index_name($regkey);
+                }
                 $this->add_index( $regkey );
             }
         }
