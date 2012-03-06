@@ -230,7 +230,7 @@ class Modyllic_Generator_SQL {
 
     function table_meta($table) {
         if ( $table->static != Modyllic_Table::STATIC_DEFAULT ) {
-            return array( "static", $table->static );
+            return array( "static"=>$table->static );
         }
         else {
             return array();
@@ -897,13 +897,10 @@ class Modyllic_Generator_SQL {
             $kind, $which );
     }
 
-    function update_meta($kind,$which,$what) {
+    function update_meta($kind,$which,array $what) {
+        $this->delete_meta($kind,$which);
         if ( count($what) > 0 ) {
-            $this->cmd( "UPDATE SQLMETA SET value=%str WHERE kind=%str AND which=%str",
-                json_encode($what), $kind, $which );
-        }
-        else {
-            $this->delete_meta($kind,$which);
+            $this->insert_meta($kind,$which,$what);
         }
     }
 
