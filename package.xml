@@ -60,20 +60,20 @@
    <file baseinstalldir="/" name="scripts/sqlpreparse" role="script" />
    <file baseinstalldir="/" name="scripts/sqlprofile" role="script" />
    <file baseinstalldir="/" name="scripts/sqltophp" role="script" />
-   <file name="test/General_Functional.t" role="data" />
-   <file name="test/SQL_Tokenizer.t" role="data" />
-   <file name="test/Quote.t" role="data" />
-   <file name="test/Types.t" role="data" />
-   <file name="testlib/README.md" role="data" />
-   <file name="testlib/testmore.php" role="data" />
-   <file name="testlib/test/inc_false.php" role="data" />
-   <file name="testlib/test/inc_true.php" role="data" />
-   <file name="testlib/test/test.php" role="data" />
-   <file name="DIALECT_SUPPORT.md" role="data" />
-   <file name="HACKING.md" role="data" />
-   <file name="LICENSE.md" role="data" />
-   <file name="LIMITATIONS.md" role="data" />
-   <file name="Makefile" role="data" />
+   <file name="Makefile" role="test" />
+   <file name="test/General_Functional.t" role="test" />
+   <file name="test/SQL_Tokenizer.t" role="test" />
+   <file name="test/Quote.t" role="test" />
+   <file name="test/Types.t" role="test" />
+   <file name="testlib/README.md" role="test" />
+   <file name="testlib/testmore.php" role="test" />
+   <file name="testlib/test/inc_false.php" role="test" />
+   <file name="testlib/test/inc_true.php" role="test" />
+   <file name="testlib/test/test.php" role="test" />
+   <file name="DIALECT_SUPPORT.md" role="doc" />
+   <file name="HACKING.md" role="doc" />
+   <file name="LICENSE.md" role="doc" />
+   <file name="LIMITATIONS.md" role="doc" />
    <file name="README.md" role="doc" />
    <file name="SCHEMA_CHANGE_EVENTS.md" role="doc" />
    <file name="SQL_DIALECT.md" role="doc" />
