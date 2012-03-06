@@ -250,6 +250,20 @@ class Modyllic_Table extends Modyllic_Diffable {
         }
         $this->indexes[$name] = $index;
         $this->last_index = $index;
+        foreach ($index->columns as $cname=>$value) {
+            if ( ! isset($this->columns[$cname]) ) {
+                throw new Exception("In table ".$this->name.", index $name, can't index unknown column $cname");
+            }
+        }
+        // If this is a primary key and has only one column then we'll flag that column as a primary key
+        if ($index->primary and count($index->columns) == 1) {
+            $name = array_shift( array_keys($index->columns) );
+            $len = array_shift( array_values($index->columns) );
+            // And if there's no length limiter on the column...
+            if ( $len === FALSE ) {
+                $this->columns[$name]->is_primary = true;
+            }
+        }
         return $index;
     }
 
@@ -341,7 +355,7 @@ class Modyllic_Table extends Modyllic_Diffable {
      */
     function match_row($row) {
         $where = array();
-        foreach ($this->primary_key() as $key) {
+        foreach ($this->primary_key() as $key=>$len) {
              $where[$key] = @$row[$key];
         }
         return $where;

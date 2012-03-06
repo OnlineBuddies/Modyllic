@@ -242,10 +242,15 @@ class Modyllic_Generator_SQL {
         $this->table_docs( $table );
         $this->extend( "CREATE TABLE %id (", $table->name );
         $this->indent();
-        $entries = count($table->columns) + count($table->indexes);
+        $indexes = $table->indexes;
+        $entries = count($table->columns) + count($indexes);
         $completed = 0;
         foreach ( $table->columns as $column ) {
             $this->create_column( $column );
+            if ( $column->primary ) {
+                unset($indexes['!PRIMARY KEY']);
+                $entries --;
+            }
             if ( ++$completed < $entries ) {
                 $this->add(",");
             }
@@ -253,8 +258,8 @@ class Modyllic_Generator_SQL {
                 $this->add( " -- ".$column->docs );
             }
         }
-        ksort($table->indexes);
-        foreach ( $table->indexes as $index ) {
+        ksort($indexes);
+        foreach ( $indexes as $index ) {
             $this->create_index( $index );
             if ( ++$completed < $entries ) {
                 $this->add(",");
@@ -308,7 +313,7 @@ class Modyllic_Generator_SQL {
             }
 
             $tometa = $this->table_meta($table);
-            $frommeta = $this->table_meta($table);
+            $frommeta = $this->table_meta($table->from);
             if ( $tometa != $frommeta ) {
                 if ( count($tometa) == 0 ) {
                     $this->delete_meta( "TABLE", $table->name );
@@ -452,6 +457,9 @@ class Modyllic_Generator_SQL {
         }
         if ( $column->on_update ) {
             $this->add( " ON UPDATE %lit", $column->on_update );
+        }
+        if ( $column->is_primary ) {
+            $this->add( " PRIMARY KEY" );
         }
         return $this;
     }
