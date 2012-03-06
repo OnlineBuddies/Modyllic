@@ -48,7 +48,7 @@ class Modyllic_Loader_DB {
             $password = null;
             $dbname = null;
             $opts = array();
-            foreach ( explode(';',$matches[2]) as $opt_pair ) {
+            foreach ( preg_split('/[:;]/',$matches[2]) as $opt_pair ) {
                 list($name,$value) = explode('=',$opt_pair,2);
                 $value = rawurldecode($value);
                 if ( $name == 'username' ) {

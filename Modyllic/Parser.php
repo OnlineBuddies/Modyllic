@@ -948,7 +948,7 @@ class Modyllic_Parser {
                 $is_primary = true;
             }
             else if ( $this->cur()->token() == 'UNIQUE' ) {
-                if ( $this->peek_next()->token() == 'KEY' ) {
+                if ( $this->maybe('KEY') ) {
                     $this->get_reserved();
                 }
                 $is_unique = true;
