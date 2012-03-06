@@ -266,10 +266,18 @@ class Modyllic_Diff {
                     $exists = FALSE;
                     foreach ( $from_data as $fromrow ) {
                         $match = TRUE;
-                        foreach ( $primary as $key ) {
-                            if ( @$torow[$key] != @$fromrow[$key] ) {
-                                $match = FALSE;
-                                break;
+                        foreach ( $primary as $key => $len ) {
+                            if ( $len === FALSE ) {
+                                if ( @$torow[$key] != @$fromrow[$key] ) {
+                                    $match = FALSE;
+                                    break;
+                                }
+                            }
+                            else {
+                                if ( @substr($torow[$key],0,$len) != @substr($fromrow[$key],0,$len) ) {
+                                    $match = FALSE;
+                                    break;
+                                }
                             }
                         }
                         if ( $match ) {
@@ -295,10 +303,18 @@ class Modyllic_Diff {
                     $exists = FALSE;
                     foreach ( $to_data as $torow ) {
                         $match = TRUE;
-                        foreach ( $primary as $key ) {
-                            if ( @$torow[$key] != @$fromrow[$key] ) {
-                                $match = FALSE;
-                                break;
+                        foreach ( $primary as $key=>$len ) {
+                            if ( $len === FALSE ) {
+                                if ( @$torow[$key] != @$fromrow[$key] ) {
+                                    $match = FALSE;
+                                    break;
+                                }
+                            }
+                            else {
+                                if ( @substr($torow[$key],0,$len) != @substr($fromrow[$key],0,$len) ) {
+                                    $match = FALSE;
+                                    break;
+                                }
                             }
                         }
                         if ( $match ) {
