@@ -35,11 +35,19 @@ class Modyllic_Schema extends Modyllic_Diffable {
     public $collate = self::DEFAULT_COLLATE;
     public $docs = "";
     public $sqlmeta_exists = FALSE;
+    
+    function nameIsDefault() {
+        return ($this->name == self::DEFAULT_NAME);
+    }
+    
+    function setName( $name ) {
+        $this->nameIsDefault = ( $name == self::DEFAULT_NAME );
+        $this->name = $name;
+    }
 
     function merge( $schema ) {
         if ( $this->nameIsDefault ) {
-            $this->name = $schema->name;
-            $this->nameIsDefault = $schema->nameIsDefault;
+            $this->setName($schema->name);
         }
         if ( $this->charset == self::DEFAULT_CHARSET ) {
             $this->charset = $schema->charset;
