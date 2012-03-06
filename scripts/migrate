@@ -107,7 +107,6 @@ try {
     Modyllic_Status::$sourceIndex = 1;
     foreach ($gen->sql_commands() as $cmd) {
         Modyllic_Status::status( ++$ii, $cmds );
-        Modyllic_Status::verbose( "$cmd\n" );
         $dbh->exec($cmd);
     }
 }
