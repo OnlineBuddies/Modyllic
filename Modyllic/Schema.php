@@ -385,6 +385,7 @@ class Modyllic_Column extends Modyllic_Diffable {
     public $on_update;
     public $docs = "";
     public $after;
+    public $is_primary;
 
     /**
      * @param string $name
