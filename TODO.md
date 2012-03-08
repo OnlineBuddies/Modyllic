@@ -22,16 +22,17 @@ into multiple files.
   * Have --no-procs and --no-tables options to skip generating proc and
     table changes.
 
-Make tools accept a DSN instead of host+dbname (maybe) 
-
-Write the quote tests again
-
 Optionally push static tables into static PHP classes? Maybe...
 
-Important refactoring concerns:
+Refactoring concerns:
 
-  * Change the way columns are added-- don't check for matching indexes,
-    instead add all indexes blindly and consolidate duplicates after.
+  * Rename PlainSQL to something like Bare or NoMeta
+  * Rename StrictSQL to something like Assert
+
+Documentation concerns:
+
+  * List dialects in help
+  * Describe schema specifiers
 
 Important completeness concerns:
 
@@ -45,5 +46,3 @@ Generator features/cleanup:
 Wishlist Items:
 
   * Column order only changes, maybe
-
-
