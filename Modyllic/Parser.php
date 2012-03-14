@@ -86,7 +86,7 @@ class Modyllic_Parser {
     function next($whitespace=false) {
         $next = $this->tok->next($whitespace);
         if ( $next instanceOf Modyllic_Token_Error ) {
-            throw $this->error( "Syntax error" );
+            throw $this->error( $next->value() );
         }
         return $next;
     }
