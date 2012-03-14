@@ -197,18 +197,23 @@ class Modyllic_Token_EOF extends Modyllic_Token_EOC {}
  * one it will always be returned by next().
  */
 class Modyllic_Token_Error extends Modyllic_Token_Except {
-    private $row;
-    private $col;
+    protected $row;
+    protected $col;
     function __construct($pos, $row,$col) {
         $this->pos = $pos;
         $this->row = $row;
         $this->col = $col;
     }
     function value() {
-        return "Syntax Error at ".$this->row.", ".$this->col;
+        return "Syntax error";
     }
 }
 
+class Modyllic_Token_Delimiter_Error extends Modyllic_Token_Error {
+    function value() {
+        return "Invalid delimiter declaration";
+    }
+}
 
 class Modyllic_Token_SOC extends Modyllic_Token_EOC {}
 
@@ -374,7 +379,7 @@ class Modyllic_Tokenizer {
         return isset($this->delimiter) and preg_match( "/\G\Q$this->delimiter\E/", $this->cmdstr, $matches, 0, $this->pos );
     }
     function is_new_delimiter(&$matches) {
-        return $this->prev instanceOf Modyllic_Token_SOC and preg_match( "/\G(DELIMITER\s+(\S+)\s*(?:\n|\z))/i", $this->cmdstr, $matches, 0, $this->pos);
+        return $this->prev instanceOf Modyllic_Token_SOC and preg_match( "/\G(DELIMITER\s+(\S+)([^\n]*?)(?=\n|\z))/i", $this->cmdstr, $matches, 0, $this->pos);
     }
     function is_string() {
         return isset( $this->quote_chars[$this->cmdstr[$this->pos]] );
@@ -537,9 +542,16 @@ class Modyllic_Tokenizer {
                 $this->cur = new Modyllic_Token_Whitespace( $this->pos, $matches[1] );
             }
             else if ( $this->is_new_delimiter($matches) ) {
-                $this->pos += strlen($matches[1]);
                 $this->delimiter = $matches[2];
-                $this->cur = new Modyllic_Token_NewDelim( $this->pos, $matches[1]);
+                $this->pos += strlen($matches[1]);
+                if ( preg_match("/\S/",$matches[3], $offset, PREG_OFFSET_CAPTURE) ) {
+                    $this->pos -= strlen($matches[3]);
+                    $this->pos += $offset[0][1];
+                    $this->cur = new Modyllic_Token_Delimiter_Error($this->pos, $this->line(), $this->col() );
+                }
+                else {
+                    $this->cur = new Modyllic_Token_NewDelim( $this->pos, $matches[1]);
+                }
             }
             else if ( $this->is_reserved($matches) ) {
                 $this->pos += strlen($matches[1]);
