@@ -59,3 +59,17 @@ $table = $schema->tables['test'];
 $index = array_pop($table->indexes);
 is( $index->name, "id", "Generated index name is correct");
 is( $index->dynamic_name, true, "Generated index name is flagged as dynamic");
+
+$msg = "Trailing words on DELIMITERs produce reasonable error messages";
+try {
+    $sql = 'DELIMITER ; |';
+    $schema = $parser->parse($sql);
+    fail($msg);
+}
+catch (Modyllic_Exception $e) {
+    if ( ! ok( ! preg_match("/Modyllic_Token/",$e->getMessage()), $msg ) ) {
+        foreach (explode("\n",$e->getMessage()) as $line) {
+            diag($line);
+        }
+    }
+}
