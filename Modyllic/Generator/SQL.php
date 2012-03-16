@@ -247,7 +247,7 @@ class Modyllic_Generator_SQL {
         $completed = 0;
         foreach ( $table->columns as $column ) {
             $this->create_column( $column );
-            if ( $column->primary ) {
+            if ( $column->is_primary ) {
                 unset($indexes['!PRIMARY KEY']);
                 $entries --;
             }
