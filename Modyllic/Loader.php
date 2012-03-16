@@ -22,13 +22,6 @@ class Modyllic_Loader_Exception extends Exception {}
 class Modyllic_Loader {
 
     static function determine_loader($source) {
-        if ( is_link($source) ) {
-            $dir = dirname($source);
-            if ( $dir == "" ) {
-                $dir = ".";
-            }
-            $source = $dir . "/" . readlink($source);
-        }
         if ( is_dir($source) ) {
             $loader = "Modyllic_Loader_Dir";
         }
