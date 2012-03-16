@@ -1133,21 +1133,11 @@ class Modyllic_Generator_PHP {
                      ->add_str('General error while fetching return value of '.$routine->name.
                          '; this usually means that you declared this routine as having a return value '.
                          'but it does not actually select any data before completing.')
-                     ->sep()
-                     ->add('0')
-                     ->sep()
-                     ->add_var('e')
                    ->end_new()
                  ->end_throw()
                ->begin_else()
                  ->begin_throw()
-                   ->begin_new('PDOException')
-                     ->add_str('Error while fetching return value of '.$routine->name)
-                     ->sep()
-                     ->add('0')
-                     ->sep()
-                     ->add_var('e')
-                   ->end_new()
+                   ->add_var('e')
                  ->end_throw()
                ->end_if()
              ->end_try();
