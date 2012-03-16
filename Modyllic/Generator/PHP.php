@@ -1214,6 +1214,12 @@ class Modyllic_Generator_PHP {
                ->end_method()
              ->end_assign();
         $this->method('sth','closeCursor');
+        $this->begin_cmd( 'if (! isset(' )
+               ->add_var('row')
+             ->end_cmd(') ) {')
+             ->begin_block()
+               ->cmd('return',';')
+             ->end_block('}');
         $this->begin_assert()
                ->begin_cmd( 'isset(' )
                  ->index( 'row', $routine->returns['column'] )
