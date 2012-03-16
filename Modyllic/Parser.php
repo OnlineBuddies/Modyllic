@@ -208,12 +208,15 @@ class Modyllic_Parser {
             $this->assert_symbol();
             $columns = $this->get_array();
             $this->get_reserved('VALUES');
-            $this->get_symbol('(');
-            $values = $this->get_token_array();
-            if ( count($columns) != count($values) ) {
-                throw $this->error("INSERT INTO column count doesn't match value count" );
-            }
-            $row = array_combine( $columns, $values );
+            do {
+                $this->get_symbol('(');
+                $values = $this->get_token_array();
+                if ( count($columns) != count($values) ) {
+                    throw $this->error("INSERT INTO column count doesn't match value count" );
+                }
+                $row = array_combine( $columns, $values );
+                $table->add_row( $row );
+            } while ($this->maybe(','));
         }
         else if ( $this->maybe('SET') ) {
            $this->assert_reserved();
@@ -224,11 +227,11 @@ class Modyllic_Parser {
                 $value = $this->next();
                 $row[$col] = $value;
             }
+            $table->add_row( $row );
         }
         else {
             throw $this->error( "Expected '(col_names) VALUES (values)' or 'SET col_name=value,...'" );
         }
-        $table->add_row( $row );
     }
 
     function cmd_USE() {
