@@ -47,7 +47,7 @@ class Modyllic_Loader {
             Modyllic_Status::$sourceIndex ++;
             list($source,$loader) = self::determine_loader($source);
             if ( isset($loader) ) {
-                $loader::load($source,$schema);
+                call_user_func(array($loader,'load'),$source,$schema);
             }
             else {
                 throw new Modyllic_Loader_Exception("Could not load $source, file or directory not found");
