@@ -14,8 +14,8 @@
   <email>development@online-buddies.com</email>
   <active>yes</active>
  </lead>
- <date>2012-03-06</date>
- <time>12:04:00</time>
+ <date>2012-03-19</date>
+ <time>12:25:00</time>
  <!-- arbitrary version number -->
  <version>
   <release>0.1.5</release>
@@ -27,9 +27,12 @@
  </stability>
  <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
  <notes>
-* Packaging updates to use our own channel and document releases
-* Class rename bug in SQL generators
-* Loader fix required for static tables, spread across multiple files
+* Add IF EXISTS to events. Fixes #93.
+* Stop using 5.3 Exception form and just rethrow non-general errors
+* RETURNS COLUMN assertions should allow empty result sets (#56)
+* Implement support for extended inserts (#88)
+* Fix missing is_primary attribute on columns
+* Improve error messages for invalid delimiters (#82)
  </notes>
  <contents>
   <dir name="/">
@@ -65,6 +68,7 @@
    <file name="test/SQL_Tokenizer.t" role="test" />
    <file name="test/Quote.t" role="test" />
    <file name="test/Types.t" role="test" />
+   <file name="test/Static_Tables.t" role="test" />
    <file name="test/bugs/Create_Index_Len.t" role="test" />
    <file name="testlib/README.md" role="test" />
    <file name="testlib/testmore.php" role="test" />
@@ -206,9 +210,15 @@ Initial release.
     <release>beta</release>
     <api>beta</api>
    </stability>
-   <date>2999-12-31</date>
+   <date>2012-03-19</date>
    <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
    <notes>
+* Add IF EXISTS to events. Fixes #93.
+* Stop using 5.3 Exception form and just rethrow non-general errors
+* RETURNS COLUMN assertions should allow empty result sets (#56)
+* Implement support for extended inserts (#88)
+* Fix missing is_primary attribute on columns
+* Improve error messages for invalid delimiters (#82)
    </notes>
   </release>
  </changelog>
