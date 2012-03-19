@@ -9,7 +9,7 @@
 
 require_once dirname(__FILE__)."/../testlib/testmore.php";
 
-plan(20);
+plan(11);
 
 require_ok("Modyllic/Parser.php");
 
