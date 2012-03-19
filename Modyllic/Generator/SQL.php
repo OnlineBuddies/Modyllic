@@ -887,7 +887,7 @@ class Modyllic_Generator_SQL {
     }
 
     function drop_event( $event ) {
-        $this->cmd( "DROP EVENT %id", $event->name );
+        $this->cmd( "DROP EVENT IF EXISTS %id", $event->name );
         return $this;
     }
 
