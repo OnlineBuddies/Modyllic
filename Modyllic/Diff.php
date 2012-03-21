@@ -116,6 +116,7 @@ class Modyllic_Diff {
             }
             $fromview = $this->from->views[$name];
             if ( ! $toview->equalTo($fromview) ) {
+                $toview->from = $fromview;
                 $this->changeset->update_view( $toview );
             }
         }
@@ -392,6 +393,27 @@ class Modyllic_Changeset {
      */
     function update_table( $table ) {
         $this->update['tables'][$table->name] = $table;
+    }
+
+    /**
+     * @param Modyllic_View $view
+     */
+    function add_view( $view ) {
+        $this->add['views'][$view->name] = $view;
+    }
+
+    /**
+     * @param Modyllic_View_Changeset $view
+     */
+    function update_view( $view ) {
+        $this->update['views'][$view->name] = $view;
+    }
+
+    /**
+     * @param Modyllic_View $view
+     */
+    function remove_view( $view ) {
+        $this->remove['views'][$view->name] = $view;
     }
 
     /**
