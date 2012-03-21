@@ -131,6 +131,30 @@ class Modyllic_Diff {
             }
         }
 
+        # New and updated triggers
+        foreach ($this->to->triggers as $name=>$totrigger) {
+            if ( ! isset($this->from->triggers[$name]) ) {
+                $this->changeset->add_trigger($totrigger);
+                continue;
+            }
+            $fromtrigger = $this->from->triggers[$name];
+            if ( ! $totrigger->equalTo($fromtrigger) ) {
+                $totrigger->from = $fromtrigger;
+                $this->changeset->update_trigger( $totrigger );
+            }
+        }
+        # Deleted triggers
+        foreach ($this->from->triggers as $name=>$fromtrigger) {
+            if ( ! isset($this->to->triggers[$name]) ) {
+                if ( isset($this->to->tables[$name]) ) {
+                    # If a table exists for this trigger, then we'll ignore this
+                }
+                else {
+                    $this->changeset->remove_trigger($fromtrigger);
+                }
+            }
+        }
+
         # Find removed tables
         foreach ($this->from->tables as $name=>$table) {
             if ( ! isset($this->to->tables[$name]) ) {
@@ -354,18 +378,21 @@ class Modyllic_Changeset {
             "routines"  => array(),
             "events" => array(),
             "views"  => array(),
+            "triggers" => array(),
             );
         $this->remove = array(
             "tables" => array(),
             "routines"  => array(),
             "events" => array(),
             "views"  => array(),
+            "triggers" => array(),
             );
         $this->update = array(
             "tables" => array(),
             "routines"  => array(),
             "events" => array(),
             "views"  => array(),
+            "triggers" => array(),
             );
         $this->schema = new Modyllic_Schema_Changeset();
     }
@@ -440,15 +467,35 @@ class Modyllic_Changeset {
     }
 
     /**
+     * @param Modyllic_Trigger $trigger
+     */
+    function add_trigger( $trigger ) {
+        $this->add['triggers'][$trigger->name] = $trigger;
+    }
+
+    /**
+     * @param Modyllic_Trigger_Changeset $trigger
+     */
+    function update_trigger( $trigger ) {
+        $this->update['triggers'][$trigger->name] = $trigger;
+    }
+
+    /**
+     * @param Modyllic_Trigger $trigger
+     */
+    function remove_trigger( $trigger ) {
+        $this->remove['triggers'][$trigger->name] = $trigger;
+    }
+
+    /**
      * Check to see if this object actually contains any changes
      */
     function has_changes() {
-        $changed = (count($this->add['tables'])    + count($this->add['routines'])+
-                    count($this->add['events'])    + count($this->add['views'])+
-                    count($this->remove['tables']) + count($this->remove['routines'])+
-                    count($this->remove['events']) + count($this->remove['views'])+
-                    count($this->update['tables']) + count($this->update['routines'])+
-                    count($this->update['events']) + count($this->update['views'])
+        $changed = (count($this->add['tables'  ]) + count($this->update['tables'  ]) + count($this->remove['tables'  ]) +
+                    count($this->add['routines']) + count($this->update['routines']) + count($this->remove['routines']) +
+                    count($this->add['events'  ]) + count($this->update['events'  ]) + count($this->remove['events'  ]) +
+                    count($this->add['views'   ]) + count($this->update['views'   ]) + count($this->remove['views'   ]) +
+                    count($this->add['triggers']) + count($this->update['triggers']) + count($this->remove['triggers'])
                     );
         return ($changed != 0 or $this->create_sqlmeta or isset($this->schema->charset) or isset($this->schema->collate));
     }
