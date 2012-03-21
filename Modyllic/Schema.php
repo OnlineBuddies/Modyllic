@@ -58,16 +58,16 @@ class Modyllic_Schema extends Modyllic_Diffable {
         if ( $this->docs == "" ) {
             $this->docs = $schema->docs;
         }
-        foreach ($schema->tables as &$table) {
+        foreach ($schema->tables as $table) {
             $this->add_table($table);
         }
-        foreach ($schema->routines as &$routine) {
+        foreach ($schema->routines as $routine) {
             $this->add_routine($routine);
         }
-        foreach ($schema->views as &$view) {
+        foreach ($schema->views as $view) {
             $this->add_view($view);
         }
-        foreach ($schema->events as &$event) {
+        foreach ($schema->events as $event) {
             $this->add_event($event);
         }
         if ($schema->sqlmeta_exists) {
