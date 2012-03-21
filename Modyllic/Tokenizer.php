@@ -689,6 +689,7 @@ class Modyllic_Tokenizer {
     static private $reserved_words_re;
     static private function reserved_words() {
         return array(
+            "AFTER",
             "ALGORITHM",
             "ALIASES", // Special
             "ALTER",
@@ -699,6 +700,7 @@ class Modyllic_Tokenizer {
             "AT",
             "AVG_ROW_LENGTH",
             "BINARY",
+            "BEFORE",
             "BEGIN",
             "BIGINT",
             "BINARY",
@@ -740,6 +742,7 @@ class Modyllic_Tokenizer {
             "DECIMAL",
             "DEFAULT",
             "DEFINER",
+            "DELETE",
             "DELIMITER",
             "DETERMINISTIC",
             "DISABLE",
@@ -763,6 +766,7 @@ class Modyllic_Tokenizer {
             "FLOAT",
             "FULLTEXT",
             "FUNCTION",
+            "FOR EACH ROW",
             "FOREIGN KEY",
             "GEOMETRY",
             "HASH",
@@ -776,6 +780,7 @@ class Modyllic_Tokenizer {
             "INDEX",
             "INNODB",
             "INOUT",
+            "INSERT",
             "INSERT INTO",
             "INT",
             "INTEGER",
@@ -853,6 +858,7 @@ class Modyllic_Tokenizer {
             "TINYTEXT",
             "TRANSACTION ISOLATION LEVEL",
             "TRUNCATE",
+            "TRIGGER",
             "UNDEFINED",
             "UNICODE",
             "UNIQUE",
