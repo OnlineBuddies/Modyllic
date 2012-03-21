@@ -46,7 +46,7 @@ class Modyllic_Diff {
         }
 
         // If our metadata table doesn't yet exist, create it
-        if ( ! $this->from->sqlmeta_exists ) {
+        if ( ! $this->from->sqlmeta_exists and $this->sqlmeta_exists ) {
             $this->changeset->create_sqlmeta = TRUE;
 
         }
