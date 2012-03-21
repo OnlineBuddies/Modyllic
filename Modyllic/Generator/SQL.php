@@ -29,6 +29,7 @@ class Modyllic_Generator_SQL {
             $this->create_sqlmeta();
         }
 
+        $this->drop_triggers( $diff->changeset->remove['triggers'] );
         $this->drop_events( $diff->changeset->remove['events'] );
         $this->drop_routines( $diff->changeset->remove['routines'] );
         $this->drop_views( $diff->changeset->remove['views'] );
@@ -38,11 +39,13 @@ class Modyllic_Generator_SQL {
         $this->create_views( $diff->changeset->add['views'] );
         $this->create_routines( $diff->changeset->add['routines'] );
         $this->create_events( $diff->changeset->add['events'] );
+        $this->create_triggers( $diff->changeset->add['triggers'] );
 
         $this->alter_tables( $diff->changeset->update['tables'] );
         $this->alter_views( $diff->changeset->update['views'] );
         $this->alter_routines( $diff->changeset->update['routines'] );
         $this->alter_events( $diff->changeset->update['events'] );
+        $this->alter_triggers( $diff->changeset->update['triggers'] );
         return $this;
     }
 
@@ -60,6 +63,7 @@ class Modyllic_Generator_SQL {
         $this->create_views( $schema->views );
         $this->create_routines( $schema->routines );
         $this->create_events( $schema->events );
+        $this->create_triggers( $schema->triggers );
         return $this;
     }
 
@@ -87,6 +91,7 @@ class Modyllic_Generator_SQL {
     }
 
     function drop( Modyllic_Schema $schema ) {
+        $this->drop_triggers( $schema->triggers );
         $this->drop_events( $schema->events );
         $this->drop_routines( $schema->routines );
         $this->drop_views( $schema->views );
@@ -222,6 +227,29 @@ class Modyllic_Generator_SQL {
     function drop_events( $events ) {
         foreach ( array_reverse($events) as $event ) {
             $this->drop_event($event);
+        }
+        return $this;
+    }
+
+// TRIGGERS
+
+    function create_triggers( $triggers ) {
+        foreach ( $triggers as $trigger ) {
+            $this->create_trigger($trigger);
+        }
+        return $this;
+    }
+
+    function alter_triggers( $triggers ) {
+        foreach ( $triggers as $trigger ) {
+            $this->alter_trigger($trigger);
+        }
+        return $this;
+    }
+
+    function drop_triggers( $triggers ) {
+        foreach ( array_reverse($triggers) as $trigger ) {
+            $this->drop_trigger($trigger);
         }
         return $this;
     }
@@ -841,6 +869,26 @@ class Modyllic_Generator_SQL {
     function drop_procedure( $proc ) {
         $this->cmd( "DROP PROCEDURE IF EXISTS %id", $proc->name );
         return $this;
+    }
+
+// TRIGGER
+
+    function create_trigger( $trigger ) {
+        $this->begin_cmd( "CREATE TRIGGER %id", $trigger->name );
+        $this->undent();
+        $this->extend( "%lit %lit ON %id", $trigger->time, $trigger->event, $trigger->table );
+        $this->extend( "FOR EACH ROW %lit", $trigger->body );
+        $this->end_cmd();
+        return $this;
+    }
+    
+    function alter_trigger( $trigger ) {
+        $this->drop_trigger( $trigger->from );
+        $this->create_trigger( $trigger );
+    }
+    
+    function drop_trigger( $trigger ) {
+        $this->cmd( "DROP TRIGGER IF EXISTS %id", $trigger->name );
     }
 
 // EVENT

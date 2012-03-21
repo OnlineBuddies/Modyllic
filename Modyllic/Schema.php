@@ -26,6 +26,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     public $routines = array();
     public $views = array();
     public $events = array();
+    public $triggers = array();
     const DEFAULT_NAME = "database";
     public $name = self::DEFAULT_NAME;
     public $nameIsDefault = true;
@@ -70,6 +71,9 @@ class Modyllic_Schema extends Modyllic_Diffable {
         foreach ($schema->events as &$event) {
             $this->add_event($event);
         }
+        foreach ($schema->triggers as $trigger) {
+            $this->add_trigger($trigger);
+        }
         if ($schema->sqlmeta_exists) {
             $this->sqlmeta_exists = $schema->sqlmeta_exists;
         }
@@ -97,6 +101,14 @@ class Modyllic_Schema extends Modyllic_Diffable {
     function add_event( $event ) {
         $this->events[$event->name] = $event;
         return $event;
+    }
+    
+    /**
+     * @param Modyllic_Trigger $trigger
+     */
+    function add_trigger( $trigger ) {
+        $this->triggers[$trigger->name] = $trigger;
+        return $trigger;
     }
 
     /**
@@ -181,6 +193,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
         if ( count($this->tables) != count($other->tables) ) { return FALSE; }
         if ( count($this->routines) != count($other->routines) ) { return FALSE; }
         if ( count($this->events) != count($other->events) ) { return FALSE; }
+        if ( count($this->triggers) != count($other->triggers) ) { return FALSE; }
         if ( count($this->views) != count($other->views) ) { return FALSE; }
         foreach ($this->tables as $key=>&$table) {
             if ( ! $table->equalTo( $other->tables[$key] ) ) { return FALSE; }
@@ -530,6 +543,33 @@ class Modyllic_Event extends Modyllic_CodeBody {
         if ( $this->schedule != $other->schedule ) { return FALSE; }
         if ( $this->preserve != $other->preserve ) { return FALSE; }
         if ( $this->status != $other->status ) { return FALSE; }
+        return TRUE;
+    }
+}
+
+/**
+ * A collection of attributes describing an event
+ */
+class Modyllic_Trigger extends Modyllic_CodeBody {
+    public $name;
+    public $time;
+    public $event;
+    public $table;
+    public $body;
+    public $docs = "";
+
+    /**
+     * @param string $name
+     */
+    function __construct($name) {
+        $this->name = $name;
+    }
+
+    function equalTo($other) {
+        if ( ! parent::equalTo($other)     ) { return FALSE; }
+        if ( $this->time != $other->time   ) { return FALSE; }
+        if ( $this->event != $other->event ) { return FALSE; }
+        if ( $this->body != $other->body   ) { return FALSE; }
         return TRUE;
     }
 }

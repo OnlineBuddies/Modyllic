@@ -275,6 +275,9 @@ class Modyllic_Parser {
             case 'EVENT':
                 unset($this->schema->events[$name]);
                 break;
+            case 'TRIGGER':
+                unset($this->schema->triggers[$name]);
+                break;
             case 'PROCEDURE':
             case 'FUNCTION':
                 unset($this->schema->routines[$name]);
@@ -454,6 +457,18 @@ class Modyllic_Parser {
             $this->assert_reserved();
             $this->get_event_body();
         }
+    }
+
+    function cmd_CREATE_TRIGGER() {
+        // TRIGGER trigger_name trigger_time trigger_event
+        //  ON tbl_name FOR EACH ROW trigger_body
+        $trigger = $this->schema->add_trigger( new Modyllic_Trigger( $this->get_ident() ) );
+        $trigger->time = $this->get_reserved(array('BEFORE','AFTER'));
+        $trigger->event = $this->get_reserved(array('INSERT','UPDATE','DELETE'));
+        $this->get_reserved('ON');
+        $trigger->table = $this->get_ident();
+        $this->get_reserved('FOR EACH ROW');
+        $trigger->body = trim($this->rest());
     }
 
     function cmd_CREATE_EVENT() {
