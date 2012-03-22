@@ -51,24 +51,12 @@ if ( ! Modyllic_Loader_DB::is_dsn($args->options['fromschema']) ) {
 
 list( $driver, $dsn, $dbname, $user, $pass ) = Modyllic_Loader_DB::parse_dsn($args->options['fromschema']);
 
-try {
-    $dbh = new PDO( $dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
-}
-catch (Exception $e) {
-    if ( strpos( $e->getMessage(), "Unknown database" ) !== FALSE ) {
-        if ( $args->options['create'] ) {
-            $base_dsn = preg_replace("/;?dbname=[^;]+/","",$dsn);
-            $dbh = new PDO( $base_dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
-            $dbh->exec("CREATE DATABASE ".Modyllic_SQL::quote_ident($dbname));
-        }
-        else {
-            print $e->getMessage()."\n";
-            exit(1);
-        }
-    }
-    else {
-        throw $e;
-    }
+$dbh = new PDO( $dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
+$sth = $dbh->prepare('SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME=?');
+$sth->execute(array($dbname));
+list($count) = $sth->fetch(PDO::FETCH_NUM);
+if ( $count == 0 ) {
+    $dbh->exec("CREATE DATABASE ".Modyllic_SQL::quote_ident($dbname));
 }
 
 try {
