@@ -36,8 +36,7 @@ $args = Modyllic_Commandline::getArgs(array(
         )));
 
 if ( (isset($args->options['fromschema']) or isset($args->options['toschema'])) and isset($args->args['fromschema']) ) {
-    $parser = Modyllic_Commandline::getParser();
-    $parser->displayError( "You can't specify a schema both positionally and via options" );
+    Modyllic_Commandline::displayError( "You can't specify a schema both positionally and via options" );
 }
 
 $fromschema = array();
@@ -48,8 +47,7 @@ if ( isset($args->options['fromschema']) ) {
     $fromschema += $args->options['fromschema'];
 }
 if ( count($fromschema) == 0 ) {
-    $parser = Modyllic_Commandline::getParser();
-    $parser->displayError( 'You must specify a from schema to compare');
+    Modyllic_Commandline::displayError( 'You must specify a from schema to compare');
 }
 
 $toschema = array();
@@ -60,8 +58,7 @@ if ( isset($args->options['toschema']) ) {
     $toschema += $args->options['toschema'];
 }
 if ( count($fromschema) == 0 ) {
-    $parser = Modyllic_Commandline::getParser();
-    $parser->displayError( 'You must specify a to schema to compare');
+    Modyllic_Commandline::displayError( 'You must specify a to schema to compare');
 }
 
 $from = Modyllic_Commandline::schema($fromschema);
