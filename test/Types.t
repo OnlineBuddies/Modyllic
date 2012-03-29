@@ -11,8 +11,8 @@ require_once dirname(__FILE__)."/../testlib/testmore.php";
 
 $sql_types = array(
     "BIT"              => "Modyllic_Bit",
-    "BOOL"             => "Modyllic_TinyInt",
-    "BOOLEAN"          => "Modyllic_TinyInt",
+    "BOOL"             => "Modyllic_Boolean",
+    "BOOLEAN"          => "Modyllic_Boolean",
     "TINYINT"          => "Modyllic_TinyInt",
     "SMALLINT"         => "Modyllic_SmallInt",
     "MEDIUMINT"        => "Modyllic_MediumInt",
@@ -51,7 +51,7 @@ $sql_types = array(
     );
 
 
-plan( 8 + count($sql_types) );
+plan( 10 + count($sql_types) );
 
 require_ok("Modyllic/Types.php");
 
@@ -68,6 +68,17 @@ try {
 catch (Exception $e) {
     is( $e->getMessage(), "Unknown SQL type: BOGUS", "Creating a bogus type throws exception" );
 }
+
+$bool = Modyllic_Type::create("BOOLEAN");
+is( $bool->length, 1, "Boolean always have a length of 1");
+is( $bool->toSql(), "BOOLEAN", "Boolean types properly become themselves");
+$tinyint = Modyllic_Type::create("TINYINT");
+ok( $bool->isaEquivalent($tinyint), "BOOLEAN as a type is equivalent of TINYINT");
+ok( !$bool->equalTo($tinyint), "A full type declaration of BOOLEAN is not the same as just TINYINT");
+ok( !$tinyint->equalTo($bool), "A full type declaration of just TINYINT is not the same as BOOLEAN");
+$tinyint->length = 1;
+ok( $bool->equalTo($tinyint), "A full type declaration of BOOLEAN is the same as TINYINT(1)");
+ok( $tinyint->equalTo($bool), "A full type declaration of TINYINT(1) is the same as BOOLEAN");
 
 $bit = Modyllic_Type::create("BIT");
 is( $bit->name, "BIT", "Name property is set");
