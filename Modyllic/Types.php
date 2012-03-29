@@ -16,6 +16,7 @@ class Modyllic_Type {
                 return new Modyllic_Bit($type);
             case "BOOL":
             case "BOOLEAN":
+                return new Modyllic_Boolean($type);
             case "TINYINT":
                 return new Modyllic_TinyInt($type);
             case "SMALLINT":
@@ -95,8 +96,11 @@ class Modyllic_Type {
         return $this->name;
     }
     function equalTo($other) {
-        if ( get_class($this) != get_class($other) ) { return FALSE; }
+        if ( !$this->isaEquivalent($other) and !$other->isaEquivalent($this) ) { return FALSE; }
         return TRUE;
+    }
+    function isaEquivalent($other) {
+        return get_class($this) == get_class($other);
     }
     function cloneFrom($new) {}
     function normalize($value) {
@@ -170,6 +174,15 @@ class Modyllic_Integer extends Modyllic_Numeric {
 
 class Modyllic_TinyInt extends Modyllic_Integer {
     public $default_length = 4;
+}
+
+class Modyllic_Boolean extends Modyllic_TinyInt {
+    public $default_length = 1;
+    function isaEquivalent($other) {
+        if ( parent::isaEquivalent($other) ) { return TRUE; }
+        if ( get_class($other) == "Modyllic_TinyInt" ) { return TRUE; }
+        return FALSE;
+    }
 }
 
 class Modyllic_SmallInt extends Modyllic_Integer {
