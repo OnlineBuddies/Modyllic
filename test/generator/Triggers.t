@@ -78,7 +78,7 @@ require_ok("Modyllic/Diff.php");
 $diff = new Modyllic_Diff($schema1,$schema2);
 
 $gen = new Modyllic_Generator_SQL();
-$sql = $gen->alter( $diff )->sql_commands();
+$sql = $gen->alter( $diff, array('triggers') )->sql_commands();
 
 is( count($sql), 2, "Diff requires two SQL commands" );
 
