@@ -11,59 +11,123 @@ require_once "Modyllic/Schema.php";
 
 class Modyllic_Generator_SQL {
 
+    static function schema_types() {
+        return array('database','sqlmeta','tables','views','routines','events','triggers');
+    }
+    
+    static function validate_schema_types(array $what) {
+        $diff = array_diff($what, self::schema_types());
+        if ( count($diff) ) {
+            throw new Exception("Unknown kind of SQL schema element: ".implode(", ",$diff));
+        } 
+    }
+
 // ALTER
 
-    function alter_sql( Modyllic_Diff $diff, $delim=";;", $sep=TRUE ) {
-        $this->alter( $diff );
+    function alter_sql( Modyllic_Diff $diff, $delim=";;", $sep=TRUE, array $what = null ) {
+        if ( ! isset($what) ) {
+            $what = self::schema_types();
+        }
+        self::validate_schema_types($what);
+        $this->alter( $diff, $what );
         return $this->sql_document( $delim, $sep );
     }
 
-    function alter( Modyllic_Diff $diff ) {
+    function alter( Modyllic_Diff $diff, array $what ) {
         if ( ! $diff->changeset->has_changes() ) {
             $this->cmd("-- No changes detected.");
             return $this;
         }
-        $this->alter_database( $diff->changeset->schema );
-
-        if ( $diff->changeset->create_sqlmeta ) {
+        if ( in_array('database',$what) ) {
+            $this->alter_database( $diff->changeset->schema );
+        }
+        if ( in_array('sqlmeta',$what) and $diff->changeset->create_sqlmeta ) {
             $this->create_sqlmeta();
         }
 
-        $this->drop_triggers( $diff->changeset->remove['triggers'] );
-        $this->drop_events( $diff->changeset->remove['events'] );
-        $this->drop_routines( $diff->changeset->remove['routines'] );
-        $this->drop_views( $diff->changeset->remove['views'] );
-        $this->drop_tables( $diff->changeset->remove['tables'] );
+        if ( in_array('triggers',$what) ) {
+            $this->drop_triggers( $diff->changeset->remove['triggers'] );
+        }
+        if ( in_array('events',$what) ) {
+            $this->drop_events( $diff->changeset->remove['events'] );
+        }
+        if ( in_array('routines',$what) ) {
+            $this->drop_routines( $diff->changeset->remove['routines'] );
+        }
+        if ( in_array('views',$what) ) {
+            $this->drop_views( $diff->changeset->remove['views'] );
+        }
+        if ( in_array('tables',$what) ) {
+            $this->drop_tables( $diff->changeset->remove['tables'] );
+        }
 
-        $this->create_tables( $diff->changeset->add['tables'], $diff->changeset->schema );
-        $this->create_views( $diff->changeset->add['views'] );
-        $this->create_routines( $diff->changeset->add['routines'] );
-        $this->create_events( $diff->changeset->add['events'] );
-        $this->create_triggers( $diff->changeset->add['triggers'] );
+        if ( in_array('tables',$what) ) {
+            $this->create_tables( $diff->changeset->add['tables'], $diff->changeset->schema );
+        }
+        if ( in_array('views',$what) ) {
+            $this->create_views( $diff->changeset->add['views'] );
+        }
+        if ( in_array('routines',$what) ) {
+            $this->create_routines( $diff->changeset->add['routines'] );
+        }
+        if ( in_array('events',$what) ) {
+            $this->create_events( $diff->changeset->add['events'] );
+        }
+        if ( in_array('triggers',$what) ) {
+            $this->create_triggers( $diff->changeset->add['triggers'] );
+        }
 
-        $this->alter_tables( $diff->changeset->update['tables'] );
-        $this->alter_views( $diff->changeset->update['views'] );
-        $this->alter_routines( $diff->changeset->update['routines'] );
-        $this->alter_events( $diff->changeset->update['events'] );
-        $this->alter_triggers( $diff->changeset->update['triggers'] );
+        if ( in_array('tables',$what) ) {
+            $this->alter_tables( $diff->changeset->update['tables'] );
+        }
+        if ( in_array('views',$what) ) {
+            $this->alter_views( $diff->changeset->update['views'] );
+        }
+        if ( in_array('routines',$what) ) {
+            $this->alter_routines( $diff->changeset->update['routines'] );
+        }
+        if ( in_array('events',$what) ) {
+            $this->alter_events( $diff->changeset->update['events'] );
+        }
+        if ( in_array('triggers',$what) ) {
+            $this->alter_triggers( $diff->changeset->update['triggers'] );
+        }
         return $this;
     }
 
 // CREATE
 
-    function create_sql( Modyllic_Schema $schema, $delim=";;", $sep=TRUE  ) {
-        $this->create( $schema );
+    function create_sql( Modyllic_Schema $schema, $delim=";;", $sep=TRUE, array $what=null ) {
+        if ( ! isset($what) ) {
+            $what = self::schema_types();
+        }
+        self::validate_schema_types($what);
+        $this->create( $schema, $what );
         return $this->sql_document( $delim, $sep );
     }
 
-    function create( Modyllic_Schema $schema, $delim=";;", $sep=TRUE  ) {
-        $this->create_database( $schema );
-        $this->create_sqlmeta();
-        $this->create_tables( $schema->tables, $schema );
-        $this->create_views( $schema->views );
-        $this->create_routines( $schema->routines );
-        $this->create_events( $schema->events );
-        $this->create_triggers( $schema->triggers );
+    function create( Modyllic_Schema $schema, array $what ) {
+        if ( in_array('database',$what) ) {
+            $this->create_database( $schema );
+        }
+        if ( in_array('sqlmeta',$what) ) {
+            $this->create_sqlmeta();
+        }
+        if ( in_array('tables',$what) ) {
+            $this->create_tables( $schema->tables, $schema );
+        }
+        if ( in_array('views',$what) ) {
+            $this->create_views( $schema->views );
+        }
+        if ( in_array('routines',$what) ) {
+            $this->create_routines( $schema->routines );
+        }
+        if ( in_array('events',$what) ) {
+            $this->create_events( $schema->events );
+        }
+        if ( in_array('triggers',$what) ) {
+            $this->create_triggers( $schema->triggers );
+        }
         return $this;
     }
 
@@ -82,22 +146,46 @@ class Modyllic_Generator_SQL {
         $this->extend(") ENGINE=MyISAM");
         $this->end_cmd();
     }
+    
 
 // DROP
 
-    function drop_sql( Modyllic_Schema $schema, $delim=";", $sep=FALSE  ) {
-        $this->drop($schema);
+    function drop_sql( Modyllic_Schema $schema, $delim=";", $sep=FALSE, array $what = null  ) {
+        if ( ! isset($what) ) {
+            $what = self::schema_types();
+        }
+        self::validate_schema_types($what);
+        $this->drop($schema,$what);
         return $this->sql_document( $delim, $sep );
     }
 
-    function drop( Modyllic_Schema $schema ) {
-        $this->drop_triggers( $schema->triggers );
-        $this->drop_events( $schema->events );
-        $this->drop_routines( $schema->routines );
-        $this->drop_views( $schema->views );
-        $this->drop_tables( $schema->tables );
-        $this->drop_database( $schema );
+    function drop( Modyllic_Schema $schema, array $what ) {
+        if ( in_array('triggers',$what) ) {
+            $this->drop_triggers( $schema->triggers );
+        }
+        if ( in_array('events',$what) ) {
+            $this->drop_events( $schema->events );
+        }
+        if ( in_array('routines',$what) ) {
+            $this->drop_routines( $schema->routines );
+        }
+        if ( in_array('views',$what) ) {
+            $this->drop_views( $schema->views );
+        }
+        if ( in_array('tables',$what) ) {
+            $this->drop_tables( $schema->tables );
+        }
+        if ( in_array('sqlmeta',$what) and $schema->sqlmeta_exists ) {
+            $this->drop_sqlmeta();
+        }
+        if ( in_array('database',$what) ) {
+            $this->drop_database( $schema );
+        }
         return $this;
+    }
+
+    function drop_sqlmeta() {
+        $this->cmd('DROP TABLE SQLMETA');
     }
 
 // DATABASE

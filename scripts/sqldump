@@ -9,6 +9,7 @@
 
 require_once "Modyllic/Commandline.php";
 require_once "Modyllic/Generator.php";
+require_once "Modyllic/Generator/SQL.php";
 
 $args = Modyllic_Commandline::getArgs(array(
     'description' => 'Load one or more schema and print them out',
@@ -18,7 +19,14 @@ $args = Modyllic_Commandline::getArgs(array(
             'long_name'   => '--dialect',
             'description' => 'dialect to output in',
             'action'      => 'Dialect',
-            'default'     => 'Modyllic_Generator_NativeSQL' ) ),
+            'default'     => 'Modyllic_Generator_NativeSQL',
+            ),
+        'only' => array(
+            'long_name'   => '--only',
+            'description' => 'comma separated list of kinds of schema objects to process: database, sqlmeta, tables, views, routines, events, triggers',
+            'action'      => 'StoreString',
+            'default'     => implode(",",Modyllic_Generator_SQL::schema_types())
+            ) ),
     'arguments' => array(
         'spec' => array('multiple'=>true) )));
 
@@ -27,4 +35,12 @@ $schema = Modyllic_Commandline::schema($args->args['spec']);
 $class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
 $gen = new $class();
 
-print $gen->create_sql( $schema );
+try {
+    $only = preg_split('/\s*,\s*/',$args->options['only']);
+    Modyllic_Generator_SQL::validate_schema_types($only);
+}
+catch (Exception $e) {
+    Modyllic_Commandline::displayError($e->getMessage());
+}
+
+print $gen->create_sql( $schema, ';;', true, $only );
