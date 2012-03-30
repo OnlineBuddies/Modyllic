@@ -30,8 +30,9 @@ class Modyllic_Parser {
      * @returns array
      */
     function parse($sql,$filename="SQL") {
-
-        return $this->partial( new Modyllic_Schema(), $sql, $filename, ";" );
+        $schema = new Modyllic_Schema();
+        $this->partial($schema , $sql, $filename, ";" );
+        return $schema;
     }
 
     /**
@@ -75,7 +76,6 @@ class Modyllic_Parser {
                 throw $this->error($e->getMessage());
             }
         }
-        return $schema;
     }
 
     private $cmddocs;
