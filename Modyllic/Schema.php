@@ -171,10 +171,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
                     }
                 }
             }
-            # We then clear the SQLMETA table we read in and regenerate it
-            # below.  This allows us to merge SQLMETA rows with table
-            # definitions.
-            $schema->sqlmeta_exists = true;
             unset($this->tables['SQLMETA']);
         }
     }

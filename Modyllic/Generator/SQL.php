@@ -11,12 +11,31 @@ require_once "Modyllic/Schema.php";
 
 class Modyllic_Generator_SQL {
 
-    static function schema_types() {
+    protected $delim;
+    protected $sep;
+    protected $what;
+    protected $source;
+    
+    function __construct( $delim=';;', $sep=TRUE ) {
+        $this->set_what( $this->schema_types() );
+        $this->delim = $delim;
+        $this->sep = $sep;
+    }
+    
+    function set_what($what) {
+        $this->what = $what;
+        $this->validate_schema_types($what);
+        foreach ($what as $type) {
+            $this->what[$type] = true;
+        }
+    }
+
+    function schema_types() {
         return array('database','sqlmeta','tables','views','routines','events','triggers');
     }
     
-    static function validate_schema_types(array $what) {
-        $diff = array_diff($what, self::schema_types());
+    function validate_schema_types(array $what) {
+        $diff = array_diff($what, $this->schema_types());
         if ( count($diff) ) {
             throw new Exception("Unknown kind of SQL schema element: ".implode(", ",$diff));
         } 
@@ -24,117 +43,110 @@ class Modyllic_Generator_SQL {
 
 // ALTER
 
-    function alter_sql( Modyllic_Diff $diff, $delim=";;", $sep=TRUE, array $what = null ) {
-        if ( ! isset($what) ) {
-            $what = self::schema_types();
-        }
-        self::validate_schema_types($what);
-        $this->alter( $diff, $what );
-        return $this->sql_document( $delim, $sep );
+    function alter_sql( Modyllic_Diff $diff ) {
+        $this->alter( $diff );
+        return $this->sql_document( $this->delim, $this->sep );
     }
 
-    function alter( Modyllic_Diff $diff, array $what ) {
+    function alter( Modyllic_Diff $diff ) {
+        $this->source = $diff->changeset;
         if ( ! $diff->changeset->has_changes() ) {
             $this->cmd("-- No changes detected.");
             return $this;
         }
-        if ( in_array('database',$what) ) {
+        if ( isset($this->what['database']) ) {
             $this->alter_database( $diff->changeset->schema );
         }
-        if ( in_array('sqlmeta',$what) and $diff->changeset->create_sqlmeta ) {
+        if ( isset($this->what['sqlmeta']) and $diff->changeset->sqlmeta_exists ) {
             $this->create_sqlmeta();
         }
 
-        if ( in_array('triggers',$what) ) {
+        if ( isset($this->what['triggers']) ) {
             $this->drop_triggers( $diff->changeset->remove['triggers'] );
         }
-        if ( in_array('events',$what) ) {
+        if ( isset($this->what['events']) ) {
             $this->drop_events( $diff->changeset->remove['events'] );
         }
-        if ( in_array('routines',$what) ) {
+        if ( isset($this->what['routines']) ) {
             $this->drop_routines( $diff->changeset->remove['routines'] );
         }
-        if ( in_array('views',$what) ) {
+        if ( isset($this->what['views']) ) {
             $this->drop_views( $diff->changeset->remove['views'] );
         }
-        if ( in_array('tables',$what) ) {
+        if ( isset($this->what['tables']) ) {
             $this->drop_tables( $diff->changeset->remove['tables'] );
         }
 
-        if ( in_array('tables',$what) ) {
+        if ( isset($this->what['tables']) ) {
             $this->create_tables( $diff->changeset->add['tables'], $diff->changeset->schema );
         }
-        if ( in_array('views',$what) ) {
+        if ( isset($this->what['views']) ) {
             $this->create_views( $diff->changeset->add['views'] );
         }
-        if ( in_array('routines',$what) ) {
+        if ( isset($this->what['routines']) ) {
             $this->create_routines( $diff->changeset->add['routines'] );
         }
-        if ( in_array('events',$what) ) {
+        if ( isset($this->what['events']) ) {
             $this->create_events( $diff->changeset->add['events'] );
         }
-        if ( in_array('triggers',$what) ) {
+        if ( isset($this->what['triggers']) ) {
             $this->create_triggers( $diff->changeset->add['triggers'] );
         }
 
-        if ( in_array('tables',$what) ) {
+        if ( isset($this->what['tables']) ) {
             $this->alter_tables( $diff->changeset->update['tables'] );
         }
-        if ( in_array('views',$what) ) {
+        if ( isset($this->what['views']) ) {
             $this->alter_views( $diff->changeset->update['views'] );
         }
-        if ( in_array('routines',$what) ) {
+        if ( isset($this->what['routines']) ) {
             $this->alter_routines( $diff->changeset->update['routines'] );
         }
-        if ( in_array('events',$what) ) {
+        if ( isset($this->what['events']) ) {
             $this->alter_events( $diff->changeset->update['events'] );
         }
-        if ( in_array('triggers',$what) ) {
+        if ( isset($this->what['triggers']) ) {
             $this->alter_triggers( $diff->changeset->update['triggers'] );
         }
+        $this->source = null;
         return $this;
     }
 
 // CREATE
 
-    function create_sql( Modyllic_Schema $schema, $delim=";;", $sep=TRUE, array $what=null ) {
-        if ( ! isset($what) ) {
-            $what = self::schema_types();
-        }
-        self::validate_schema_types($what);
-        $this->create( $schema, $what );
-        return $this->sql_document( $delim, $sep );
+    function create_sql( Modyllic_Schema $schema ) {
+        $this->create( $schema );
+        return $this->sql_document( $this->delim, $this->sep );
     }
 
-    function create( Modyllic_Schema $schema, array $what ) {
-        if ( in_array('database',$what) ) {
+    function create( Modyllic_Schema $schema) {
+        $this->source = $schema;
+        if ( isset($this->what['database']) ) {
             $this->create_database( $schema );
         }
-        if ( in_array('sqlmeta',$what) ) {
-            $this->create_sqlmeta();
-        }
-        if ( in_array('tables',$what) ) {
+        if ( isset($this->what['tables']) ) {
             $this->create_tables( $schema->tables, $schema );
         }
-        if ( in_array('views',$what) ) {
+        if ( isset($this->what['views']) ) {
             $this->create_views( $schema->views );
         }
-        if ( in_array('routines',$what) ) {
+        if ( isset($this->what['routines']) ) {
             $this->create_routines( $schema->routines );
         }
-        if ( in_array('events',$what) ) {
+        if ( isset($this->what['events']) ) {
             $this->create_events( $schema->events );
         }
-        if ( in_array('triggers',$what) ) {
+        if ( isset($this->what['triggers']) ) {
             $this->create_triggers( $schema->triggers );
         }
+        $this->source = null;
         return $this;
     }
 
     function create_sqlmeta() {
         $this->begin_cmd();
         $this->extend( "-- This is used to store metadata used by the schema management tool" );
-        $this->extend("CREATE TABLE SQLMETA (");
+        $this->extend("CREATE TABLE SQLMETA IF NOT EXISTS (");
         $this->indent();
         $this->begin_list();
         $this->extend("kind CHAR(9) NOT NULL");
@@ -150,37 +162,35 @@ class Modyllic_Generator_SQL {
 
 // DROP
 
-    function drop_sql( Modyllic_Schema $schema, $delim=";", $sep=FALSE, array $what = null  ) {
-        if ( ! isset($what) ) {
-            $what = self::schema_types();
-        }
-        self::validate_schema_types($what);
-        $this->drop($schema,$what);
-        return $this->sql_document( $delim, $sep );
+    function drop_sql( Modyllic_Schema $schema ) {
+        $this->drop($schema);
+        return $this->sql_document( $this->delim, $this->sep );
     }
 
-    function drop( Modyllic_Schema $schema, array $what ) {
-        if ( in_array('triggers',$what) ) {
+    function drop( Modyllic_Schema $schema ) {
+        $this->source = $schema;
+        if ( isset($this->what['triggers']) ) {
             $this->drop_triggers( $schema->triggers );
         }
-        if ( in_array('events',$what) ) {
+        if ( isset($this->what['events']) ) {
             $this->drop_events( $schema->events );
         }
-        if ( in_array('routines',$what) ) {
+        if ( isset($this->what['routines']) ) {
             $this->drop_routines( $schema->routines );
         }
-        if ( in_array('views',$what) ) {
+        if ( isset($this->what['views']) ) {
             $this->drop_views( $schema->views );
         }
-        if ( in_array('tables',$what) ) {
+        if ( isset($this->what['tables']) ) {
             $this->drop_tables( $schema->tables );
         }
-        if ( in_array('sqlmeta',$what) and $schema->sqlmeta_exists ) {
+        if ( isset($this->what['sqlmeta']) and $schema->sqlmeta_exists ) {
             $this->drop_sqlmeta();
         }
         if ( in_array('database',$what) ) {
             $this->drop_database( $schema );
         }
+        $this->source = null;
         return $this;
     }
 
@@ -1029,22 +1039,37 @@ class Modyllic_Generator_SQL {
 
 // Helpers for data that we store that MySQL doesn't know how to store directly.
 
-    function insert_meta($kind,$which,array $what) {
-        if ( count($what) > 0 ) {
+    function insert_meta($kind,$which,array $meta) {
+        if ( count($meta) > 0 ) {
+            if ( ! isset($this->what['sqlmeta']) ) { return; }
+            if ( ! $this->source->sqlmeta_exists ) {
+                $this->create_sqlmeta();
+                $this->source->sqlmeta_exists = true;
+            }
             $this->cmd( "INSERT INTO SQLMETA (kind,which,value) VALUES (%str, %str, %str)",
-                $kind, $which, json_encode($what) );
+                $kind, $which, json_encode($meta) );
         }
     }
 
     function delete_meta($kind,$which) {
+        if ( ! isset($this->what['sqlmeta']) ) { return; }
+        if ( ! $this->source->sqlmeta_exists ) {
+            $this->create_sqlmeta();
+            $this->source->sqlmeta_exists = true;
+        }
         $this->cmd( "DELETE FROM SQLMETA WHERE kind=%str AND which=%str",
             $kind, $which );
     }
 
-    function update_meta($kind,$which,array $what) {
+    function update_meta($kind,$which,array $meta) {
+        if ( ! isset($this->what['sqlmeta']) ) { return; }
+        if ( ! $this->source->sqlmeta_exists ) {
+            $this->create_sqlmeta();
+            $this->source->sqlmeta_exists = true;
+        }
         $this->delete_meta($kind,$which);
-        if ( count($what) > 0 ) {
-            $this->insert_meta($kind,$which,$what);
+        if ( count($meta) > 0 ) {
+            $this->insert_meta($kind,$which,$meta);
         }
     }
 
