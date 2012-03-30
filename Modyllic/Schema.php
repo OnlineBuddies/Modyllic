@@ -35,7 +35,21 @@ class Modyllic_Schema extends Modyllic_Diffable {
     const DEFAULT_COLLATE = "utf8_general_ci";
     public $collate = self::DEFAULT_COLLATE;
     public $docs = "";
-    public $sqlmeta_exists = FALSE;
+    public $sqlmeta_exists = false;
+    
+    function reset() {
+        $this->triggers       = array();
+        $this->routines       = array();
+        $this->tables         = array();
+        $this->views          = array();
+        $this->events         = array();
+        $this->name           = self::DEFAULT_NAME;
+        $this->nameIsDefault  = true;
+        $this->charset        = self::DEFAULT_CHARSET;
+        $this->collate        = self::DEFAULT_COLLATE;
+        $this->docs           = "";
+        $this->sqlmeta_exists = false;
+    }
     
     function nameIsDefault() {
         return ($this->name == self::DEFAULT_NAME);

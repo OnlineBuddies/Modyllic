@@ -80,7 +80,7 @@ if ( isset($args->args['toschema']) ) {
 if ( isset($args->options['toschema']) ) {
     $toschema += $args->options['toschema'];
 }
-if ( count($fromschema) == 0 ) {
+if ( count($toschema) == 0 ) {
     Modyllic_Commandline::displayError( 'You must specify a to schema to compare');
 }
 
