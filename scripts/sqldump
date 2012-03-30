@@ -35,12 +35,13 @@ $schema = Modyllic_Commandline::schema($args->args['spec']);
 $class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
 $gen = new $class();
 
-try {
-    $only = preg_split('/\s*,\s*/',$args->options['only']);
-    Modyllic_Generator_SQL::validate_schema_types($only);
+if ( isset($args->options['only']) ) {
+    try {
+        $only = preg_split('/\s*,\s*/',$args->options['only']);
+        $gen->set_what($only);
+    }
+    catch (Exception $e) {
+        Modyllic_Commandline::displayError($e->getMessage());
+    }
 }
-catch (Exception $e) {
-    Modyllic_Commandline::displayError($e->getMessage());
-}
-
-print $gen->create_sql( $schema, ';;', true, $only );
+print $gen->create_sql( $schema );

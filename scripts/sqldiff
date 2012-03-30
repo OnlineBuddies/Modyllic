@@ -36,23 +36,30 @@ $args = Modyllic_Commandline::getArgs(array(
             'long_name'   => '--only',
             'description' => 'comma separated list of kinds of schema objects to process: database, sqlmeta, tables, views, routines, events, triggers',
             'action'      => 'StoreString',
-            'default'     => implode(",",Modyllic_Generator_SQL::schema_types())
             ) ),
     'arguments' => array(
         'fromschema' => array('optional'=>true),
         'toschema' => array('optional'=>true)
         )));
 
-try {
-    $only = preg_split('/\s*,\s*/',$args->options['only']);
-    Modyllic_Generator_SQL::validate_schema_types($only);
-}
-catch (Exception $e) {
-    Modyllic_Commandline::displayError($e->getMessage());
-}
-
 if ( (isset($args->options['fromschema']) or isset($args->options['toschema'])) and isset($args->args['fromschema']) ) {
     Modyllic_Commandline::displayError( "You can't specify a schema both positionally and via options" );
+}
+
+$class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
+$gen = new $class();
+
+if ( isset($args->options['only']) ) {
+    try {
+        $only = preg_split('/\s*,\s*/',$args->options['only']);
+        $gen->validate_schema_types($only);
+    }
+    catch (Exception $e) {
+        Modyllic_Commandline::displayError($e->getMessage());
+    }
+}
+else {
+    $only = $gen->schema_types();
 }
 
 $fromschema = array();
@@ -86,8 +93,5 @@ if ( ! $diff->changeset->has_changes() ) {
     print "-- No changes detected.\n";
     exit(0);
 }
-
-$class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
-$gen = new $class();
 
 print $gen->alter_sql($diff, ';;', true, $only);
