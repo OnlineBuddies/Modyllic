@@ -75,7 +75,7 @@ class Modyllic_Parser {
                 throw $this->error($e->getMessage());
             }
         }
-        return $this->schema;
+        return $schema;
     }
 
     private $cmddocs;
@@ -284,7 +284,7 @@ class Modyllic_Parser {
                 break;
             case 'SCHEMA':
             case 'DATABASE':
-                $this->schema = new Modyllic_Schema();
+                $this->schema->reset();
                 break;
             case 'VIEW':
                 unset($this->schema->views[$name]);
