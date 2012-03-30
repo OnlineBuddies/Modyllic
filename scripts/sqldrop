@@ -25,7 +25,6 @@ $args = Modyllic_Commandline::getArgs(array(
             'long_name'   => '--only',
             'description' => 'comma separated list of kinds of schema objects to process: database, sqlmeta, tables, views, routines, events, triggers',
             'action'      => 'StoreString',
-            'default'     => implode(",",Modyllic_Generator_SQL::schema_types())
             ) ),
     'arguments' => array(
         'spec' => array('multiple'=>true) )));
@@ -35,12 +34,17 @@ $schema = Modyllic_Commandline::schema($args->args['spec']);
 $class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
 $gen = new $class();
 
-try {
-    $only = preg_split('/\s*,\s*/',$args->options['only']);
-    Modyllic_Generator_SQL::validate_schema_types($only);
+if ( isset($args->options['only']) ) {
+    try {
+        $only = preg_split('/\s*,\s*/',$args->options['only']);
+        $gen->validate_schema_types($only);
+    }
+    catch (Exception $e) {
+        Modyllic_Commandline::displayError($e->getMessage());
+    }
 }
-catch (Exception $e) {
-    Modyllic_Commandline::displayError($e->getMessage());
+else {
+    $only = $gen->schema_types();
 }
 
 print $gen->drop_sql( $schema, ';;', true, $only );
