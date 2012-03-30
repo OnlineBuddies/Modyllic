@@ -85,7 +85,7 @@ class Modyllic_Status {
 
         $percent_per_file = 1 / self::$sourceCount;
         $already_done = (self::$sourceIndex-1) * $percent_per_file;
-        $in_file = $pos / $len;
+        $in_file = $len==0 ? 1 : ($pos / $len);
         $overall = $already_done + $percent_per_file*$in_file;
 
         $fill_count = floor($overall * $progress_size);

@@ -15,7 +15,7 @@ require_once "Modyllic/Schema.php";
 
 $parser = new Modyllic_Parser();
 $schema = new Modyllic_Schema();
-$schema = $parser->partial($schema, "
+$parser->partial($schema, "
 CREATE TABLE a (
     b VARCHAR(60) NOT NULL,
     KEY (b(30))
