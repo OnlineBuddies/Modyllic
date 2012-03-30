@@ -18,7 +18,7 @@
  <time>12:25:00</time>
  <!-- arbitrary version number -->
  <version>
-  <release>0.1.5</release>
+  <release>0.1.6</release>
   <api>0.1.0</api>
  </version>
  <stability>
@@ -27,12 +27,17 @@
  </stability>
  <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
  <notes>
-* Add IF EXISTS to events. Fixes #93.
-* Stop using 5.3 Exception form and just rethrow non-general errors
-* RETURNS COLUMN assertions should allow empty result sets (#56)
-* Implement support for extended inserts (#88)
-* Fix missing is_primary attribute on columns
-* Improve error messages for invalid delimiters (#82)
+* Stop Modyllic_Parser::partial from having a return value
+* Complain if no toschema is provided to sqldiff
+* Fix a --progress divide by zero when the source file was empty
+* Fix bug where a DROP DATABASE would ignore any following CREATEs
+* Make the SQL generator able to only output specific kinds of data
+* Boolean types were being treated as exactly equivalent to TINYINT and this isn't actually the case
+* displayError should really be a static function
+* Fix migration --create option
+* Fix bugs around when SQLMETA is created
+* Add support for MySQL Triggers
+* Fix view changeset handling
  </notes>
  <contents>
   <dir name="/">
@@ -70,6 +75,9 @@
    <file name="test/Types.t" role="test" />
    <file name="test/Static_Tables.t" role="test" />
    <file name="test/bugs/Create_Index_Len.t" role="test" />
+   <file name="test/diff/Triggers.t" role="test" />
+   <file name="test/generator/Triggers.t" role="test" />
+   <file name="test/parser/Triggers.t" role="test" />
    <file name="testlib/README.md" role="test" />
    <file name="testlib/testmore.php" role="test" />
    <file name="testlib/test/inc_false.php" role="test" />
@@ -219,6 +227,29 @@ Initial release.
 * Implement support for extended inserts (#88)
 * Fix missing is_primary attribute on columns
 * Improve error messages for invalid delimiters (#82)
+   </notes>
+  </release>
+  <release>
+   <version>0.1.6</version>
+   <api>0.1.0</api>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2012-03-30</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
+   <notes>
+* Stop Modyllic_Parser::partial from having a return value
+* Complain if no toschema is provided to sqldiff
+* Fix a --progress divide by zero when the source file was empty
+* Fix bug where a DROP DATABASE would ignore any following CREATEs
+* Make the SQL generator able to only output specific kinds of data
+* Boolean types were being treated as exactly equivalent to TINYINT and this isn't actually the case
+* displayError should really be a static function
+* Fix migration --create option
+* Fix bugs around when SQLMETA is created
+* Add support for MySQL Triggers
+* Fix view changeset handling
    </notes>
   </release>
  </changelog>
