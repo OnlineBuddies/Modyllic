@@ -288,8 +288,8 @@ class Modyllic_Table extends Modyllic_Diffable {
         }
         // If this is a primary key and has only one column then we'll flag that column as a primary key
         if ($index->primary and count($index->columns) == 1) {
-            $name = array_shift( array_keys($index->columns) );
-            $len = array_shift( array_values($index->columns) );
+            $name = current( array_keys($index->columns) );
+            $len = current( array_values($index->columns) );
             // And if there's no length limiter on the column...
             if ( $len === FALSE ) {
                 $this->columns[$name]->is_primary = true;
