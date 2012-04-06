@@ -187,7 +187,7 @@ class Modyllic_Generator_SQL {
         if ( isset($this->what['sqlmeta']) and $schema->sqlmeta_exists ) {
             $this->drop_sqlmeta();
         }
-        if ( in_array('database',$what) ) {
+        if ( isset($this->what['database']) ) {
             $this->drop_database( $schema );
         }
         $this->source = null;
