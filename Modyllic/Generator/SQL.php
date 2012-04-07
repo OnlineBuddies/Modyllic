@@ -195,7 +195,7 @@ class Modyllic_Generator_SQL {
     }
 
     function drop_sqlmeta() {
-        $this->cmd('DROP TABLE SQLMETA');
+        $this->cmd('DROP TABLE IF EXISTS SQLMETA');
     }
 
 // DATABASE
@@ -233,7 +233,7 @@ class Modyllic_Generator_SQL {
 
     function drop_database($schema) {
         if ($schema->nameIsDefault) return $this;
-        $this->cmd( "DROP DATABASE %id", $schema->name );
+        $this->cmd( "DROP DATABASE IF EXISTS %id", $schema->name );
         return $this;
     }
 
@@ -507,7 +507,7 @@ class Modyllic_Generator_SQL {
     }
 
     function drop_table( $table ) {
-        $this->cmd( "DROP TABLE %id", $table->name );
+        $this->cmd( "DROP TABLE IF EXISTS %id", $table->name );
         if ( count($this->table_meta($table)) > 0 ) {
             $this->delete_meta("TABLE",$table->name);
         }
@@ -757,7 +757,7 @@ class Modyllic_Generator_SQL {
     }
 
     function drop_view( $view ) {
-        $this->cmd( "DROP VIEW %id", $view->name );
+        $this->cmd( "DROP VIEW IF EXISTS %id", $view->name );
         return $this;
     }
 
@@ -934,7 +934,7 @@ class Modyllic_Generator_SQL {
         return $this;
     }
     function drop_function( $func ) {
-        $this->cmd( "DROP FUNCTION %id", $func->name );
+        $this->cmd( "DROP FUNCTION IF EXISTS %id", $func->name );
         return $this;
     }
 
