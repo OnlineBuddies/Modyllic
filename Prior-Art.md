@@ -15,3 +15,7 @@ A Perl project that does essentially the same thing.  It's focus is on translati
 ### [SQLDiff](https://github.com/christeredvartsen/sqldiff/)
 
 A PHP 5.3 project that will generate ALTER statements when comparing between two MySQL XML dump files.
+
+### [SchemaCrawler](http://schemacrawler.sourceforge.net/)
+
+A JDBC tool for showing the differences between schemas.
