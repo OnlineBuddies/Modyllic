@@ -14,11 +14,10 @@
   <email>development@online-buddies.com</email>
   <active>yes</active>
  </lead>
- <date>2012-03-30</date>
- <time>12:25:00</time>
- <!-- arbitrary version number -->
+ <date>2012-04-13</date>
+ <time>16:48:00</time>
  <version>
-  <release>0.1.6</release>
+  <release>0.1.7</release>
   <api>0.1.0</api>
  </version>
  <stability>
@@ -27,18 +26,11 @@
  </stability>
  <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
  <notes>
-* Stop Modyllic_Parser::partial from having a return value
-* Complain if no toschema is provided to sqldiff
-* Fix a --progress divide by zero when the source file was empty
-* Fix bug where a DROP DATABASE would ignore any following CREATEs
-* Make the SQL generator able to only output specific kinds of data
-* Boolean types were being treated as exactly equivalent to TINYINT and this isn't actually the case
-* displayError should really be a static function
-* Fix migration --create option
-* Fix bugs around when SQLMETA is created
-* Add support for MySQL Triggers
-* Fix view changeset handling
+* Add IF EXISTS to all of our DROPs
+* Fix bugs in --only support
+* Fix bugs in tracking sqlmeta_exists
  </notes>
+ <!-- arbitrary version number -->
  <contents>
   <dir name="/">
    <file name="Modyllic/SQL.php" role="php" />
@@ -250,6 +242,23 @@ Initial release.
 * Fix bugs around when SQLMETA is created
 * Add support for MySQL Triggers
 * Fix view changeset handling
+   </notes>
+  </release>
+  <release>
+   <version>
+    <release>0.1.7</release>
+    <api>0.1.0</api>
+   </version>
+   <stability>
+    <release>beta</release>
+    <api>beta</api>
+   </stability>
+   <date>2012-04-13</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">BSD Style</license>
+   <notes>
+* Add IF EXISTS to all of our DROPs
+* Fix bugs in --only support
+* Fix bugs in tracking sqlmeta_exists
    </notes>
   </release>
  </changelog>
