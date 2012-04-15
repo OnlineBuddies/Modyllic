@@ -65,11 +65,19 @@ while ( !$tok->next(true) instanceOf Modyllic_Token_EOF ) {
     print array_shift($lines);
     if (count($lines)) {
         foreach ($lines as $line) {
-            print CLEAR()."\n".$color . $line;
+            if ($color != CLEAR() ) {
+                print CLEAR()."\n".$color;
+            }
+            else {
+                print "\n";
+            }
+            print $line;
         }
     }
 }
-print WHITE()."\n";
+if ( $color != CLEAR() ) {
+    print CLEAR();
+}
 
 
 function CLEAR() { return chr(27).'[0m'; }
