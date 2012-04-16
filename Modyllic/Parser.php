@@ -1189,7 +1189,7 @@ class Modyllic_Parser {
     }
 
     function gen_index_name($key) {
-        $key->name = $this->ctx->gen_index_name( array_shift(array_keys($key->columns)) );
+        $key->name = $this->ctx->gen_index_name( current(array_keys($key->columns)) );
         $key->dynamic_name = true;
     }
 
