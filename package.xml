@@ -56,7 +56,6 @@
    <file baseinstalldir="/" name="scripts/sqldrop" role="script" />
    <file baseinstalldir="/" name="scripts/sqldump" role="script" />
    <file baseinstalldir="/" name="scripts/sqlpreparse" role="script" />
-   <file baseinstalldir="/" name="scripts/sqlprofile" role="script" />
    <file baseinstalldir="/" name="scripts/sqltophp" role="script" />
    <file name="Makefile" role="test" />
    <file name="test/General_Functional.t" role="test" />
