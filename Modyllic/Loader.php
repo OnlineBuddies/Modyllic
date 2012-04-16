@@ -43,6 +43,10 @@ class Modyllic_Loader {
         }
         Modyllic_Status::$sourceCount += count($sources);
         foreach ($sources as $source) {
+            // Strip trailing slashes from directory names
+            if ( substr($source,-1) == "/" ) {
+                $source = substr($source,0,-1);
+            }
             Modyllic_Status::$sourceName = $source;
             Modyllic_Status::$sourceIndex ++;
             list($source,$loader) = self::determine_loader($source);
