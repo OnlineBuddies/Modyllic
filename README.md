@@ -6,9 +6,12 @@ framework...idyllic.  Modyllic is written in PHP, but can be useful as
 a toolset for any language.
 
 Three primary use cases are:
+
 * Detecting and examining differences between databases.
+
 * Replacing conventional linear up/down scripts with more flexible
   change management.
+
 * Providing a consistant, safe and transparent access to stored routines.
 
 Modyllic operates on "schemas", which can represent database, table, and
