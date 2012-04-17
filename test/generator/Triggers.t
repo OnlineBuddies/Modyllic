@@ -27,24 +27,24 @@ FOR EACH ROW INSERT INTO foo (id) VALUES (27)
 EOSQL;
 $drop_sql[] = "DROP TRIGGER IF EXISTS trig2";
 
-plan( 10 + count($create_sql) );
+plan( 7 + count($create_sql) );
 
-require_ok("Modyllic/Parser.php");
+require_once("Modyllic/Parser.php");
 
 $parser = new Modyllic_Parser();
 
 $schema = $parser->parse($delim.implode(";;",$create_sql));
 
-require_ok("Modyllic/Generator/SQL.php");
-
-$gen = new Modyllic_Generator_SQL();
+require_once("Modyllic/Generator.php");
+$gen_class = Modyllic_Generator::dialectToClass("Modyllic");
+$gen = new $gen_class();
 $gen_sql = $gen->create_triggers( $schema->triggers )->sql_commands();
 is( count($gen_sql), count($create_sql), "Generated all the CREATEs" );
 foreach ($create_sql as $num=>$sql) {
     is( $gen_sql[$num], $sql, "Trigger ".($num+1).": Generated CREATE SQL" );
 }
 
-$gen = new Modyllic_Generator_SQL();
+$gen = new $gen_class();
 $gen_sql = $gen->drop_triggers( $schema->triggers )->sql_commands();
 is( count($gen_sql), count($drop_sql), "Generated all the DROPs" );
 foreach (array_reverse($drop_sql) as $num=>$sql) { // Drops are in reverse order of creates
@@ -73,11 +73,11 @@ EOSQL;
 $schema1 = $parser->parse($trig1_sql);
 $schema2 = $parser->parse($trig2_sql);
 
-require_ok("Modyllic/Diff.php");
+require_once("Modyllic/Diff.php");
 
 $diff = new Modyllic_Diff($schema1,$schema2);
 
-$gen = new Modyllic_Generator_SQL();
+$gen = new $gen_class();
 $sql = $gen->alter( $diff, array('triggers') )->sql_commands();
 
 is( count($sql), 2, "Diff requires two SQL commands" );

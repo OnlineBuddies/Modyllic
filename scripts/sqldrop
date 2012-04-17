@@ -9,7 +9,6 @@
 
 require_once "Modyllic/CommandLine.php";
 require_once "Modyllic/Generator.php";
-require_once "Modyllic/Generator/SQL.php";
 
 $args = Modyllic_CommandLine::getArgs(array(
     'description' => 'Display drop statements for a schema',
@@ -19,7 +18,7 @@ $args = Modyllic_CommandLine::getArgs(array(
             'long_name'   => '--dialect',
             'description' => 'dialect to output in',
             'action'      => 'Dialect',
-            'default'     => 'Modyllic_Generator_NativeSQL',
+            'default'     => 'Modyllic',
             ),
         'only' => array(
             'long_name'   => '--only',
