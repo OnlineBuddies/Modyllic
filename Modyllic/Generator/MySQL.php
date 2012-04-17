@@ -17,7 +17,7 @@ class Modyllic_Generator_MySQL {
     protected $source;
     protected $from_sqlmeta_exists;
     protected $to_sqlmeta_exists;
-    
+
     function __construct( $delim=';;', $sep=true ) {
         $this->set_what( $this->schema_types() );
         $this->delim = $delim;
@@ -47,7 +47,7 @@ class Modyllic_Generator_MySQL {
         }
         return false;
     }
-    
+
     function set_what($what) {
         $this->what = $what;
         $this->validate_schema_types($what);
@@ -59,12 +59,12 @@ class Modyllic_Generator_MySQL {
     function schema_types() {
         return array('database','sqlmeta','tables','views','routines','events','triggers');
     }
-    
+
     function validate_schema_types(array $what) {
         $diff = array_diff($what, $this->schema_types());
         if ( count($diff) ) {
             throw new Exception("Unknown kind of SQL schema element: ".implode(", ",$diff));
-        } 
+        }
     }
 
 // ALTER
@@ -77,7 +77,7 @@ class Modyllic_Generator_MySQL {
     function alter( Modyllic_Diff $diff ) {
         $this->from_sqlmeta_exists = $this->sqlmeta_exists($diff->from);
         $this->to_sqlmeta_exists = $this->sqlmeta_exists($diff->to);
-        
+
         $this->source = $diff->changeset;
         if ( ! $diff->changeset->has_changes() ) {
             $this->cmd("-- No changes detected.");
@@ -198,7 +198,7 @@ class Modyllic_Generator_MySQL {
         $this->extend(") ENGINE=MyISAM");
         $this->end_cmd();
     }
-    
+
 
 // DROP
 
@@ -1017,12 +1017,12 @@ class Modyllic_Generator_MySQL {
         $this->end_cmd();
         return $this;
     }
-    
+
     function alter_trigger( $trigger ) {
         $this->drop_trigger( $trigger->from );
         $this->create_trigger( $trigger );
     }
-    
+
     function drop_trigger( $trigger ) {
         $this->cmd( "DROP TRIGGER IF EXISTS %id", $trigger->name );
     }
