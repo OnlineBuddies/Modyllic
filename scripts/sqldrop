@@ -7,11 +7,11 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Commandline.php";
+require_once "Modyllic/CommandLine.php";
 require_once "Modyllic/Generator.php";
 require_once "Modyllic/Generator/SQL.php";
 
-$args = Modyllic_Commandline::getArgs(array(
+$args = Modyllic_CommandLine::getArgs(array(
     'description' => 'Display drop statements for a schema',
     'options' => array(
         'dialect' => array(
@@ -29,7 +29,7 @@ $args = Modyllic_Commandline::getArgs(array(
     'arguments' => array(
         'spec' => array('multiple'=>true) )));
 
-$schema = Modyllic_Commandline::schema($args->args['spec']);
+$schema = Modyllic_CommandLine::schema($args->args['spec']);
 
 $class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
 $gen = new $class();
@@ -40,7 +40,7 @@ if ( isset($args->options['only']) ) {
         $gen->validate_schema_types($only);
     }
     catch (Exception $e) {
-        Modyllic_Commandline::displayError($e->getMessage());
+        Modyllic_CommandLine::displayError($e->getMessage());
     }
 }
 else {

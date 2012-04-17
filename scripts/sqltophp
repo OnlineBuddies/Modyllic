@@ -7,10 +7,10 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Commandline.php";
+require_once "Modyllic/CommandLine.php";
 require_once "Modyllic/Generator/PHP.php";
 
-$args = Modyllic_Commandline::getArgs(array(
+$args = Modyllic_CommandLine::getArgs(array(
     'description' => 'Generate a PHP helper class for the stored procs in the schema',
     'options' => array(
         'class' => array(
@@ -22,7 +22,7 @@ $args = Modyllic_Commandline::getArgs(array(
     'arguments' => array(
         'spec' => array('multiple'=>true) )));
 
-$schema = Modyllic_Commandline::schema($args->args['spec']);
+$schema = Modyllic_CommandLine::schema($args->args['spec']);
 
 $class = $args->options['class'];
 if (!$class) { $class = ucfirst($schema->name); }

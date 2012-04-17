@@ -7,14 +7,14 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Commandline.php";
+require_once "Modyllic/CommandLine.php";
 require_once "Modyllic/Generator.php";
 
-$args = Modyllic_Commandline::getArgs(array(
+$args = Modyllic_CommandLine::getArgs(array(
     'description' => 'Preparse the SQL and generate something that can be loaded instantly.',
     'arguments' => array(
         'spec' => array('multiple'=>true) )));
 
-$schema = Modyllic_Commandline::schema($args->args['spec']);
+$schema = Modyllic_CommandLine::schema($args->args['spec']);
 
 print serialize($schema);
