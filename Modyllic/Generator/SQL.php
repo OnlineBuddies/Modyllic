@@ -15,11 +15,37 @@ class Modyllic_Generator_SQL {
     protected $sep;
     protected $what;
     protected $source;
+    protected $from_sqlmeta_exists;
+    protected $to_sqlmeta_exists;
     
     function __construct( $delim=';;', $sep=TRUE ) {
         $this->set_what( $this->schema_types() );
         $this->delim = $delim;
         $this->sep = $sep;
+    }
+
+    function sqlmeta_exists($schema) {
+        foreach ($schema->tables as $table) {
+            if ( count($this->table_meta($table)) ) {
+                return true;
+            }
+            foreach ($table->columns as $column) {
+                if ( count($this->column_meta($column)) ) {
+                    return true;
+                }
+            }
+            foreach ($table->indexes as $index) {
+                if ( count($this->index_meta($index)) ) {
+                    return true;
+                }
+            }
+        }
+        foreach ($schema->routines as $routine) {
+            if ( count($this->routine_meta($routine)) ) {
+                return true;
+            }
+        }
+        return false;
     }
     
     function set_what($what) {
@@ -49,6 +75,9 @@ class Modyllic_Generator_SQL {
     }
 
     function alter( Modyllic_Diff $diff ) {
+        $this->from_sqlmeta_exists = $this->sqlmeta_exists($diff->from);
+        $this->to_sqlmeta_exists = $this->sqlmeta_exists($diff->to);
+        
         $this->source = $diff->changeset;
         if ( ! $diff->changeset->has_changes() ) {
             $this->cmd("-- No changes detected.");
@@ -57,8 +86,10 @@ class Modyllic_Generator_SQL {
         if ( isset($this->what['database']) ) {
             $this->alter_database( $diff->changeset->schema );
         }
-        if ( isset($this->what['sqlmeta']) and $diff->changeset->sqlmeta_exists ) {
-            $this->create_sqlmeta();
+        if ( isset($this->what['sqlmeta']) ) {
+            if ( $this->to_sqlmeta_exists and ! $this->from_sqlmeta_exists ) {
+                $this->create_sqlmeta();
+            }
         }
 
         if ( isset($this->what['triggers']) ) {
@@ -108,6 +139,11 @@ class Modyllic_Generator_SQL {
         if ( isset($this->what['triggers']) ) {
             $this->alter_triggers( $diff->changeset->update['triggers'] );
         }
+        if ( isset($this->what['sqlmeta']) ) {
+            if ( $this->from_sqlmeta_exists and ! $this->to_sqlmeta_exists ) {
+                $this->drop_sqlmeta();
+            }
+        }
         $this->source = null;
         return $this;
     }
@@ -121,8 +157,12 @@ class Modyllic_Generator_SQL {
 
     function create( Modyllic_Schema $schema) {
         $this->source = $schema;
+        $this->to_sqlmeta_exists = $this->sqlmeta_exists($schema);
         if ( isset($this->what['database']) ) {
             $this->create_database( $schema );
+        }
+        if ( isset($this->what['sqlmeta']) and $this->to_sqlmeta_exists ) {
+            $this->create_sqlmeta();
         }
         if ( isset($this->what['tables']) ) {
             $this->create_tables( $schema->tables, $schema );
@@ -169,6 +209,7 @@ class Modyllic_Generator_SQL {
 
     function drop( Modyllic_Schema $schema ) {
         $this->source = $schema;
+        $this->to_sqlmeta_exists = $this->sqlmeta_exists($schema);
         if ( isset($this->what['triggers']) ) {
             $this->drop_triggers( $schema->triggers );
         }
@@ -184,7 +225,7 @@ class Modyllic_Generator_SQL {
         if ( isset($this->what['tables']) ) {
             $this->drop_tables( $schema->tables );
         }
-        if ( isset($this->what['sqlmeta']) and $schema->sqlmeta_exists ) {
+        if ( isset($this->what['sqlmeta']) and $this->to_sqlmeta_exists ) {
             $this->drop_sqlmeta();
         }
         if ( isset($this->what['database']) ) {
@@ -438,17 +479,12 @@ class Modyllic_Generator_SQL {
                 $this->end_cmd();
             }
 
-            $tometa = $this->table_meta($table);
-            $frommeta = $this->table_meta($table->from);
-            if ( $tometa != $frommeta ) {
-                if ( count($tometa) == 0 ) {
-                    $this->delete_meta( "TABLE", $table->name );
-                }
-                else if ( count($frommeta) == 0 ) {
-                    $this->insert_meta( "TABLE", $table->name, $tometa );
+            if ( isset($table->static) ) {
+                if ( $table->static ) {
+                    $this->insert_meta( "TABLE", $table->name, $this->table_meta($table) );
                 }
                 else {
-                    $this->update_meta( "TABLE", $table->name, $tometa );
+                    $this->delete_meta( "TABLE", $table->name );
                 }
             }
             foreach ($table->add['columns'] as $column) {
@@ -468,40 +504,42 @@ class Modyllic_Generator_SQL {
             }
         }
 
-        if ( isset($table->static) and $table->static ) {
+        if ( isset($table->static) and $table->static and ! $table->from->static ) {
             $this->cmd("TRUNCATE %id", $table->name);
         }
-        foreach ($table->remove['data'] as $row ) {
-            $this->begin_cmd();
-            $this->partial( "DELETE FROM %id WHERE ", $table->name);
-            $this->begin_list( " AND " );
-            foreach ($row as $col=>$val) {
-                $this->next_list_item();
-                $this->partial( "%id=%lit", $col, $val );
+        if ( $table->static ) {
+            foreach ($table->remove['data'] as $row ) {
+                $this->begin_cmd();
+                $this->partial( "DELETE FROM %id WHERE ", $table->name);
+                $this->begin_list( " AND " );
+                foreach ($row as $col=>$val) {
+                    $this->next_list_item();
+                    $this->partial( "%id=%lit", $col, $val );
+                }
+                $this->end_list();
+                $this->end_cmd();
             }
-            $this->end_list();
-            $this->end_cmd();
-        }
-        foreach ($table->update['data'] as $row ) {
-            $this->begin_cmd();
-            $this->partial( "UPDATE %id SET ", $table->name );
-            $this->begin_list();
-            foreach ($row['updated'] as $col=>$val) {
-                $this->next_list_item();
-                $this->partial( "%id=%lit", $col, $val );
+            foreach ($table->update['data'] as $row ) {
+                $this->begin_cmd();
+                $this->partial( "UPDATE %id SET ", $table->name );
+                $this->begin_list();
+                foreach ($row['updated'] as $col=>$val) {
+                    $this->next_list_item();
+                    $this->partial( "%id=%lit", $col, $val );
+                }
+                $this->end_list();
+                $this->partial(" WHERE ");
+                $this->begin_list(" AND ");
+                foreach ($row['where'] as $col=>$val) {
+                    $this->next_list_item();
+                    $this->partial( "%id=%lit", $col, $val );
+                }
+                $this->end_list();
+                $this->end_cmd();
             }
-            $this->end_list();
-            $this->partial(" WHERE ");
-            $this->begin_list(" AND ");
-            foreach ($row['where'] as $col=>$val) {
-                $this->next_list_item();
-                $this->partial( "%id=%lit", $col, $val );
+            foreach ($table->add['data'] as $row ) {
+                $this->create_data( $table, $row );
             }
-            $this->end_list();
-            $this->end_cmd();
-        }
-        foreach ($table->add['data'] as $row ) {
-            $this->create_data( $table, $row );
         }
         return $this;
     }
@@ -1042,10 +1080,6 @@ class Modyllic_Generator_SQL {
     function insert_meta($kind,$which,array $meta) {
         if ( count($meta) > 0 ) {
             if ( ! isset($this->what['sqlmeta']) ) { return; }
-            if ( ! $this->source->sqlmeta_exists ) {
-                $this->create_sqlmeta();
-                $this->source->sqlmeta_exists = true;
-            }
             $this->cmd( "INSERT INTO SQLMETA (kind,which,value) VALUES (%str, %str, %str)",
                 $kind, $which, json_encode($meta) );
         }
@@ -1053,23 +1087,20 @@ class Modyllic_Generator_SQL {
 
     function delete_meta($kind,$which) {
         if ( ! isset($this->what['sqlmeta']) ) { return; }
-        if ( ! $this->source->sqlmeta_exists ) {
-            $this->create_sqlmeta();
-            $this->source->sqlmeta_exists = true;
-        }
+        if ( ! $this->to_sqlmeta_exists ) { return; }
         $this->cmd( "DELETE FROM SQLMETA WHERE kind=%str AND which=%str",
             $kind, $which );
     }
 
     function update_meta($kind,$which,array $meta) {
         if ( ! isset($this->what['sqlmeta']) ) { return; }
-        if ( ! $this->source->sqlmeta_exists ) {
-            $this->create_sqlmeta();
-            $this->source->sqlmeta_exists = true;
-        }
-        $this->delete_meta($kind,$which);
         if ( count($meta) > 0 ) {
-            $this->insert_meta($kind,$which,$meta);
+            $this->cmd( "INSERT INTO SQLMETA SET kind=%str, which=%str, value=%str ON DUPLICATE KEY UPDATE meta=%str",
+                 $kind, $which, $meta, $meta );
+        }
+        else {
+            if ( ! $this->to_sqlmeta_exists ) { return; }
+            $this->delete_meta($kind,$which);
         }
     }
 
