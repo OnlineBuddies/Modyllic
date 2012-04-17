@@ -62,7 +62,7 @@ class Modyllic_Diff {
             if ( ! isset($this->from->routines[$name]) ) {
                 $this->changeset->add_routine($routine);
             }
-            else if ( ! $routine->equalTo($this->from->routines[$name]) ) {
+            else if ( ! $routine->equal_to($this->from->routines[$name]) ) {
                 $other = $this->from->routines[$name];
                 $routine->from = $this->from->routines[$name];
                 $this->changeset->update_routine($routine);
@@ -76,7 +76,7 @@ class Modyllic_Diff {
                 continue;
             }
             $fromevt = $this->from->events[$name];
-            if ( ! $toevt->equalTo($fromevt) ) {
+            if ( ! $toevt->equal_to($fromevt) ) {
                 $updevt = new Modyllic_Event_Changeset();
                 $updevt->name = $name;
                 $updevt->from = $fromevt;
@@ -109,7 +109,7 @@ class Modyllic_Diff {
                 continue;
             }
             $fromview = $this->from->views[$name];
-            if ( ! $toview->equalTo($fromview) ) {
+            if ( ! $toview->equal_to($fromview) ) {
                 $toview->from = $fromview;
                 $this->changeset->update_view( $toview );
             }
@@ -133,7 +133,7 @@ class Modyllic_Diff {
                 continue;
             }
             $fromtrigger = $this->from->triggers[$name];
-            if ( ! $totrigger->equalTo($fromtrigger) ) {
+            if ( ! $totrigger->equal_to($fromtrigger) ) {
                 $totrigger->from = $fromtrigger;
                 $this->changeset->update_trigger( $totrigger );
             }
@@ -229,7 +229,7 @@ class Modyllic_Diff {
                     continue;
                 }
                 $fromcolumn = $fromtable->columns[$fromname];
-                if ( ! $tocolumn->equalTo($fromcolumn) ) {
+                if ( ! $tocolumn->equal_to($fromcolumn) ) {
                     $tocolumn->previously = $fromname;
                     $tocolumn->from = $fromcolumn;
                     $tablediff->update_column($tocolumn);
@@ -248,7 +248,7 @@ class Modyllic_Diff {
             foreach ( $totable->indexes as $name=>$toindex ) {
                 $match = false;
                 foreach ($fromtable->indexes as $name=>$fromindex ) {
-                    $match = $toindex->equalTo( $fromindex );
+                    $match = $toindex->equal_to( $fromindex );
                     if ( $match ) { break; }
                 }
                 if ( ! $match ) {
@@ -259,7 +259,7 @@ class Modyllic_Diff {
             foreach ( $fromtable->indexes as $name=>$fromindex ) {
                 $match = false;
                 foreach ($totable->indexes as $name=>$toindex ) {
-                    $match = $fromindex->equalTo( $toindex );
+                    $match = $fromindex->equal_to( $toindex );
                     if ( $match ) { break; }
                 }
                 if ( ! $match ) {

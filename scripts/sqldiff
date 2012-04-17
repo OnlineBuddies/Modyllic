@@ -11,7 +11,7 @@ require_once "Modyllic/CommandLine.php";
 require_once "Modyllic/Diff.php";
 require_once "Modyllic/Generator.php";
 
-$args = Modyllic_CommandLine::getArgs(array(
+$args = Modyllic_CommandLine::get_args(array(
     'description' => 'Generate a PHP helper class for the stored procs in the schema',
     'options' => array(
         'fromschema' => array(
@@ -42,10 +42,10 @@ $args = Modyllic_CommandLine::getArgs(array(
         )));
 
 if ( (isset($args->options['fromschema']) or isset($args->options['toschema'])) and isset($args->args['fromschema']) ) {
-    Modyllic_CommandLine::displayError( "You can't specify a schema both positionally and via options" );
+    Modyllic_CommandLine::display_error( "You can't specify a schema both positionally and via options" );
 }
 
-$class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
+$class = Modyllic_Generator::dialect_to_class( $args->options['dialect'] );
 $gen = new $class();
 
 if ( isset($args->options['only']) ) {
@@ -54,7 +54,7 @@ if ( isset($args->options['only']) ) {
         $gen->validate_schema_types($only);
     }
     catch (Exception $e) {
-        Modyllic_CommandLine::displayError($e->getMessage());
+        Modyllic_CommandLine::display_error($e->getMessage());
     }
 }
 else {
@@ -69,7 +69,7 @@ if ( isset($args->options['fromschema']) ) {
     $fromschema += $args->options['fromschema'];
 }
 if ( count($fromschema) == 0 ) {
-    Modyllic_CommandLine::displayError( 'You must specify a from schema to compare');
+    Modyllic_CommandLine::display_error( 'You must specify a from schema to compare');
 }
 
 $toschema = array();
@@ -80,7 +80,7 @@ if ( isset($args->options['toschema']) ) {
     $toschema += $args->options['toschema'];
 }
 if ( count($toschema) == 0 ) {
-    Modyllic_CommandLine::displayError( 'You must specify a to schema to compare');
+    Modyllic_CommandLine::display_error( 'You must specify a to schema to compare');
 }
 
 $from = Modyllic_CommandLine::schema($fromschema);

@@ -47,14 +47,14 @@ class Modyllic_Loader_DB_MySQL {
         $parser = new Modyllic_Parser();
 
         $schema->name = $dbschema['SCHEMA_NAME'];
-        $schema->nameIsDefault = false;
+        $schema->name_is_default = false;
         $schema->charset = $dbschema['DEFAULT_CHARACTER_SET_NAME'];
         $schema->collate = $dbschema['DEFAULT_COLLATION_NAME'];
 
         $table_sth = self::query( $dbh, "SELECT TABLE_NAME FROM TABLES WHERE TABLE_SCHEMA=? AND TABLE_TYPE='BASE TABLE'", array($dbname) );
         $tables = array();
         while ( $table_row = $table_sth->fetch(PDO::FETCH_ASSOC) ) {
-            Modyllic_Status::$sourceCount ++;
+            Modyllic_Status::$source_count ++;
             $table = self::selectrow( $dbh, "SHOW CREATE TABLE ".Modyllic_SQL::quote_ident($dbname).".".Modyllic_SQL::quote_ident($table_row['TABLE_NAME']) );
             $tables[$table_row['TABLE_NAME']] = $table['Create Table'];
         }
@@ -62,7 +62,7 @@ class Modyllic_Loader_DB_MySQL {
         $routine_sth = self::query( $dbh, "SELECT ROUTINE_TYPE, ROUTINE_NAME FROM ROUTINES WHERE ROUTINE_SCHEMA=?", array($dbname) );
         $routines = array();
         while ( $routine = $routine_sth->fetch(PDO::FETCH_ASSOC) ) {
-            Modyllic_Status::$sourceCount ++;
+            Modyllic_Status::$source_count ++;
             if ( $routine['ROUTINE_TYPE'] == 'PROCEDURE' ) {
                 $proc = self::selectrow( $dbh,"SHOW CREATE PROCEDURE ".Modyllic_SQL::quote_ident($dbname).".".Modyllic_SQL::quote_ident($routine['ROUTINE_NAME']) );
                 $routines[$routine['ROUTINE_NAME']] = $proc['Create Procedure'];
@@ -77,16 +77,16 @@ class Modyllic_Loader_DB_MySQL {
         }
 
         foreach ($tables as $table_name=>$table_sql) {
-            Modyllic_Status::$sourceName = "$dbname.".$table_name;
+            Modyllic_Status::$source_name = "$dbname.".$table_name;
             $parser->partial( $schema, $table_sql, "$dbname.$table_name" );
-            Modyllic_Status::$sourceIndex ++;
+            Modyllic_Status::$source_index ++;
         }
         ksort($schema->tables);
 
         foreach ( $routines as $routine_name=>$routine_sql ) {
-            Modyllic_Status::$sourceName = "$dbname.$routine_name";
+            Modyllic_Status::$source_name = "$dbname.$routine_name";
             $parser->partial( $schema, $routine_sql, "$dbname.$routine_name" );
-            Modyllic_Status::$sourceIndex ++;
+            Modyllic_Status::$source_index ++;
         }
         ksort($schema->routines);
 

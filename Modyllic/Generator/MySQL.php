@@ -242,7 +242,7 @@ class Modyllic_Generator_MySQL {
 // DATABASE
 
     function create_database($schema) {
-        if ($schema->nameIsDefault) return $this;
+        if ($schema->name_is_default) return $this;
         $this->begin_cmd( "CREATE DATABASE %id", $schema->name );
         $this->extend( "DEFAULT CHARACTER SET=%lit", $schema->charset );
         $this->extend( "DEFAULT COLLATE=%lit", $schema->collate );
@@ -273,7 +273,7 @@ class Modyllic_Generator_MySQL {
     }
 
     function drop_database($schema) {
-        if ($schema->nameIsDefault) return $this;
+        if ($schema->name_is_default) return $this;
         $this->cmd( "DROP DATABASE IF EXISTS %id", $schema->name );
         return $this;
     }
@@ -603,10 +603,10 @@ class Modyllic_Generator_MySQL {
 
     function create_column( $column ) {
         if ( isset($column->from) ) {
-            $this->extend("%id %lit", $column->name, $column->type->toSql($column->from->type) );
+            $this->extend("%id %lit", $column->name, $column->type->to_sql($column->from->type) );
         }
         else {
-            $this->extend("%id %lit", $column->name, $column->type->toSql() );
+            $this->extend("%id %lit", $column->name, $column->type->to_sql() );
         }
         if ( ! $column->null ) {
             $this->add( " NOT NULL" );
@@ -914,7 +914,7 @@ class Modyllic_Generator_MySQL {
         else {
             $dir = "";
         }
-        $this->extend( "%lit%id %lit", $dir, $arg->name, $arg->type->toSql() );
+        $this->extend( "%lit%id %lit", $dir, $arg->name, $arg->type->to_sql() );
         return $this;
     }
 
@@ -927,7 +927,7 @@ class Modyllic_Generator_MySQL {
         $this->indent();
         for ($ii=0; $ii<$argc; ++$ii ) {
             $arg = $routine->args[$ii];
-            if ( $routine->from and isset($routine->from->args[$ii]) and ! $arg->equalTo($routine->from->args[$ii]) ) {
+            if ( $routine->from and isset($routine->from->args[$ii]) and ! $arg->equal_to($routine->from->args[$ii]) ) {
                 $this->reindent("--  ");
                 $this->routine_arg( $routine->from->args[$ii] );
                 $this->reindent();
@@ -963,7 +963,7 @@ class Modyllic_Generator_MySQL {
     }
 
     function function_returns( $func ) {
-        $this->extend( "RETURNS %lit", $func->returns->toSql() );
+        $this->extend( "RETURNS %lit", $func->returns->to_sql() );
         return $this;
     }
 
