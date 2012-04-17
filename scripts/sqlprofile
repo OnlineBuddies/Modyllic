@@ -15,7 +15,7 @@ require_once "Modyllic/Generator.php";
 require_once '/opt/php/xhprof/xhprof_lib/utils/xhprof_lib.php';
 require_once '/opt/php/xhprof/xhprof_lib/utils/xhprof_runs.php';
 
-$args = Modyllic_CommandLine::getArgs(array(
+$args = Modyllic_CommandLine::get_args(array(
     'description' => 'Loads a schema with xhprof enabled',
     'arguments' => array(
         'spec' => array('multiple'=>true) )));

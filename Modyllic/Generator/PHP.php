@@ -664,7 +664,7 @@ class Modyllic_Generator_PHP {
     }
     function args_list_docs($args) {
         foreach ($args as $arg) {
-            $this->phpdoc( '@param '.$arg->type->toSql().' $'.$arg->name.' '.$arg->docs );
+            $this->phpdoc( '@param '.$arg->type->to_sql().' $'.$arg->name.' '.$arg->docs );
         }
         return $this;
     }
@@ -696,7 +696,7 @@ class Modyllic_Generator_PHP {
             $max_len = max( $max_len, strlen($arg->name) );
         }
         foreach ($args as $arg) {
-            $this->phpdoc( sprintf('       %-'.$max_len.'s => %s %s',$arg->name,$arg->type->toSql(),$arg->docs ) );
+            $this->phpdoc( sprintf('       %-'.$max_len.'s => %s %s',$arg->name,$arg->type->to_sql(),$arg->docs ) );
         }
         return $this;
     }
@@ -983,7 +983,7 @@ class Modyllic_Generator_PHP {
         return $this;
     }
     function func_returns_docs($returns) {
-            $this->phpdoc( "@returns ".$returns->toSql() );
+            $this->phpdoc( "@returns ".$returns->to_sql() );
         return $this;
     }
     function proc_returns_docs($returns) {

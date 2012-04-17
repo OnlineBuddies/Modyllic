@@ -30,7 +30,7 @@ Console_CommandLine::registerAction('Dialect', 'Modyllic_Console_CommandLine_Act
 
 class Modyllic_CommandLine {
 
-    static function getParser() {
+    static function get_parser() {
         static $parser;
         if ( !isset($parser) ) {
             $parser = new Console_CommandLine();
@@ -38,12 +38,12 @@ class Modyllic_CommandLine {
         return $parser;
     }
 
-    static function displayError( $msg ) {
-        self::getParser()->displayError( $msg );
+    static function display_error( $msg ) {
+        self::get_parser()->displayError( $msg );
     }
 
-    static function getArgs( $argSpec ) {
-        $parser = self::getParser();
+    static function get_args( $arg_spec ) {
+        $parser = self::get_parser();
         $parser->addOption('verbose', array(
             'short_name'  => '-v',
             'long_name'   => '--verbose',
@@ -63,16 +63,16 @@ class Modyllic_CommandLine {
             'action'      => 'StoreTrue',
             'default'     => false,
             ));
-        if ( isset($argSpec['description']) ) {
-            $parser->description = $argSpec['description'];
+        if ( isset($arg_spec['description']) ) {
+            $parser->description = $arg_spec['description'];
         }
-        if ( isset($argSpec['options']) ) {
-            foreach ($argSpec['options'] as $name=>$opt) {
+        if ( isset($arg_spec['options']) ) {
+            foreach ($arg_spec['options'] as $name=>$opt) {
                 $parser->addOption( $name, $opt );
             }
         }
-        if ( isset($argSpec['arguments']) ) {
-            foreach ($argSpec['arguments'] as $name=>$opt) {
+        if ( isset($arg_spec['arguments']) ) {
+            foreach ($arg_spec['arguments'] as $name=>$opt) {
                 $parser->addArgument( $name, $opt );
             }
         }

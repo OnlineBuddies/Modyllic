@@ -41,17 +41,17 @@ class Modyllic_Status {
         }
     }
 
-    static $sourceName = "";
-    static $sourceIndex = 0;
-    static $sourceCount = 0;
+    static $source_name = "";
+    static $source_index = 0;
+    static $source_count = 0;
 
     static function status( $pos, $len ) {
-        if ( self::$in_file != self::$sourceName ) {
+        if ( self::$in_file != self::$source_name ) {
              if ( self::$in_file != "" ) {
                  self::clear_progress();
              }
-             self::verbose("Loading ".self::$sourceName."...\n");
-             self::$in_file = self::$sourceName;
+             self::verbose("Loading ".self::$source_name."...\n");
+             self::$in_file = self::$source_name;
         }
 
         if ( ! self::$progress ) {
@@ -73,18 +73,18 @@ class Modyllic_Status {
             return;
         }
 
-        $filename = self::$sourceName;
+        $filename = self::$source_name;
 
         # if we can fit the entire filename on the line then we size the progress bar
-        if ( $min_width+strlen(self::$sourceName) < (self::$width-1) ) {
+        if ( $min_width+strlen(self::$source_name) < (self::$width-1) ) {
             $progress_size = self::$width - ($min_width+strlen($filename)+1);
         }
         else {
             $filename = substr($filename, 0, self::$width - ($min_width+1) );
         }
 
-        $percent_per_file = 1 / self::$sourceCount;
-        $already_done = (self::$sourceIndex-1) * $percent_per_file;
+        $percent_per_file = 1 / self::$source_count;
+        $already_done = (self::$source_index-1) * $percent_per_file;
         $in_file = $len==0 ? 1 : ($pos / $len);
         $overall = $already_done + $percent_per_file*$in_file;
 

@@ -29,7 +29,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     public $triggers = array();
     const DEFAULT_NAME = "database";
     public $name = self::DEFAULT_NAME;
-    public $nameIsDefault = true;
+    public $name_is_default = true;
     const DEFAULT_CHARSET = "utf8";
     public $charset = self::DEFAULT_CHARSET;
     const DEFAULT_COLLATE = "utf8_general_ci";
@@ -43,24 +43,24 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $this->views          = array();
         $this->events         = array();
         $this->name           = self::DEFAULT_NAME;
-        $this->nameIsDefault  = true;
+        $this->name_is_default  = true;
         $this->charset        = self::DEFAULT_CHARSET;
         $this->collate        = self::DEFAULT_COLLATE;
         $this->docs           = "";
     }
 
-    function nameIsDefault() {
+    function name_is_default() {
         return ($this->name == self::DEFAULT_NAME);
     }
 
-    function setName( $name ) {
-        $this->nameIsDefault = ( $name == self::DEFAULT_NAME );
+    function set_name( $name ) {
+        $this->name_is_default = ( $name == self::DEFAULT_NAME );
         $this->name = $name;
     }
 
     function merge( $schema ) {
-        if ( $this->nameIsDefault ) {
-            $this->setName($schema->name);
+        if ( $this->name_is_default ) {
+            $this->set_name($schema->name);
         }
         if ( $this->charset == self::DEFAULT_CHARSET ) {
             $this->charset = $schema->charset;
@@ -186,30 +186,30 @@ class Modyllic_Schema extends Modyllic_Diffable {
     /**
      * @param Modyllic_Schema $other
      */
-    function schemaDefEqualTo( $other ) {
+    function schema_def_equal_to( $other ) {
         if ( $this->charset != $other->charset ) { return false; }
         if ( $this->collate != $other->collate ) { return false; }
         return true;
     }
 
-    function equalTo( $other ) {
-        if ( ! $this->schemaDefEqualTo($other) ) { return false; }
+    function equal_to( $other ) {
+        if ( ! $this->schema_def_equal_to($other) ) { return false; }
         if ( count($this->tables) != count($other->tables) ) { return false; }
         if ( count($this->routines) != count($other->routines) ) { return false; }
         if ( count($this->events) != count($other->events) ) { return false; }
         if ( count($this->triggers) != count($other->triggers) ) { return false; }
         if ( count($this->views) != count($other->views) ) { return false; }
         foreach ($this->tables as $key=>&$table) {
-            if ( ! $table->equalTo( $other->tables[$key] ) ) { return false; }
+            if ( ! $table->equal_to( $other->tables[$key] ) ) { return false; }
         }
         foreach ($this->routines as $key=>&$routine) {
-            if ( ! $routine->equalTo( $other->routines[$key] ) ) { return false; }
+            if ( ! $routine->equal_to( $other->routines[$key] ) ) { return false; }
         }
         foreach ($this->events as $key=>&$event) {
-            if ( ! $event->equalTo( $other->events[$key] ) ) { return false; }
+            if ( ! $event->equal_to( $other->events[$key] ) ) { return false; }
         }
         foreach ($this->views as $key=>&$view) {
-            if ( ! $view->equalTo( $other->views[$key] ) ) { return false; }
+            if ( ! $view->equal_to( $other->views[$key] ) ) { return false; }
         }
         return true;
     }
@@ -224,7 +224,7 @@ class Modyllic_View extends Modyllic_Diffable {
     function __construct($name) {
         $this->name = $name;
     }
-    function equalTo( $other ) {
+    function equal_to( $other ) {
         if ( $this->def != $other->def ) { return false; }
         return true;
     }
@@ -269,7 +269,7 @@ class Modyllic_Table extends Modyllic_Diffable {
      * @param Modyllic_Index $index
      */
     function add_index($index) {
-        $name = $index->getName();
+        $name = $index->get_name();
         if ( isset($this->indexes[$name]) ) {
             throw new Exception("In table ".$this->name."- duplicate key name ".$name);
         }
@@ -309,7 +309,7 @@ class Modyllic_Table extends Modyllic_Diffable {
      * @param Modyllic_Table $other
      * @returns bool True if $other is equivalent to $this
      */
-    function equalTo( $other ) {
+    function equal_to( $other ) {
         if ( $this->name != $other->name ) { return false; }
         if ( $this->engine != $other->engine ) { return false; }
         if ( $this->charset != $other->charset ) { return false; }
@@ -317,10 +317,10 @@ class Modyllic_Table extends Modyllic_Diffable {
         if ( count($this->columns) != count($other->columns) ) { return false; }
         if ( count($this->indexes) != count($other->indexes) ) { return false; }
         foreach ( $this->columns as $key=>&$value ) {
-            if ( ! $value->equalTo( $other->columns[$key] ) ) { return false; }
+            if ( ! $value->equal_to( $other->columns[$key] ) ) { return false; }
         }
         foreach ( $this->indexes as $key=>&$value ) {
-            if ( ! $value->equalTo( $other->indexes[$key] ) ) { return false; }
+            if ( ! $value->equal_to( $other->indexes[$key] ) ) { return false; }
         }
         return true;
     }
@@ -416,9 +416,9 @@ class Modyllic_Column extends Modyllic_Diffable {
      * @param Modyllic_Column $other
      * @returns bool True if $other is equivalent to $this
      */
-    function equalTo($other) {
+    function equal_to($other) {
         if ( $this->name != $other->name ) { return false; }
-        if ( ! $this->type->equalTo( $other->type ) ) { return false; }
+        if ( ! $this->type->equal_to( $other->type ) ) { return false; }
         if ( $this->null != $other->null ) { return false; }
         if ( $this->default != $other->default ) { return false; }
         if ( $this->auto_increment != $other->auto_increment ) { return false; }
@@ -449,7 +449,7 @@ class Modyllic_Index extends Modyllic_Diffable {
         $this->name = $name;
     }
 
-    function getName() {
+    function get_name() {
         return $this->name;
     }
 
@@ -457,7 +457,7 @@ class Modyllic_Index extends Modyllic_Diffable {
      * @param Modyllic_Index $other
      * @returns bool True if $other is equivalent to $this
      */
-    function equalTo($other) {
+    function equal_to($other) {
         if ( get_class($other) != get_class($this) )   { return false; }
         if ( $this->columns != $other->columns ) { return false; }
         if ( $this->primary != $other->primary ) { return false; }
@@ -485,12 +485,12 @@ class Modyllic_Index_Foreign extends Modyllic_Index {
         $this->references['on_update'] = "";
     }
 
-    function getName() {
+    function get_name() {
         return "~".$this->cname;
     }
 
-    function equalTo($other) {
-        if ( ! parent::equalTo($other) )               { return false; }
+    function equal_to($other) {
+        if ( ! parent::equal_to($other) )               { return false; }
         if ( $this->references != $other->references ) { return false; }
         if ( $this->weak != $other->weak )             { return false; }
         return true;
@@ -517,7 +517,7 @@ class Modyllic_CodeBody extends Modyllic_Diffable {
         return $stripped;
     }
 
-    function equalTo($other) {
+    function equal_to($other) {
         if ( get_class($other) != get_class($this) )   { return false; }
         if ( $this->_body_no_comments() != $other->_body_no_comments() ) { return false; }
         return true;
@@ -542,8 +542,8 @@ class Modyllic_Event extends Modyllic_CodeBody {
         $this->name = $name;
     }
 
-    function equalTo($other) {
-        if ( ! parent::equalTo($other) ) { return false; }
+    function equal_to($other) {
+        if ( ! parent::equal_to($other) ) { return false; }
         if ( $this->schedule != $other->schedule ) { return false; }
         if ( $this->preserve != $other->preserve ) { return false; }
         if ( $this->status != $other->status ) { return false; }
@@ -569,8 +569,8 @@ class Modyllic_Trigger extends Modyllic_CodeBody {
         $this->name = $name;
     }
 
-    function equalTo($other) {
-        if ( ! parent::equalTo($other)     ) { return false; }
+    function equal_to($other) {
+        if ( ! parent::equal_to($other)     ) { return false; }
         if ( $this->time != $other->time   ) { return false; }
         if ( $this->event != $other->event ) { return false; }
         if ( $this->body != $other->body   ) { return false; }
@@ -609,8 +609,8 @@ class Modyllic_Routine extends Modyllic_CodeBody {
      * @param Modyllic_Routine $other
      * @returns bool True if $other is equivalent to $this
      */
-    function equalTo($other) {
-        if ( ! parent::equalTo($other) ) { return false; }
+    function equal_to($other) {
+        if ( ! parent::equal_to($other) ) { return false; }
         if ( $this->deterministic != $other->deterministic ) { return false; }
         if ( $this->access        != $other->access )        { return false; }
         if ( $this->args_type     != $other->args_type )     { return false; }
@@ -619,7 +619,7 @@ class Modyllic_Routine extends Modyllic_CodeBody {
         $otherargc = count($other->args);
         if ( $thisargc != $otherargc ) { return false; }
         for ( $ii=0; $ii<$thisargc; ++$ii ) {
-            if ( ! $this->args[$ii]->equalTo( $other->args[$ii] ) ) { return false; }
+            if ( ! $this->args[$ii]->equal_to( $other->args[$ii] ) ) { return false; }
         }
         return true;
     }
@@ -631,8 +631,8 @@ class Modyllic_Routine extends Modyllic_CodeBody {
 class Modyllic_Proc extends Modyllic_Routine {
     const RETURNS_TYPE_DEFAULT = "NONE";
     public $returns = array("type"=>self::RETURNS_TYPE_DEFAULT);
-    function equalTo($other) {
-        if ( ! parent::equalTo( $other ) ) { return false; }
+    function equal_to($other) {
+        if ( ! parent::equal_to( $other ) ) { return false; }
         if ( $this->returns != $other->returns ) { return false; }
         return true;
     }
@@ -642,9 +642,9 @@ class Modyllic_Proc extends Modyllic_Routine {
  * A collection of attributes describing a stored function
  */
 class Modyllic_Func extends Modyllic_Routine {
-    function equalTo($other) {
-        if ( ! parent::equalTo( $other ) ) { return false; }
-        if ( ! $this->returns->equalTo( $other->returns ) ) { return false; }
+    function equal_to($other) {
+        if ( ! parent::equal_to( $other ) ) { return false; }
+        if ( ! $this->returns->equal_to( $other->returns ) ) { return false; }
         return true;
     }
 }
@@ -658,19 +658,19 @@ class Modyllic_Arg extends Modyllic_Diffable {
     public $type;
     public $dir = "IN";
     public $docs = "";
-    function toSql() {
+    function to_sql() {
         $sql = "";
         if ( $dir != "IN" ) {
             $sql .= "$dir ";
         }
         $sql .= Modyllic_SQL::quote_ident($name)." ";
-        $sql .= $type->toSql();
+        $sql .= $type->to_sql();
         return $sql;
     }
-    function equalTo($other) {
+    function equal_to($other) {
         if ( $this->name != $other->name ) { return false; }
         if ( $this->dir != $other->dir ) { return false; }
-        if ( ! $this->type->equalTo($other->type) ) { return false; }
+        if ( ! $this->type->equal_to($other->type) ) { return false; }
         return true;
     }
 }
