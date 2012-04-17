@@ -8,15 +8,15 @@
 
 class Modyllic_Loader_DB {
     static private $dialect_map;
-    static public function dbDriver($dialect) {
+    static public function db_driver($dialect) {
         if ( !isset(self::$dialect_map) ) { self::$dialect_map = array(); }
         if ( ! isset(self::$dialect_map[$dialect]) ) {
-            $capDialect = preg_replace( "/sql/", "SQL", $dialect );
+            $cap_dialect = preg_replace( "/sql/", "SQL", $dialect );
             $classes_to_try = array(
-                "Modyllic_Loader_DB_".ucfirst($capDialect),
+                "Modyllic_Loader_DB_".ucfirst($cap_dialect),
                 "Modyllic_Loader_DB_".ucfirst($dialect)."SQL",
                 "Modyllic_Loader_DB_".ucfirst($dialect),
-                "Modyllic_Loader_DB_".$capDialect,
+                "Modyllic_Loader_DB_".$cap_dialect,
                 "Modyllic_Loader_DB_".$dialect."SQL",
                 "Modyllic_Loader_DB_".$dialect,
                 $dialect,
@@ -77,9 +77,9 @@ class Modyllic_Loader_DB {
 
     static function load( $source, $schema ) {
         list( $driver, $dsn, $dbname, $username, $password ) = self::parse_dsn($source);
-        Modyllic_Status::$sourceName = $dsn;
+        Modyllic_Status::$source_name = $dsn;
 
-        $class = self::dbDriver( $driver );
+        $class = self::db_driver( $driver );
 
         $dbh = new PDO( $dsn, $username, $password, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES=>true ) );
 

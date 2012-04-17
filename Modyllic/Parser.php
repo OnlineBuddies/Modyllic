@@ -236,8 +236,8 @@ class Modyllic_Parser {
 
     function cmd_USE() {
         $name = $this->get_ident();
-        if ( $this->schema->nameIsDefault ) {
-            $this->schema->setName($name);
+        if ( $this->schema->name_is_default ) {
+            $this->schema->set_name($name);
         }
         if ( $name != $this->schema->name ) {
             throw $this->error( "Can't USE $name when creating ".$this->schema->name );
@@ -322,8 +322,8 @@ class Modyllic_Parser {
 
     function cmd_ALTER_DATABASE() {
         $name = $this->get_ident();
-        if ( $this->schema->nameIsDefault ) {
-            $this->schema->setName( $name );
+        if ( $this->schema->name_is_default ) {
+            $this->schema->set_name( $name );
         }
         if ( $name != $this->schema->name ) {
             throw $this->error( "Can't ALTER $name when creating ".$this->schema->name );
@@ -403,7 +403,7 @@ class Modyllic_Parser {
         //      [DEFAULT] {CHARACTER SET | CHARSET} [=] charset_name
         //    | [DEFAULT] COLLATE [=] collation_name
         $this->maybe('IF NOT EXISTS');
-        $this->schema->setName( $this->get_ident() );
+        $this->schema->set_name( $this->get_ident() );
         $this->get_create_specification();
     }
 
@@ -782,8 +782,8 @@ class Modyllic_Parser {
             $type->collate( $type->charset() . "_bin" );
         }
 
-        if ( ! $type->isValid() ) {
-#            throw $this->error( "Syntax error in type declaration of ".$type->toSql() );
+        if ( ! $type->is_valid() ) {
+#            throw $this->error( "Syntax error in type declaration of ".$type->to_sql() );
         }
 
         return $type;
@@ -1172,7 +1172,7 @@ class Modyllic_Parser {
         // If a semantically identical key already exists, replace it.
         $match = null;
         foreach ($this->ctx->indexes as $array_index=>&$index) {
-            if ( $key->equalTo($index) ) {
+            if ( $key->equal_to($index) ) {
                 $match = $array_index;
                 break;
             }
@@ -1211,12 +1211,12 @@ class Modyllic_Parser {
         else {
             // Scan to see if another key would meet our needs
             $matched = false;
-            foreach ( $this->ctx->indexes as &$otherKey ) {
-                if ( $otherKey instanceOf Modyllic_Index_Foreign ) { continue; }
-                if ( count($key->columns) <= count($otherKey->columns) ) {
+            foreach ( $this->ctx->indexes as &$other_key ) {
+                if ( $other_key instanceOf Modyllic_Index_Foreign ) { continue; }
+                if ( count($key->columns) <= count($other_key->columns) ) {
                     $matched = true;
                     foreach ( $key->columns as $idx=>&$colname ) {
-                        if ( !isset($otherKey->columns[$idx]) or $colname != $otherKey->columns[$idx] ) {
+                        if ( !isset($other_key->columns[$idx]) or $colname != $other_key->columns[$idx] ) {
                             $matched = false;
                             break;
                         }

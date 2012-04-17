@@ -10,7 +10,7 @@
 require_once "Modyllic/CommandLine.php";
 require_once "Modyllic/Generator.php";
 
-$args = Modyllic_CommandLine::getArgs(array(
+$args = Modyllic_CommandLine::get_args(array(
     'description' => 'Preparse the SQL and generate something that can be loaded instantly.',
     'arguments' => array(
         'spec' => array('multiple'=>true) )));

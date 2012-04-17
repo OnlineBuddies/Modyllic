@@ -41,14 +41,14 @@ class Modyllic_Loader {
         if ( !isset($schema) ) {
             $schema = new Modyllic_Schema();
         }
-        Modyllic_Status::$sourceCount += count($sources);
+        Modyllic_Status::$source_count += count($sources);
         foreach ($sources as $source) {
             // Strip trailing slashes from directory names
             if ( substr($source,-1) == "/" ) {
                 $source = substr($source,0,-1);
             }
-            Modyllic_Status::$sourceName = $source;
-            Modyllic_Status::$sourceIndex ++;
+            Modyllic_Status::$source_name = $source;
+            Modyllic_Status::$source_index ++;
             list($source,$loader) = self::determine_loader($source);
             if ( isset($loader) ) {
                 call_user_func(array($loader,'load'),$source,$schema);

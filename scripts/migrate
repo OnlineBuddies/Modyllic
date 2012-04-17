@@ -13,7 +13,7 @@ require_once "Modyllic/Diff.php";
 require_once "Modyllic/SQL.php";
 require_once "Modyllic/Loader/DB.php";
 
-$args = Modyllic_CommandLine::getArgs(array(
+$args = Modyllic_CommandLine::get_args(array(
     'description' => 'Generate a PHP helper class for the stored procs in the schema',
     'options' => array(
         'fromschema' => array(
@@ -36,29 +36,29 @@ $args = Modyllic_CommandLine::getArgs(array(
         ));
 
 if ( ! isset($args->options['fromschema']) ) {
-    Modyllic_CommandLine::displayError( 'the fromschema is required');
+    Modyllic_CommandLine::display_error( 'the fromschema is required');
 }
 if ( ! isset($args->options['toschema']) ) {
-    Modyllic_CommandLine::displayError( 'the toschema is required');
+    Modyllic_CommandLine::display_error( 'the toschema is required');
 }
 
 if ( ! Modyllic_Loader_DB::is_dsn($args->options['fromschema']) ) {
-    Modyllic_CommandLine::displayError( 'the fromschema must be a database');
+    Modyllic_CommandLine::display_error( 'the fromschema must be a database');
 }
 
 list( $driver, $dsn, $dbname, $user, $pass ) = Modyllic_Loader_DB::parse_dsn($args->options['fromschema']);
 
 try {
-    $gen_class = Modyllic_Generator::dialectToClass($driver);
+    $gen_class = Modyllic_Generator::dialect_to_class($driver);
 }
 catch (Exception $e) {
-    Modyllic_Commandline::displayError( 'Could not find a compatible dialect for '.$driver );
+    Modyllic_Commandline::display_error( 'Could not find a compatible dialect for '.$driver );
 }
 try {
     $dbh = new PDO( $dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
 }
 catch (PDOException $e) {
-    Modyllic_Commandline::displayError( 'error connecting to database server: '.$e->getMessage() );
+    Modyllic_Commandline::display_error( 'error connecting to database server: '.$e->getMessage() );
 }
 
 /// @todo Eeek, MySQL specific stuff in a generic script, push this out to a layer that knows
@@ -72,7 +72,7 @@ if ( $count == 0 ) {
         $dbh->exec("CREATE DATABASE ".Modyllic_SQL::quote_ident($dbname));
     }
     else {
-        Modyllic_CommandLine::displayError( "database $dbname does not exist" );
+        Modyllic_CommandLine::display_error( "database $dbname does not exist" );
     }
 }
 // End MySQL specific stuff
@@ -99,9 +99,9 @@ $gen->alter($diff);
 $cmds = count($gen->sql_commands());
 try {
     $ii = 0;
-    Modyllic_Status::$sourceName = "changes into database";
-    Modyllic_Status::$sourceCount = 1;
-    Modyllic_Status::$sourceIndex = 1;
+    Modyllic_Status::$source_name = "changes into database";
+    Modyllic_Status::$source_count = 1;
+    Modyllic_Status::$source_index = 1;
     foreach ($gen->sql_commands() as $cmd) {
         Modyllic_Status::status( ++$ii, $cmds );
         $dbh->exec($cmd);

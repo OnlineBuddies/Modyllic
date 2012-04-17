@@ -10,7 +10,7 @@
 require_once "Modyllic/CommandLine.php";
 require_once "Modyllic/Generator.php";
 
-$args = Modyllic_CommandLine::getArgs(array(
+$args = Modyllic_CommandLine::get_args(array(
     'description' => 'Load one or more schema and print them out',
     'options' => array(
         'dialect' => array(
@@ -30,7 +30,7 @@ $args = Modyllic_CommandLine::getArgs(array(
 
 $schema = Modyllic_CommandLine::schema($args->args['spec']);
 
-$class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
+$class = Modyllic_Generator::dialect_to_class( $args->options['dialect'] );
 $gen = new $class();
 
 if ( isset($args->options['only']) ) {
@@ -39,7 +39,7 @@ if ( isset($args->options['only']) ) {
         $gen->set_what($only);
     }
     catch (Exception $e) {
-        Modyllic_CommandLine::displayError($e->getMessage());
+        Modyllic_CommandLine::display_error($e->getMessage());
     }
 }
 print $gen->create_sql( $schema );
