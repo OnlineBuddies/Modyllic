@@ -36,7 +36,7 @@ $parser = new Modyllic_Parser();
 $schema = $parser->parse($delim.implode(";;",$create_sql));
 
 require_once("Modyllic/Generator.php");
-$gen_class = Modyllic_Generator::dialectToClass("Modyllic");
+$gen_class = Modyllic_Generator::dialect_to_class("Modyllic");
 $gen = new $gen_class();
 $gen_sql = $gen->create_triggers( $schema->triggers )->sql_commands();
 is( count($gen_sql), count($create_sql), "Generated all the CREATEs" );
