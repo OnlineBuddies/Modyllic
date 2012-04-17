@@ -14,7 +14,7 @@ class Modyllic_Status {
     static $in_file = "";
 
     static function init() {
-        if ( getenv('TERM') and ($cols = exec('tput cols')) !== FALSE ) {
+        if ( getenv('TERM') and ($cols = exec('tput cols')) !== false ) {
             self::$width = $cols;
         }
     }

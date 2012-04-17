@@ -90,7 +90,7 @@ is( $token->value(), "create", "CREATE has the right value" );
 is( $token->token(), "CREATE", "CREATE is all caps as a token" );
 
 $tok = new Modyllic_Tokenizer(" \t \n test");
-$token = $tok->next(TRUE);
+$token = $tok->next(true);
 ok( $token instanceOf Modyllic_Token_Whitespace, "Whitespace got tokenized" );
 is( $token->value(), " \t \n ", "The whitespace is what we expected" );
 

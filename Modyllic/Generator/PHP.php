@@ -435,11 +435,11 @@ class Modyllic_Generator_PHP {
         return $this;
     }
     function add_false() {
-        $this->add('FALSE');
+        $this->add('false');
         return $this;
     }
     function add_true() {
-        $this->add('TRUE');
+        $this->add('true');
         return $this;
     }
 
@@ -1126,7 +1126,7 @@ class Modyllic_Generator_PHP {
                    ->add_str('SQLSTATE[HY000]: General error')
                  ->end_cmd(')')
                  ->op('!==')
-                 ->add('FALSE')
+                 ->add('false')
                ->end_if_expr()
                  ->begin_throw()
                    ->begin_new('PDOException')
