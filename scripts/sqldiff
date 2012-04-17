@@ -7,12 +7,12 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Commandline.php";
+require_once "Modyllic/CommandLine.php";
 require_once "Modyllic/Diff.php";
 require_once "Modyllic/Generator.php";
 require_once "Modyllic/Generator/SQL.php";
 
-$args = Modyllic_Commandline::getArgs(array(
+$args = Modyllic_CommandLine::getArgs(array(
     'description' => 'Generate a PHP helper class for the stored procs in the schema',
     'options' => array(
         'fromschema' => array(
@@ -43,7 +43,7 @@ $args = Modyllic_Commandline::getArgs(array(
         )));
 
 if ( (isset($args->options['fromschema']) or isset($args->options['toschema'])) and isset($args->args['fromschema']) ) {
-    Modyllic_Commandline::displayError( "You can't specify a schema both positionally and via options" );
+    Modyllic_CommandLine::displayError( "You can't specify a schema both positionally and via options" );
 }
 
 $class = Modyllic_Generator::dialectToClass( $args->options['dialect'] );
@@ -55,7 +55,7 @@ if ( isset($args->options['only']) ) {
         $gen->validate_schema_types($only);
     }
     catch (Exception $e) {
-        Modyllic_Commandline::displayError($e->getMessage());
+        Modyllic_CommandLine::displayError($e->getMessage());
     }
 }
 else {
@@ -70,7 +70,7 @@ if ( isset($args->options['fromschema']) ) {
     $fromschema += $args->options['fromschema'];
 }
 if ( count($fromschema) == 0 ) {
-    Modyllic_Commandline::displayError( 'You must specify a from schema to compare');
+    Modyllic_CommandLine::displayError( 'You must specify a from schema to compare');
 }
 
 $toschema = array();
@@ -81,11 +81,11 @@ if ( isset($args->options['toschema']) ) {
     $toschema += $args->options['toschema'];
 }
 if ( count($toschema) == 0 ) {
-    Modyllic_Commandline::displayError( 'You must specify a to schema to compare');
+    Modyllic_CommandLine::displayError( 'You must specify a to schema to compare');
 }
 
-$from = Modyllic_Commandline::schema($fromschema);
-$to   = Modyllic_Commandline::schema($toschema);
+$from = Modyllic_CommandLine::schema($fromschema);
+$to   = Modyllic_CommandLine::schema($toschema);
 
 $diff = new Modyllic_Diff( $from, $to );
 
