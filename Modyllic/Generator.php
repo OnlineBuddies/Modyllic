@@ -12,7 +12,7 @@ class Modyllic_Generator {
         if ( !isset(self::$dialect_map) ) { self::$dialect_map = array(); }
         if ( ! isset(self::$dialect_map[$dialect]) ) {
             $capDialect = preg_replace( "/sql/", "SQL", $dialect );
-            $classes_to_try = array(
+            $classes_to_try = array_unique( array(
                 "Modyllic_Generator_".ucfirst($capDialect),
                 "Modyllic_Generator_".ucfirst($dialect)."SQL",
                 "Modyllic_Generator_".ucfirst($dialect),
@@ -20,7 +20,7 @@ class Modyllic_Generator {
                 "Modyllic_Generator_".$dialect."SQL",
                 "Modyllic_Generator_".$dialect,
                 $dialect,
-                );
+                ) );
             foreach ($classes_to_try as $class) {
                 $file = preg_replace("/_/","/", $class) . ".php";
                 @include_once $file;
