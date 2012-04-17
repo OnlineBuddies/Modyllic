@@ -35,7 +35,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     const DEFAULT_COLLATE = "utf8_general_ci";
     public $collate = self::DEFAULT_COLLATE;
     public $docs = "";
-    
+
     function reset() {
         $this->triggers       = array();
         $this->routines       = array();
@@ -48,11 +48,11 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $this->collate        = self::DEFAULT_COLLATE;
         $this->docs           = "";
     }
-    
+
     function nameIsDefault() {
         return ($this->name == self::DEFAULT_NAME);
     }
-    
+
     function setName( $name ) {
         $this->nameIsDefault = ( $name == self::DEFAULT_NAME );
         $this->name = $name;
@@ -111,7 +111,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $this->events[$event->name] = $event;
         return $event;
     }
-    
+
     /**
      * @param Modyllic_Trigger $trigger
      */
@@ -132,7 +132,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $tok = new Modyllic_Tokenizer( $sql );
         return $tok->next()->unquote();
     }
-    
+
     /**
      * Generates a meta table entry that wasn't in the schema
      */

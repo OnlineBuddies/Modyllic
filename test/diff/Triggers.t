@@ -18,8 +18,8 @@ $parser = new Modyllic_Parser();
 $trig1_sql = <<< EOSQL
 DELIMITER ;;
 CREATE TABLE bar (id int);;
-CREATE TRIGGER trig1 
-BEFORE INSERT ON bar 
+CREATE TRIGGER trig1
+BEFORE INSERT ON bar
 FOR EACH ROW
 BEGIN
     CALL do_something();
@@ -28,9 +28,9 @@ EOSQL;
 
 $trig2_sql = <<< EOSQL
 CREATE TABLE bar (id int);
-CREATE DEFINER = abc@localhost TRIGGER trig1 
-AFTER UPDATE ON bar 
-FOR EACH ROW 
+CREATE DEFINER = abc@localhost TRIGGER trig1
+AFTER UPDATE ON bar
+FOR EACH ROW
 INSERT INTO foo SET when=NOW();
 EOSQL;
 
