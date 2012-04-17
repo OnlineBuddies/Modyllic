@@ -35,7 +35,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     const DEFAULT_COLLATE = "utf8_general_ci";
     public $collate = self::DEFAULT_COLLATE;
     public $docs = "";
-    public $sqlmeta_exists = false;
+    public $sqlmeta_exists;
     
     function reset() {
         $this->triggers       = array();
@@ -48,7 +48,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $this->charset        = self::DEFAULT_CHARSET;
         $this->collate        = self::DEFAULT_COLLATE;
         $this->docs           = "";
-        $this->sqlmeta_exists = false;
+        $this->sqlmeta_exists = null;
     }
     
     function nameIsDefault() {
@@ -137,7 +137,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $tok = new Modyllic_Tokenizer( $sql );
         return $tok->next()->unquote();
     }
-
+    
     /**
      * Generates a meta table entry that wasn't in the schema
      */
