@@ -19,14 +19,14 @@ class Modyllic_Loader_File {
             throw new Modyllic_Loader_Exception("$file: File not found.");
         }
         else if ( !$sqlc or $sqlc[9] < $sql[9] ) {
-            if ( ($data = @file_get_contents($file)) === FALSE ) {
+            if ( ($data = @file_get_contents($file)) === false ) {
                 throw new Modyllic_Loader_Exception("Error opening $file");
             }
             $parser = new Modyllic_Parser();
             $parser->partial($schema, $data, $file, ";" );
         }
         else {
-            if ( ($data = @file_get_contents($sqlc_file)) === FALSE ) {
+            if ( ($data = @file_get_contents($sqlc_file)) === false ) {
                 throw new Modyllic_Loader_Exception("Error opening $sqlc_file");
             }
             $subschema = unserialize($data);

@@ -81,7 +81,7 @@ class Modyllic_Loader_DB {
 
         $class = self::dbDriver( $driver );
 
-        $dbh = new PDO( $dsn, $username, $password, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES=>TRUE ) );
+        $dbh = new PDO( $dsn, $username, $password, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES=>true ) );
 
         call_user_func( array($class,'load'), $dbh, $dbname, $schema );
     }

@@ -246,7 +246,7 @@ class Modyllic_Diff {
 
             ##### First, detect new indexes
             foreach ( $totable->indexes as $name=>$toindex ) {
-                $match = FALSE;
+                $match = false;
                 foreach ($fromtable->indexes as $name=>$fromindex ) {
                     $match = $toindex->equalTo( $fromindex );
                     if ( $match ) { break; }
@@ -257,7 +257,7 @@ class Modyllic_Diff {
             }
             ##### Next, detect removed indexes
             foreach ( $fromtable->indexes as $name=>$fromindex ) {
-                $match = FALSE;
+                $match = false;
                 foreach ($totable->indexes as $name=>$toindex ) {
                     $match = $fromindex->equalTo( $toindex );
                     if ( $match ) { break; }
@@ -272,35 +272,35 @@ class Modyllic_Diff {
             $to_data   = isset($totable->data)?   $totable->data:   array();
 
             if ( isset($totable->data) and ! isset($fromtable->data) ) {
-                $tablediff->update_option("static",TRUE);
+                $tablediff->update_option("static",true);
             }
             else if ( ! isset($totable->data) and isset($fromtable->data) ) {
-                $tablediff->update_option("static",FALSE);
+                $tablediff->update_option("static",false);
             }
             if ( isset($totable->data) ) {
                 $primary = $totable->primary_key();
 
                 # First, new and updated rows
                 foreach ( $to_data as $torow ) {
-                    $exists = FALSE;
+                    $exists = false;
                     foreach ( $from_data as $fromrow ) {
-                        $match = TRUE;
+                        $match = true;
                         foreach ( $primary as $key => $len ) {
-                            if ( $len === FALSE ) {
+                            if ( $len === false ) {
                                 if ( @$torow[$key] != @$fromrow[$key] ) {
-                                    $match = FALSE;
+                                    $match = false;
                                     break;
                                 }
                             }
                             else {
                                 if ( @substr($torow[$key],0,$len) != @substr($fromrow[$key],0,$len) ) {
-                                    $match = FALSE;
+                                    $match = false;
                                     break;
                                 }
                             }
                         }
                         if ( $match ) {
-                            $exists = TRUE;
+                            $exists = true;
                             $set = array();
                             foreach ($torow as $col=>$toval) {
                                 if ( !isset($fromrow[$col]) or $fromrow[$col]!=$toval ) {
@@ -319,25 +319,25 @@ class Modyllic_Diff {
                 }
                 # And then removed rows
                 foreach ( $from_data as $fromrow ) {
-                    $exists = FALSE;
+                    $exists = false;
                     foreach ( $to_data as $torow ) {
-                        $match = TRUE;
+                        $match = true;
                         foreach ( $primary as $key=>$len ) {
-                            if ( $len === FALSE ) {
+                            if ( $len === false ) {
                                 if ( @$torow[$key] != @$fromrow[$key] ) {
-                                    $match = FALSE;
+                                    $match = false;
                                     break;
                                 }
                             }
                             else {
                                 if ( @substr($torow[$key],0,$len) != @substr($fromrow[$key],0,$len) ) {
-                                    $match = FALSE;
+                                    $match = false;
                                     break;
                                 }
                             }
                         }
                         if ( $match ) {
-                            $exists = TRUE;
+                            $exists = true;
                             break;
                         }
                     }

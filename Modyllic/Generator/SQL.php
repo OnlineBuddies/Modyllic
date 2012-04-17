@@ -18,7 +18,7 @@ class Modyllic_Generator_SQL {
     protected $from_sqlmeta_exists;
     protected $to_sqlmeta_exists;
     
-    function __construct( $delim=';;', $sep=TRUE ) {
+    function __construct( $delim=';;', $sep=true ) {
         $this->set_what( $this->schema_types() );
         $this->delim = $delim;
         $this->sep = $sep;
@@ -666,10 +666,10 @@ class Modyllic_Generator_SQL {
 
     function ignore_index( $index ) {
         if ( $index instanceOf Modyllic_Index_Foreign and $index->weak ) {
-            return TRUE;
+            return true;
         }
         else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -712,7 +712,7 @@ class Modyllic_Generator_SQL {
                 $this->add( "," );
             }
             $this->add( "%id", $name );
-            if ( $length !== FALSE ) {
+            if ( $length !== false ) {
                 $this->add( "(%lit)", $length );
             }
         }
@@ -817,7 +817,7 @@ class Modyllic_Generator_SQL {
         return $meta;
     }
 
-    function create_routine( $routine, $dometa=TRUE ) {
+    function create_routine( $routine, $dometa=true ) {
         if ( $routine instanceOf Modyllic_Func ) {
             $this->create_function( $routine );
         }
@@ -834,8 +834,8 @@ class Modyllic_Generator_SQL {
     }
 
     function alter_routine( $routine ) {
-        $this->drop_routine( $routine->from, FALSE );
-        $this->create_routine( $routine, FALSE );
+        $this->drop_routine( $routine->from, false );
+        $this->create_routine( $routine, false );
         $frommeta = $this->routine_meta($routine->from);
         $tometa = $this->routine_meta($routine);
         if ( $frommeta != $tometa ) {
@@ -844,7 +844,7 @@ class Modyllic_Generator_SQL {
         return $this;
     }
 
-    function drop_routine( $routine, $dometa=TRUE ) {
+    function drop_routine( $routine, $dometa=true ) {
         if ( $routine instanceOf Modyllic_Func ) {
             $this->drop_function( $routine );
         }
@@ -1108,7 +1108,7 @@ class Modyllic_Generator_SQL {
 
 // SQL document wrapper
 
-    function sql_document($delim=";", $sep=FALSE) {
+    function sql_document($delim=";", $sep=false) {
         $sql = implode(";\n",$this->sql_header()) . ";\n";
         if ( $delim != ";" ) {
             $sql .= "DELIMITER $delim\n";
@@ -1123,7 +1123,7 @@ class Modyllic_Generator_SQL {
         return $sql;
     }
 
-    function sql_dump($delim=";", $sep=FALSE) {
+    function sql_dump($delim=";", $sep=false) {
         $sql = "";
         if ( $delim != "\n" ) {
             if ( $sep ) {
@@ -1160,8 +1160,8 @@ class Modyllic_Generator_SQL {
     protected $level = 0;
     protected $cmd_level = 0;
     protected $filters = array();
-    protected $partial = FALSE;
-    protected $in_list = FALSE;
+    protected $partial = false;
+    protected $in_list = false;
     protected $list_sep;
     protected $list_elem = 0;
 
@@ -1303,14 +1303,14 @@ class Modyllic_Generator_SQL {
     }
 
     protected function begin_list($list_sep=", ") {
-        $this->in_list = TRUE;
+        $this->in_list = true;
         $this->list_sep = $list_sep;
         $this->list_elem = 0;
         return $this;
     }
 
     protected function end_list() {
-        $this->in_list = FALSE;
+        $this->in_list = false;
         unset($this->list_sep);
         $this->list_elem = 0;
         return $this;
@@ -1331,7 +1331,7 @@ class Modyllic_Generator_SQL {
             array_shift($args); // Remove $str from the arg list
         }
         $this->add($str, $args);
-        $this->partial = FALSE;
+        $this->partial = false;
         return $this;
     }
 
@@ -1351,7 +1351,7 @@ class Modyllic_Generator_SQL {
             array_shift($args); // Remove $str from the arg list
         }
         $this->extend($str,$args);
-        $this->partial = TRUE;
+        $this->partial = true;
         return $this;
     }
 
