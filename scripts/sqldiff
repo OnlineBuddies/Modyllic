@@ -10,7 +10,6 @@
 require_once "Modyllic/CommandLine.php";
 require_once "Modyllic/Diff.php";
 require_once "Modyllic/Generator.php";
-require_once "Modyllic/Generator/SQL.php";
 
 $args = Modyllic_CommandLine::getArgs(array(
     'description' => 'Generate a PHP helper class for the stored procs in the schema',
@@ -30,7 +29,7 @@ $args = Modyllic_CommandLine::getArgs(array(
             'long_name'   => '--dialect',
             'description' => 'dialect to output in',
             'action'      => 'Dialect',
-            'default'     => 'Modyllic_Generator_NativeSQL',
+            'default'     => 'Modyllic',
             ),
         'only' => array(
             'long_name'   => '--only',

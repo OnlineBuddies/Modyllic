@@ -9,7 +9,7 @@
 require_once "Modyllic/SQL.php";
 require_once "Modyllic/Schema.php";
 
-class Modyllic_Generator_SQL {
+class Modyllic_Generator_MySQL {
 
     protected $delim;
     protected $sep;

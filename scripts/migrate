@@ -48,7 +48,22 @@ if ( ! Modyllic_Loader_DB::is_dsn($args->options['fromschema']) ) {
 
 list( $driver, $dsn, $dbname, $user, $pass ) = Modyllic_Loader_DB::parse_dsn($args->options['fromschema']);
 
-$dbh = new PDO( $dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
+try {
+    $gen_class = Modyllic_Generator::dialectToClass($driver);
+}
+catch (Exception $e) {
+    Modyllic_Commandline::displayError( 'Could not find a compatible dialect for '.$driver );
+}
+try {
+    $dbh = new PDO( $dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
+}
+catch (PDOException $e) {
+    Modyllic_Commandline::displayError( 'error connecting to database server: '.$e->getMessage() );
+}
+
+/// @todo Eeek, MySQL specific stuff in a generic script, push this out to a layer that knows
+/// how to talk to actual databases.  Perhaps some layer that includes what the MySQL loader
+/// currently does.
 $sth = $dbh->prepare('SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME=?');
 $sth->execute(array($dbname));
 list($count) = $sth->fetch(PDO::FETCH_NUM);
@@ -57,18 +72,10 @@ if ( $count == 0 ) {
         $dbh->exec("CREATE DATABASE ".Modyllic_SQL::quote_ident($dbname));
     }
     else {
-        Modyllic_CommandLine::displayError( 'could not connect to database '.$dbname );
+        Modyllic_CommandLine::displayError( "database $dbname does not exist" );
     }
 }
-
-try {
-    $gen_class = Modyllic_Generator::dialectToClass($driver);
-}
-catch (Exception $e) {
-    /// @todo This should probably just fail out and not default to "SQL".
-    /// Also, SQL is really MySQL
-    $gen_class = Modyllic_Generator::dialectToClass("SQL");
-}
+// End MySQL specific stuff
 
 $from = Modyllic_CommandLine::schema( array($args->options['fromschema']) );
 

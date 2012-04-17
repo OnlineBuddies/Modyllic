@@ -7,10 +7,10 @@
  */
 
 require_once "Modyllic/SQL.php";
-require_once "Modyllic/Generator/SQL.php";
+require_once "Modyllic/Generator/MySQL.php";
 require_once "Modyllic/Schema.php";
 
-class Modyllic_Generator_NativeSQL extends Modyllic_Generator_SQL {
+class Modyllic_Generator_ModyllicSQL extends Modyllic_Generator_MySQL {
     function sqlmeta_exists($schema) {
         return false;
     }
@@ -23,7 +23,7 @@ class Modyllic_Generator_NativeSQL extends Modyllic_Generator_SQL {
     function create_sqlmeta() {}
     function insert_meta($kind,$which,array $what) {}
     function delete_meta($kind,$which) {}
-    function update_meta($kind,$which,$what) {}
+    function update_meta($kind,$which,array $meta) {}
     function add_column( $column ) {
         parent::add_column( $column );
         $this->column_aliases($column);
