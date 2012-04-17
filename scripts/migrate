@@ -7,13 +7,13 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Commandline.php";
+require_once "Modyllic/CommandLine.php";
 require_once "Modyllic/Generator.php";
 require_once "Modyllic/Diff.php";
 require_once "Modyllic/SQL.php";
 require_once "Modyllic/Loader/DB.php";
 
-$args = Modyllic_Commandline::getArgs(array(
+$args = Modyllic_CommandLine::getArgs(array(
     'description' => 'Generate a PHP helper class for the stored procs in the schema',
     'options' => array(
         'fromschema' => array(
@@ -36,14 +36,14 @@ $args = Modyllic_Commandline::getArgs(array(
         ));
 
 if ( ! isset($args->options['fromschema']) ) {
-    Modyllic_Commandline::displayError( 'the fromschema is required');
+    Modyllic_CommandLine::displayError( 'the fromschema is required');
 }
 if ( ! isset($args->options['toschema']) ) {
-    Modyllic_Commandline::displayError( 'the toschema is required');
+    Modyllic_CommandLine::displayError( 'the toschema is required');
 }
 
 if ( ! Modyllic_Loader_DB::is_dsn($args->options['fromschema']) ) {
-    Modyllic_Commandline::displayError( 'the fromschema must be a database');
+    Modyllic_CommandLine::displayError( 'the fromschema must be a database');
 }
 
 list( $driver, $dsn, $dbname, $user, $pass ) = Modyllic_Loader_DB::parse_dsn($args->options['fromschema']);
@@ -57,7 +57,7 @@ if ( $count == 0 ) {
         $dbh->exec("CREATE DATABASE ".Modyllic_SQL::quote_ident($dbname));
     }
     else {
-        Modyllic_Commandline::displayError( 'could not connect to database '.$dbname );
+        Modyllic_CommandLine::displayError( 'could not connect to database '.$dbname );
     }
 }
 
@@ -70,9 +70,9 @@ catch (Exception $e) {
     $gen_class = Modyllic_Generator::dialectToClass("SQL");
 }
 
-$from = Modyllic_Commandline::schema( array($args->options['fromschema']) );
+$from = Modyllic_CommandLine::schema( array($args->options['fromschema']) );
 
-$to   = Modyllic_Commandline::schema($args->options['toschema']);
+$to   = Modyllic_CommandLine::schema($args->options['toschema']);
 
 Modyllic_Status::verbose("Comparing...\n");
 $diff = new Modyllic_Diff( $from, $to );

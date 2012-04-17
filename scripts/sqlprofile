@@ -7,7 +7,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Commandline.php";
+require_once "Modyllic/CommandLine.php";
 require_once "Modyllic/Generator.php";
 
 // note the hard coded paths from my laptop >.>
@@ -15,7 +15,7 @@ require_once "Modyllic/Generator.php";
 require_once '/opt/php/xhprof/xhprof_lib/utils/xhprof_lib.php';
 require_once '/opt/php/xhprof/xhprof_lib/utils/xhprof_runs.php';
 
-$args = Modyllic_Commandline::getArgs(array(
+$args = Modyllic_CommandLine::getArgs(array(
     'description' => 'Loads a schema with xhprof enabled',
     'arguments' => array(
         'spec' => array('multiple'=>true) )));
@@ -24,7 +24,7 @@ $ignore = array('call_user_func', 'call_user_func_array');
 
 xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY, $ignore);
 
-$schema = Modyllic_Commandline::schema($args->args['spec']);
+$schema = Modyllic_CommandLine::schema($args->args['spec']);
 
 $xhprof_data = xhprof_disable();
 $xhprof_runs = new XHProfRuns_Default();

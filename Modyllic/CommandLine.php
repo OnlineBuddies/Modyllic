@@ -28,7 +28,7 @@ class Modyllic_Console_CommandLine_ActionDialect extends Console_CommandLine_Act
 // then we can register our action
 Console_CommandLine::registerAction('Dialect', 'Modyllic_Console_CommandLine_ActionDialect');
 
-class Modyllic_Commandline {
+class Modyllic_CommandLine {
 
     static function getParser() {
         static $parser;
