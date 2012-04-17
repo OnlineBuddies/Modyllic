@@ -30,7 +30,7 @@ class Modyllic_Type {
                 return new Modyllic_BigInt($type);
             case "SERIAL":
                 $new = new Modyllic_BigInt($type);
-                $new->unsigned = TRUE;
+                $new->unsigned = true;
                 return $new;
             case "FLOAT":
                 return new Modyllic_Float($type);
@@ -96,8 +96,8 @@ class Modyllic_Type {
         return $this->name;
     }
     function equalTo($other) {
-        if ( !$this->isaEquivalent($other) and !$other->isaEquivalent($this) ) { return FALSE; }
-        return TRUE;
+        if ( !$this->isaEquivalent($other) and !$other->isaEquivalent($this) ) { return false; }
+        return true;
     }
     function isaEquivalent($other) {
         return get_class($this) == get_class($other);
@@ -116,19 +116,19 @@ class Modyllic_Bit extends Modyllic_Type {}
 class Modyllic_Numeric extends Modyllic_Type {
     public $default_length = 11;
     public $length;
-    public $unsigned = FALSE;
-    public $zerofill = FALSE;
+    public $unsigned = false;
+    public $zerofill = false;
 
     function __construct($type) {
         parent::__construct($type);
         $this->length = $this->default_length;
     }
     function equalTo($other) {
-        if ( ! parent::equalTo($other) ) { return FALSE; }
-        if ( $this->unsigned != $other->unsigned ) { return FALSE; }
-        if ( $this->zerofill != $other->zerofill ) { return FALSE; }
-        if ( $this->length != $other->length) { return FALSE; }
-        return TRUE;
+        if ( ! parent::equalTo($other) ) { return false; }
+        if ( $this->unsigned != $other->unsigned ) { return false; }
+        if ( $this->zerofill != $other->zerofill ) { return false; }
+        if ( $this->length != $other->length) { return false; }
+        return true;
     }
     function cloneFrom($old) {
         parent::cloneFrom($old);
@@ -179,9 +179,9 @@ class Modyllic_TinyInt extends Modyllic_Integer {
 class Modyllic_Boolean extends Modyllic_TinyInt {
     public $default_length = 1;
     function isaEquivalent($other) {
-        if ( parent::isaEquivalent($other) ) { return TRUE; }
-        if ( get_class($other) == "Modyllic_TinyInt" ) { return TRUE; }
-        return FALSE;
+        if ( parent::isaEquivalent($other) ) { return true; }
+        if ( get_class($other) == "Modyllic_TinyInt" ) { return true; }
+        return false;
     }
 }
 
@@ -220,9 +220,9 @@ class Modyllic_Decimal extends Modyllic_Numeric {
         return $sql;
     }
     function equalTo($other) {
-        if ( ! parent::equalTo($other) ) { return FALSE; }
-        if ( $this->scale != $other->scale) { return FALSE; }
-        return TRUE;
+        if ( ! parent::equalTo($other) ) { return false; }
+        if ( $this->scale != $other->scale) { return false; }
+        return true;
     }
     function cloneFrom($old) {
         parent::cloneFrom($old);
@@ -252,14 +252,14 @@ class Modyllic_Float extends Modyllic_Numeric {
         return $sql;
     }
     function equalTo($other) {
-        if ( get_class($this) != get_class($other) ) { return FALSE; }
-        if ( $this->unsigned != $other->unsigned ) { return FALSE; }
-        if ( $this->zerofill != $other->zerofill ) { return FALSE; }
-        if ( $this->decimals != $other->decimals ) { return FALSE; }
+        if ( get_class($this) != get_class($other) ) { return false; }
+        if ( $this->unsigned != $other->unsigned ) { return false; }
+        if ( $this->zerofill != $other->zerofill ) { return false; }
+        if ( $this->decimals != $other->decimals ) { return false; }
         if ( $this->decimals ) {
-            if ( $this->length != $other->length) { return FALSE; }
+            if ( $this->length != $other->length) { return false; }
         }
-        return TRUE;
+        return true;
     }
     function cloneFrom($old) {
         parent::cloneFrom($old);
@@ -352,9 +352,9 @@ class Modyllic_Year extends Modyllic_Type {
         return $sql;
     }
     function equalTo($other) {
-        if ( ! parent::equalTo($other) ) { return FALSE; }
-        if ( $this->length != $other->length ) { return FALSE; }
-        return TRUE;
+        if ( ! parent::equalTo($other) ) { return false; }
+        if ( $this->length != $other->length ) { return false; }
+        return true;
     }
     function cloneFrom($old) {
         parent::cloneFrom($old);
@@ -427,10 +427,10 @@ class Modyllic_String extends Modyllic_Type {
     }
 
     function equalTo($other) {
-        if ( ! parent::equalTo($other) ) { return FALSE; }
-        if ( $this->charset() != $other->charset() ) { return FALSE; }
-        if ( $this->collate() != $other->collate() ) { return FALSE; }
-        return TRUE;
+        if ( ! parent::equalTo($other) ) { return false; }
+        if ( $this->charset() != $other->charset() ) { return false; }
+        if ( $this->collate() != $other->collate() ) { return false; }
+        return true;
     }
     function cloneFrom($old) {
         parent::cloneFrom($old);
@@ -491,9 +491,9 @@ class Modyllic_String extends Modyllic_Type {
 
 class Modyllic_VarString extends Modyllic_String {
     function equalTo($other) {
-        if ( ! parent::equalTo($other) ) { return FALSE; }
-        if ( $this->length != $other->length ) { return FALSE; }
-        return TRUE;
+        if ( ! parent::equalTo($other) ) { return false; }
+        if ( $this->length != $other->length ) { return false; }
+        return true;
     }
     function cloneFrom($old) {
         parent::cloneFrom($old);

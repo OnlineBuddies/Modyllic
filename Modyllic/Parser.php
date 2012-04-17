@@ -534,14 +534,14 @@ class Modyllic_Parser {
 
     function get_completion() {
         // [ON COMPLETION [NOT] PRESERVE]
-        $in_schedule = FALSE;
+        $in_schedule = false;
         if ( $this->next()->token() == "NOT" ) {
             $this->assert_reserved();
-            $this->ctx->preserve = FALSE;
+            $this->ctx->preserve = false;
             $this->next();
         }
         else {
-            $this->ctx->preserve = TRUE;
+            $this->ctx->preserve = true;
         }
         $this->assert_reserved("PRESERVE");
     }
@@ -641,10 +641,10 @@ class Modyllic_Parser {
                     $routine->txns = Modyllic_Routine::TXNS_NONE;
                     break;
                 case 'NOT DETERMINISTIC':
-                    $routine->deterministic = FALSE;
+                    $routine->deterministic = false;
                     break;
                 case 'DETERMINISTIC':
-                    $routine->deterministic = TRUE;
+                    $routine->deterministic = true;
                     break;
                 case 'COMMENT':
                     $this->get_string();
@@ -746,16 +746,16 @@ class Modyllic_Parser {
                 }
             }
         }
-        $binary = FALSE;
+        $binary = false;
         while ( $this->peek_next() instanceOf Modyllic_Token_Reserved ) {
             if ( in_array( $this->peek_next()->token(), array( 'SIGNED', 'UNSIGNED', 'ZEROFILL', 'ASCII', 'UNICODE', 'BINARY' ) ) ) {
                 switch ( $this->get_reserved() ) {
-                    case 'SIGNED':   $type->unsigned = FALSE; break;
-                    case 'UNSIGNED': $type->unsigned = TRUE; break;
-                    case 'ZEROFILL': $type->zerofill = TRUE; $type->unsigned = TRUE; break;
+                    case 'SIGNED':   $type->unsigned = false; break;
+                    case 'UNSIGNED': $type->unsigned = true; break;
+                    case 'ZEROFILL': $type->zerofill = true; $type->unsigned = true; break;
                     case 'ASCII':    $type->charset('latin1'); $type->collate('latin1_general_ci'); break;
                     case 'UNICODE':  $type->charset('ucs2'); $type->collate('ucs2_general_ci'); break;
-                    case 'BINARY':   $binary = TRUE; break;
+                    case 'BINARY':   $binary = true; break;
                 }
             }
             else if ( in_array( $this->peek_next()->token(), array('CHARACTER SET', 'CHARSET') ) ) {
@@ -917,16 +917,16 @@ class Modyllic_Parser {
         $column = $this->ctx->add_column(new Modyllic_Column( $this->assert_ident() ));
         $column->type = $this->get_type();
 
-        $is_unique = FALSE;
+        $is_unique = false;
 
         if ( $column->type->name == 'SERIAL' ) {
             // SERIAL is an alias for BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE.
             $column->type = new Modyllic_BigInt('BIGINT');
-            $column->type->unsigned = TRUE;
-            $column->null = FALSE;
-            $column->auto_increment = TRUE;
+            $column->type->unsigned = true;
+            $column->null = false;
+            $column->auto_increment = true;
             $column->default = null; # No default
-            $is_unique = TRUE;
+            $is_unique = true;
         }
 
         if ( $column->type instanceOf Modyllic_Timestamp ) {
@@ -934,7 +934,7 @@ class Modyllic_Parser {
             $column->on_update = 'CURRENT_TIMESTAMP';
         }
 
-        $is_primary = FALSE;
+        $is_primary = false;
         while ( ! in_array($this->next()->value(), $this->column_term) ) {
             if ( $this->cur() instanceOf Modyllic_Token_Comment ) {
                 $column->docs .= trim( $column->docs . ' ' . $this->cur()->value() );
@@ -942,7 +942,7 @@ class Modyllic_Parser {
             }
             $this->assert_reserved();
             if ( $this->cur()->token() == 'NOT NULL' ) {
-                $column->null = FALSE;
+                $column->null = false;
                 // If the default was set to NULL either implicitly or explicitly but the column
                 // is not nullable then we clear the default.
                 if ( $column->default == 'NULL' ) {
@@ -953,7 +953,7 @@ class Modyllic_Parser {
                 if ( ! $column->null ) {
                     throw $this->error("Can't set column to NULL after setting it to NOT NULL");
                 }
-                $column->null = TRUE;
+                $column->null = true;
             }
             else if ( $this->cur()->token() == 'DEFAULT' ) {
                 $column->default = $column->type->normalize( $this->next() );
@@ -972,7 +972,7 @@ class Modyllic_Parser {
                 $is_unique = true;
             }
             else if ( $this->cur()->token() == 'AUTO_INCREMENT' ) {
-                $column->auto_increment = TRUE;
+                $column->auto_increment = true;
             }
             else if ( $this->cur()->token() == 'ALIASES' ) {
                 $this->get_symbol('(');
@@ -982,9 +982,9 @@ class Modyllic_Parser {
                 $key = new Modyllic_Index_Foreign();
                 if ( $this->peek_next()->token() == 'WEAKLY' ) {
                     $this->get_reserved();
-                    $key->weak = TRUE;
+                    $key->weak = true;
                 }
-                $key->columns = array( $column->name => FALSE );
+                $key->columns = array( $column->name => false );
                 $key->references['table'] = $this->get_ident();
                 $this->get_symbol('(');
                 $key->references['columns'] = $this->get_array();
@@ -1018,14 +1018,14 @@ class Modyllic_Parser {
         }
         if ( $is_primary ) {
             $index = new Modyllic_Index('!PRIMARY KEY');
-            $index->primary = TRUE;
-            $index->columns = array($column->name => FALSE);
+            $index->primary = true;
+            $index->columns = array($column->name => false);
             $this->add_index( $index );
         }
         else if ( $is_unique ) {
             $index = new Modyllic_Index($column->name);
-            $index->unique = TRUE;
-            $index->columns = array($column->name => FALSE);
+            $index->unique = true;
+            $index->columns = array($column->name => false);
             $this->add_index( $index );
         }
     }
@@ -1049,22 +1049,22 @@ class Modyllic_Parser {
         while ( 1 ) {
             $this->assert_reserved();
             if ( $token == 'PRIMARY KEY' ) {
-                $key->primary = TRUE;
+                $key->primary = true;
                 $key->name = '!PRIMARY KEY';
                 break;
             }
             else if ( $token == 'UNIQUE' ) {
-                $key->unique = TRUE;
+                $key->unique = true;
                 if ( $this->maybe('KEY') ) {
                     $this->assert_reserved();
                 }
                 break;
             }
             else if ( $token == 'FULLTEXT' ) {
-                $key->fulltext = TRUE;
+                $key->fulltext = true;
             }
             else if ( $token == 'SPATIAL' ) {
-                $key->spatial = TRUE;
+                $key->spatial = true;
             }
             else if ( $token == 'KEY' or $token == 'INDEX' ) {
                 break;
@@ -1098,7 +1098,7 @@ class Modyllic_Parser {
             $key->cname = $this->get_ident();
             $token = $this->get_reserved();
         }
-        $key->foreign = TRUE;
+        $key->foreign = true;
 
         // The name of the regular index part, optional, before the column list
         $name = '';
@@ -1119,7 +1119,7 @@ class Modyllic_Parser {
         $this->get_reserved( 'REFERENCES' );
         if ( $this->peek_next()->token() == 'WEAKLY' ) {
             $this->get_reserved();
-            $key->weak = TRUE;
+            $key->weak = true;
         }
         $key->references['table'] = $this->get_ident();
 
@@ -1161,7 +1161,7 @@ class Modyllic_Parser {
                     $this->get_symbol(')');
                 }
                 else {
-                    $columns[$colname] = FALSE;
+                    $columns[$colname] = false;
                 }
             }
         }
@@ -1184,7 +1184,7 @@ class Modyllic_Parser {
     }
 
     function gen_constraint_name($key) {
-        $key->cname = $this->ctx->gen_index_name( $this->ctx->name . "_ibfk", TRUE );
+        $key->cname = $this->ctx->gen_index_name( $this->ctx->name . "_ibfk", true );
         $key->dynamic_name = true;
     }
 
@@ -1210,14 +1210,14 @@ class Modyllic_Parser {
         }
         else {
             // Scan to see if another key would meet our needs
-            $matched = FALSE;
+            $matched = false;
             foreach ( $this->ctx->indexes as &$otherKey ) {
                 if ( $otherKey instanceOf Modyllic_Index_Foreign ) { continue; }
                 if ( count($key->columns) <= count($otherKey->columns) ) {
-                    $matched = TRUE;
+                    $matched = true;
                     foreach ( $key->columns as $idx=>&$colname ) {
                         if ( !isset($otherKey->columns[$idx]) or $colname != $otherKey->columns[$idx] ) {
-                            $matched = FALSE;
+                            $matched = false;
                             break;
                         }
                     }
@@ -1247,10 +1247,10 @@ class Modyllic_Parser {
         }
         if ( in_array( $this->peek_next()->token(), $thing ) ) {
             $this->next();
-            return TRUE;
+            return true;
         }
         else {
-            return FALSE;
+            return false;
         }
     }
 

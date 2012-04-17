@@ -346,15 +346,15 @@ class Modyllic_Tokenizer {
     /**
      * Return the next token without removing it from the token-stream.
      *
-     * @param bool $whitespace (default: FALSE) If this is TRUE, whitespace
+     * @param bool $whitespace (default: false) If this is true, whitespace
      * tokens will be returned rather then suppressed.
      */
-    function peek_next($whitespace = FALSE) {
+    function peek_next($whitespace = false) {
         $prev = $this->prev;
         $cur = $this->cur;
         $ws = array();
         do {
-            $next = $this->next(TRUE);
+            $next = $this->next(true);
             if ($whitespace or ! $next instanceOf Modyllic_Token_Whitespace) {
                 break;
             }
@@ -417,7 +417,7 @@ class Modyllic_Tokenizer {
 
     function rest_next() {
         do {
-            $redo = FALSE;
+            $redo = false;
             // If any tokens were injected into the head of the stream, we return those immediately
             if ( $this->is_injected() ) {
                 $cur = array_shift($this->injected);
@@ -459,7 +459,7 @@ class Modyllic_Tokenizer {
                 for ( ; $this->pos < $len; $this->pos++ ) {
                     $this->cmdstr[$this->pos] = ' ';
                 }
-                $redo = TRUE;
+                $redo = true;
             }
             // SQL style comments
             else if ( $this->is_sql_comment($matches) or $this->is_shell_comment($matches) ) {
@@ -493,10 +493,10 @@ class Modyllic_Tokenizer {
     /**
      * Return the next token
      *
-     * @param bool $whitespace (default: FALSE) If this is TRUE, whitespace
+     * @param bool $whitespace (default: false) If this is true, whitespace
      * tokens will be returned rather then suppressed.
      */
-    function next( $whitespace = FALSE, $peek = FALSE ) {
+    function next( $whitespace = false, $peek = false ) {
         $at_eof = $this->cur instanceOf Modyllic_Token_EOF;
         if ( ! $this->cur instanceOf Modyllic_Token_Whitespace and
              ! $this->cur instanceOf Modyllic_Token_Comment ) {
@@ -507,7 +507,7 @@ class Modyllic_Tokenizer {
         // handle MySQL conditional comments, we may need to make more then
         // one go at getting a token.  We loop rather then recursing.
         do {
-            $redo = FALSE;
+            $redo = false;
 
             // If any tokens were injected into the head of the stream, we return those immediately
             if ( $this->is_injected() ) {
@@ -581,7 +581,7 @@ class Modyllic_Tokenizer {
                 for ( ; $this->pos < $len; $this->pos++ ) {
                     $this->cmdstr[$this->pos] = ' ';
                 }
-                $redo = TRUE;
+                $redo = true;
             }
 
             // SQL style comments
@@ -614,7 +614,7 @@ class Modyllic_Tokenizer {
 
             // Supress whitespace unless we were asked for it
             if ( $this->cur instanceOf Modyllic_Token_Whitespace and ! $whitespace ) {
-                $redo = TRUE;
+                $redo = true;
             }
 
         } while ($redo);
@@ -673,10 +673,10 @@ class Modyllic_Tokenizer {
         else {
             $token = new Modyllic_Token_String($this->pos,$str);
             // If we're followed by whitespace and a string, then concatenate the string
-            if ( $this->peek_next(TRUE) instanceOf Modyllic_Token_Whitespace ) {
-                $ws = $this->next(TRUE);
-                if ( $this->peek_next(TRUE) instanceOf Modyllic_Token_String ) {
-                    $token = new Modyllic_Token_String($this->pos, Modyllic_SQL::quote_str( $token->unquote() . $this->next(FALSE)->unquote() ) );
+            if ( $this->peek_next(true) instanceOf Modyllic_Token_Whitespace ) {
+                $ws = $this->next(true);
+                if ( $this->peek_next(true) instanceOf Modyllic_Token_String ) {
+                    $token = new Modyllic_Token_String($this->pos, Modyllic_SQL::quote_str( $token->unquote() . $this->next(false)->unquote() ) );
                 }
                 else {
                     $this->inject($ws);
