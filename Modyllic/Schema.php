@@ -35,7 +35,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
     const DEFAULT_COLLATE = "utf8_general_ci";
     public $collate = self::DEFAULT_COLLATE;
     public $docs = "";
-    public $sqlmeta_exists;
     
     function reset() {
         $this->triggers       = array();
@@ -48,7 +47,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $this->charset        = self::DEFAULT_CHARSET;
         $this->collate        = self::DEFAULT_COLLATE;
         $this->docs           = "";
-        $this->sqlmeta_exists = null;
     }
     
     function nameIsDefault() {
@@ -87,9 +85,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
         }
         foreach ($schema->triggers as $trigger) {
             $this->add_trigger($trigger);
-        }
-        if ($schema->sqlmeta_exists) {
-            $this->sqlmeta_exists = $schema->sqlmeta_exists;
         }
     }
 
@@ -146,7 +141,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
         # from a database (or a dump from a database).  We'll want to
         # convert that back into our usual metadata.
         if ( isset($this->tables['SQLMETA']) and isset($this->tables['SQLMETA']->data) ) {
-            $this->sqlmeta_exists = TRUE;
             foreach ($this->tables['SQLMETA']->data as &$row) {
                 $kind = $this->unquote_sql_str($row['kind']);
                 $which = $this->unquote_sql_str($row['which']);
