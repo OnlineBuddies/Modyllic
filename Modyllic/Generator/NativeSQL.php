@@ -11,6 +11,10 @@ require_once "Modyllic/Generator/SQL.php";
 require_once "Modyllic/Schema.php";
 
 class Modyllic_Generator_NativeSQL extends Modyllic_Generator_SQL {
+    function sqlmeta_exists($schema) {
+        return false;
+    }
+
     // We include weak constraints as well as regular ones
     function ignore_index( $index ) {
         return FALSE;

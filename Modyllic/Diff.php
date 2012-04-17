@@ -45,12 +45,6 @@ class Modyllic_Diff {
             $this->changeset->schema->collate = $this->to->collate;
         }
 
-        // If our metadata table doesn't yet exist, create it
-        if ( ! $this->from->sqlmeta_exists and $this->changeset->sqlmeta_exists ) {
-            $this->changeset->sqlmeta_exists = TRUE;
-
-        }
-
         # Find completely new tables
         foreach ($this->to->tables as $name=>$table) {
             if ( ! isset($this->from->tables[$name]) ) {
@@ -371,7 +365,6 @@ class Modyllic_Changeset {
     public $remove;
     public $update;
     public $schema;
-    public $sqlmeta_exists = FALSE;
 
     function __construct() {
         $this->add = array(
@@ -519,7 +512,7 @@ class Modyllic_Changeset {
                     count($this->add['views'   ]) + count($this->update['views'   ]) + count($this->remove['views'   ]) +
                     count($this->add['triggers']) + count($this->update['triggers']) + count($this->remove['triggers'])
                     );
-        return ($changed != 0 or $this->sqlmeta_exists or isset($this->schema->charset) or isset($this->schema->collate));
+        return ($changed != 0 or isset($this->schema->charset) or isset($this->schema->collate));
     }
 }
 
