@@ -1043,7 +1043,7 @@ class Modyllic_Parser {
             $this->load_regular_key($token);
         }
     }
-    
+
     function load_regular_key($token) {
         $key = new Modyllic_Index();
         while ( 1 ) {
@@ -1091,7 +1091,7 @@ class Modyllic_Parser {
         $this->next();
         $this->add_index( $key );
     }
-    
+
     function load_foreign_key($token) {
         $key = new Modyllic_Index_Foreign();
         if ( $token == 'CONSTRAINT' ) {

@@ -37,7 +37,7 @@ class Modyllic_CommandLine {
         }
         return $parser;
     }
-    
+
     static function displayError( $msg ) {
         self::getParser()->displayError( $msg );
     }

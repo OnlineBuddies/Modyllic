@@ -22,13 +22,13 @@ class Modyllic_Status {
     static function warn( $msg ) {
         fwrite(STDERR, $msg);
     }
-    
+
     static function debug( $msg ) {
         if ( self::$debug ) {
             self::warn($msg);
         }
     }
-    
+
     static function verbose( $msg ) {
         if ( self::$verbose ) {
             self::warn($msg);
