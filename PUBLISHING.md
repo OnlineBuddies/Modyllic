@@ -9,13 +9,22 @@ And checkout the OLB pear repository:
 
 To publish a new release, from your Modyllic checkout:
 
-1. Update the version, notes, etc in package.xml
-2. Make sure there are no errors or warnings: pear package-validate package.xml
-3. git commit -m'Release Modyllic-#.#.#'
-4. git tag v#.#.#
+1. Update the version: ./release-version #.#.# beta
+2. Edit the package.xml to:
+   a. Add notes
+   b. Update the date and time
+   c. Copy the current release section down to the changelog (don't forget to delete the time section from the changelog)
+3. Make sure there are no errors or warnings: pear package-validate package.xml
+4. git add package.xml Modyllic/CommandLine.php
+5. git commit -m'Release Modyllic-#.#.#'
+6. git tag v#.#.#
+7. Build a tarball: pear package package.xml
+8. This will give you a Modyllic-#.#.#.tgz
+9. Bump the version for future edits: ./release-version #.#.#+1 alpha
+10. Edit the package.xml to clear the notes section
+11. git add package.xml Modyllic/CommandLine.php
+12. git commit -m'Begin Modyllic-#.#.#+1'
 5. git push
-5. Build a tarball: pear package package.xml
-6. This will give you a Modyllic-#.#.#.tgz
 
 Now in go to your previously checked out copy of the OLB pear repository:
 

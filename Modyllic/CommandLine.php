@@ -43,7 +43,12 @@ class Modyllic_CommandLine {
     }
 
     static function get_args( $arg_spec ) {
-        $parser = self::get_parser();
+        global $argv;
+        if ( in_array("--version",$argv) ) {
+            fputs(STDERR,"Modyllic Version: 0.1.8 alpha\n");
+            exit();
+        }
+        $parser = self::getParser();
         $parser->addOption('verbose', array(
             'short_name'  => '-v',
             'long_name'   => '--verbose',
@@ -60,6 +65,13 @@ class Modyllic_CommandLine {
         $parser->addOption('progress', array(
             'long_name'   => '--progress',
             'description' => 'output a progress meter to stderr',
+            'action'      => 'StoreTrue',
+            'default'     => false,
+            ));
+        // This is only in here to be included in help... we short circuit above if it's found
+        $parser->addOption('version', array(
+            'long_name'   => '--version',
+            'description' => 'show the Modyllic version number',
             'action'      => 'StoreTrue',
             'default'     => false,
             ));
@@ -82,6 +94,7 @@ class Modyllic_CommandLine {
         catch (Exception $e) {
             $parser->displayError($e->getMessage());
         }
+        
 
         Modyllic_Status::$verbose = $args->options['verbose'];
         Modyllic_Status::$progress = $args->options['progress'];

@@ -1,0 +1,15 @@
+#!/bin/bash
+MODYLLIC_PATH=$(dirname "$0")
+PACKAGE="$MODYLLIC_PATH/package.xml"
+MODYLLIC_COMMANDLINE="$MODYLLIC_PATH/Modyllic/CommandLine.php"
+VERSION=$(grep release $PACKAGE | head -1 | perl -ne'm{(\d+[.]\d+[.]\d+)} and print $1')
+RELEASE=$(grep release $PACKAGE | head -2 | tail -1 | perl -ne'm{>(\w+)<} and print $1')
+
+NEW_VERSION=${1-$VERSION}
+NEW_RELEASE=${2-$RELEASE}
+
+perl -pi -e 's{^  <release>'"$VERSION"'</release>}{  <release>'"$NEW_VERSION"'</release>}' $PACKAGE
+perl -pi -e 's{^  <release>'"$RELEASE"'</release>}{  <release>'"$NEW_RELEASE"'</release>}' $PACKAGE
+perl -pi -e 's{"Modyllic Version: .*?"}{"Modyllic Version: '"$NEW_VERSION"' '"$NEW_RELEASE"'"}' $MODYLLIC_COMMANDLINE
+
+echo "Version number bumped to: $NEW_VERSION $NEW_RELEASE"
