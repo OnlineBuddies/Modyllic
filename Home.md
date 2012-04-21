@@ -13,8 +13,8 @@ section for the list of ones we're currently aware of.
 Modyliic supports MySQL's DDL commands for creating databases,
 tables, views, procedures, functions, events and triggers.  A full list of
 the SQL we know how to parse is available in the
-[[Dialect | dialect documentation]].  There are also some of Modyllic's
-features that are supported by [[Extensions | extensions to SQL]].
+[[dialect documentation | Dialect]].  There are also some of Modyllic's
+features that are supported by [[extensions to SQL | Extensions]].
 
 Three primary use cases are:
 
