@@ -13,19 +13,19 @@ From this object you can:
 * Construct a new schema...
   * Create an empty schema
   * Load a schema from a file
-    *  Either our own dialect, or a database dump.  Essentially, we load
-       the database's dialect with our extensions, then call a database
-       specific fixup handler afterward to look for additional data, eg
-       the SQLMETA table.
+    * Either our own dialect, or a database dump.  Essentially, we load
+      the database's dialect with our extensions, then call a database
+      specific fixup handler afterward to look for additional data, eg
+      the SQLMETA table.
   * Load a schema from a database
-    *  Interrogates the database for schema information, either through
-       INFORMATION_SCHEMA or equivalent data dictionary tables or by
-       the equivalent of 'SHOW CREATE ...' or worst case by calling the
-       database's dump tool and parsing that output.
-    *  This would also manually query the SQLMETA table for metadata.  As
-       there is a standard way of translating this back into schema
-       attributes, what's contained here rather then being in the actual
-       schema is arbitrary.
+    * Interrogates the database for schema information, either through
+      INFORMATION_SCHEMA or equivalent data dictionary tables or by
+      the equivalent of 'SHOW CREATE ...' or worst case by calling the
+      database's dump tool and parsing that output.
+    * This would also manually query the SQLMETA table for metadata.  As
+      there is a standard way of translating this back into schema
+      attributes, what's contained here rather then being in the actual
+      schema is arbitrary.
        
 * Validate a schema:
   * Move many things that produce load errors currently off into a
@@ -37,5 +37,5 @@ From this object you can:
 
 * Generate SQL from a schema
   * Either database specific...
-    *  With and without weak foreign keys
+    * With and without weak foreign keys
   * Or using our own dialect
