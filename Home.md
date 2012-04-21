@@ -1,3 +1,34 @@
-Welcome to the Modyllic wiki!
+Modyllic is an SQL parser and set of schema management tools, written in PHP 5.2.
 
-Here you can see [[Prior Art]] and some notes on doing a [[Parser Refactor]].
+Modyllic is a collection of handy utilities for managing the schemas
+and contents of SQL databases at an enterprise level of
+sophistication.  By solving common problems a way traditional tools
+don't, it is intended to make the model in your model-view-controller
+framework...idyllic.  Modyllic is written in PHP, but can be useful as
+a toolset for any language.
+
+There have been a number of similar projects over the years, see our [[Prior Art]] 
+section for the list of ones we're currently aware of.
+
+In the wiki we also have some notes on doing a [[Parser Refactor]].
+
+Three primary use cases are:
+
+* Detecting and examining differences between databases. See [[sqldiff]] for
+  details.
+
+* Replacing conventional linear up/down scripts with more flexible
+  change management. See [[sqldump]], [[sqldrop]], [[sqldiff]] and
+  [[migrate]] for details.
+
+* Providing a consistant, safe and transparent access to stored routines. 
+  See [[sqltophp]] for details.
+
+And finally, incidentally, we provide a fast syntax highlighter based on
+Modyllic's tokenizer in the form of [[sqlcolorize]].
+
+Modyllic operates on [[schemas]], which can represent database, table, and
+column definitions, routines, events, triggers, as well as data.  They are
+stored in files as the SQL statements that would normally be used to create
+the tables.
+
