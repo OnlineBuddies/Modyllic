@@ -10,8 +10,6 @@ a toolset for any language.
 There have been a number of similar projects over the years, see our [[Prior Art]]
 section for the list of ones we're currently aware of.
 
-In the wiki we also have some notes on doing a [[Parser Refactor]].
-
 Modyliic supports MySQL's DDL commands for creating databases,
 tables, views, procedures, functions, events and triggers.  A full list of
 the SQL we know how to parse is available in the
@@ -38,3 +36,5 @@ column definitions, routines, events, triggers, as well as data.  They are
 stored in files as the SQL statements that would normally be used to create
 the tables.
 
+We also have some notes on doing a [[Parser Refactor]], a
+[[Dialect Refactor]], and adding support for [[Schema Change Events]].
