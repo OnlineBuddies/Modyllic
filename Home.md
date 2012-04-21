@@ -7,10 +7,16 @@ don't, it is intended to make the model in your model-view-controller
 framework...idyllic.  Modyllic is written in PHP, but can be useful as
 a toolset for any language.
 
-There have been a number of similar projects over the years, see our [[Prior Art]] 
+There have been a number of similar projects over the years, see our [[Prior Art]]
 section for the list of ones we're currently aware of.
 
 In the wiki we also have some notes on doing a [[Parser Refactor]].
+
+Modyliic supports MySQL's DDL commands for creating databases,
+tables, views, procedures, functions, events and triggers.  A full list of
+the SQL we know how to parse is available in the
+[[Dialect | dialect documentation]].  There are also some of Modyllic's
+features that are supported by [[Extensions | extensions to SQL]].
 
 Three primary use cases are:
 
@@ -21,7 +27,7 @@ Three primary use cases are:
   change management. See [[sqldump]], [[sqldrop]], [[sqldiff]] and
   [[migrate]] for details.
 
-* Providing a consistant, safe and transparent access to stored routines. 
+* Providing a consistant, safe and transparent access to stored routines.
   See [[sqltophp]] for details.
 
 And finally, incidentally, we provide a fast syntax highlighter based on
