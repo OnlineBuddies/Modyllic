@@ -38,3 +38,8 @@ the tables.
 
 We also have some notes on doing a [[Parser Refactor]], a
 [[Dialect Refactor]], and adding support for [[Schema Change Events]].
+
+Other documentation is included in the distribution itself:
+
+* Documentation on how to (publish new versions)[https://github.com/OnlineBuddies/Modyllic/blob/master/PUBLISHING.md]
+* Some slightly out of date documentation on (internals and how you might extend it)[https://github.com/OnlineBuddies/Modyllic/blob/master/HACKING.md]
