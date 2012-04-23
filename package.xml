@@ -106,7 +106,6 @@
    <install as="sqldrop" name="scripts/sqldrop" />
    <install as="sqldump" name="scripts/sqldump" />
    <install as="sqlpreparse" name="scripts/sqlpreparse" />
-   <install as="sqlprofile" name="scripts/sqlprofile" />
    <install as="sqltophp" name="scripts/sqltophp" />
   </filelist>
  </phprelease>
