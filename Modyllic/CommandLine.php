@@ -21,7 +21,7 @@ require_once "Console/CommandLine/Action.php";
 // A Modyllic generator dialect
 class Modyllic_Console_CommandLine_ActionDialect extends Console_CommandLine_Action {
     public function execute($value=false, $params=array()) {
-        $this->setResult( Modyllic_Generator::dialectToClass($value) );
+        $this->setResult( Modyllic_Generator::dialect_to_class($value) );
     }
 }
 
@@ -48,7 +48,7 @@ class Modyllic_CommandLine {
             fputs(STDERR,"Modyllic Version: 0.1.8 alpha\n");
             exit();
         }
-        $parser = self::getParser();
+        $parser = self::get_parser();
         $parser->addOption('verbose', array(
             'short_name'  => '-v',
             'long_name'   => '--verbose',
