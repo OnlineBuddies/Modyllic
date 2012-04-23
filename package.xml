@@ -32,7 +32,7 @@
  <contents>
   <dir name="/">
    <file name="Modyllic/SQL.php" role="php" />
-   <file name="Modyllic/Commandline.php" role="php" />
+   <file name="Modyllic/CommandLine.php" role="php" />
    <file name="Modyllic/Diff.php" role="php" />
    <file name="Modyllic/Generator.php" role="php" />
    <file name="Modyllic/Loader.php" role="php" />
@@ -45,11 +45,11 @@
    <file name="Modyllic/Status.php" role="php" />
    <file name="Modyllic/Tokenizer.php" role="php" />
    <file name="Modyllic/Types.php" role="php" />
-   <file name="Modyllic/Generator/NativeSQL.php" role="php" />
-   <file name="Modyllic/Generator/PlainSQL.php" role="php" />
+   <file name="Modyllic/Generator/ModyllicSQL.php" role="php" />
+   <file name="Modyllic/Generator/StrippedMySQL.php" role="php" />
    <file name="Modyllic/Generator/PHP.php" role="php" />
-   <file name="Modyllic/Generator/SQL.php" role="php" />
-   <file name="Modyllic/Generator/StrictSQL.php" role="php" />
+   <file name="Modyllic/Generator/MySQL.php" role="php" />
+   <file name="Modyllic/Generator/AssertMySQL.php" role="php" />
    <file baseinstalldir="/" name="scripts/migrate" role="script" />
    <file baseinstalldir="/" name="scripts/sqlcolorize" role="script" />
    <file baseinstalldir="/" name="scripts/sqldiff" role="script" />
@@ -106,7 +106,6 @@
    <install as="sqldrop" name="scripts/sqldrop" />
    <install as="sqldump" name="scripts/sqldump" />
    <install as="sqlpreparse" name="scripts/sqlpreparse" />
-   <install as="sqlprofile" name="scripts/sqlprofile" />
    <install as="sqltophp" name="scripts/sqltophp" />
   </filelist>
  </phprelease>
