@@ -32,7 +32,7 @@
  <contents>
   <dir name="/">
    <file name="Modyllic/SQL.php" role="php" />
-   <file name="Modyllic/Commandline.php" role="php" />
+   <file name="Modyllic/CommandLine.php" role="php" />
    <file name="Modyllic/Diff.php" role="php" />
    <file name="Modyllic/Generator.php" role="php" />
    <file name="Modyllic/Loader.php" role="php" />
