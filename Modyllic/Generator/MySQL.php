@@ -629,8 +629,8 @@ class Modyllic_Generator_MySQL {
     }
 
     function index_meta($index) {
-        if ( $index instanceOf Modyllic_Index_Foreign ) {
-            if ( $index->weak != Modyllic_Index_Foreign::WEAK_DEFAULT ) {
+        if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
+            if ( $index->weak != Modyllic_Schema_Index_Foreign::WEAK_DEFAULT ) {
                 return array( "weak" => $index->weak );
             }
             else {
@@ -648,7 +648,7 @@ class Modyllic_Generator_MySQL {
     }
 
     function drop_index( $index ) {
-        if ( $index instanceOf Modyllic_Index_Foreign ) {
+        if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
             $this->extend("DROP FOREIGN KEY %id", $index->cname);
         }
         else if ( $index->primary ) {
@@ -665,7 +665,7 @@ class Modyllic_Generator_MySQL {
     }
 
     function ignore_index( $index ) {
-        if ( $index instanceOf Modyllic_Index_Foreign and $index->weak ) {
+        if ( $index instanceOf Modyllic_Schema_Index_Foreign and $index->weak ) {
             return true;
         }
         else {
@@ -681,7 +681,7 @@ class Modyllic_Generator_MySQL {
             $this->partial($prefix);
         }
         $this->extend();
-        if ( $index instanceOf Modyllic_Index_Foreign ) {
+        if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
             if ( ! $index->dynamic_name and $index->cname ) {
                 $this->add( "CONSTRAINT %id ", $index->cname );
             }
@@ -717,7 +717,7 @@ class Modyllic_Generator_MySQL {
             }
         }
         $this->add( ")" );
-        if ( $index instanceOf Modyllic_Index_Foreign ) {
+        if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
             $this->foreign_key( $index );
         }
         if ( isset($index->using) ) {

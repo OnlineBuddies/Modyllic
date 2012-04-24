@@ -858,7 +858,7 @@ class Modyllic_Parser {
             }
         }
         foreach ($this->ctx->indexes as &$index) {
-            if ($index instanceOf Modyllic_Index_Foreign ) {
+            if ($index instanceOf Modyllic_Schema_Index_Foreign ) {
                 $this->add_foreign_key_index( '', $index );
             }
         }
@@ -979,7 +979,7 @@ class Modyllic_Parser {
                 $column->aliases += $this->get_array();
             }
             else if ( $this->cur()->token() == 'REFERENCES' ) {
-                $key = new Modyllic_Index_Foreign();
+                $key = new Modyllic_Schema_Index_Foreign();
                 if ( $this->peek_next()->token() == 'WEAKLY' ) {
                     $this->get_reserved();
                     $key->weak = true;
@@ -1093,7 +1093,7 @@ class Modyllic_Parser {
     }
 
     function load_foreign_key($token) {
-        $key = new Modyllic_Index_Foreign();
+        $key = new Modyllic_Schema_Index_Foreign();
         if ( $token == 'CONSTRAINT' ) {
             $key->cname = $this->get_ident();
             $token = $this->get_reserved();
@@ -1212,7 +1212,7 @@ class Modyllic_Parser {
             // Scan to see if another key would meet our needs
             $matched = false;
             foreach ( $this->ctx->indexes as &$other_key ) {
-                if ( $other_key instanceOf Modyllic_Index_Foreign ) { continue; }
+                if ( $other_key instanceOf Modyllic_Schema_Index_Foreign ) { continue; }
                 if ( count($key->columns) <= count($other_key->columns) ) {
                     $matched = true;
                     foreach ( $key->columns as $idx=>&$colname ) {

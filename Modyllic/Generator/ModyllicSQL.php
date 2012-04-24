@@ -43,7 +43,7 @@ class Modyllic_Generator_ModyllicSQL extends Modyllic_Generator_MySQL {
         }
     }
     function foreign_key($index) {
-        if ( $index->weak != Modyllic_Index_Foreign::WEAK_DEFAULT ) {
+        if ( $index->weak != Modyllic_Schema_Index_Foreign::WEAK_DEFAULT ) {
             $this->add( " WEAKLY REFERENCES %id", $index->references['table'] );
         }
         else {

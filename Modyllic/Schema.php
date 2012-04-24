@@ -9,6 +9,10 @@
 require_once "Modyllic/SQL.php";
 require_once "Modyllic/Types.php";
 
+// Components
+require_once "Modyllic/Schema/Index.php";
+require_once "Modyllic/Schema/Index/Foreign.php";
+
 /**
  * A base class for various schema objects.  Handles generic things like
  * providing previous values for the diff engine.  In a perfect world this
@@ -266,7 +270,7 @@ class Modyllic_Table extends Modyllic_Diffable {
         return $column;
     }
     /**
-     * @param Modyllic_Index $index
+     * @param Modyllic_Schema_Index $index
      */
     function add_index($index) {
         $name = $index->get_name();
@@ -424,35 +428,6 @@ class Modyllic_Column extends Modyllic_Diffable {
         if ( $this->auto_increment != $other->auto_increment ) { return false; }
         if ( $this->on_update != $other->on_update ) { return false; }
         if ( $this->aliases != $other->aliases ) { return false; }
-        return true;
-    }
-}
-
-
-class Modyllic_Index_Foreign extends Modyllic_Index {
-    public $cname = "";
-    const WEAK_DEFAULT = false;
-    public $weak     = self::WEAK_DEFAULT;
-    public $references = array();
-    /**
-     * @param string $name
-     */
-    function __construct($name="") {
-        parent::__construct($name);
-        $this->references['table'] = "";
-        $this->references['columns'] = array();
-        $this->references['on_delete'] = "";
-        $this->references['on_update'] = "";
-    }
-
-    function get_name() {
-        return "~".$this->cname;
-    }
-
-    function equal_to($other) {
-        if ( ! parent::equal_to($other) )               { return false; }
-        if ( $this->references != $other->references ) { return false; }
-        if ( $this->weak != $other->weak )             { return false; }
         return true;
     }
 }
