@@ -593,7 +593,7 @@ class Modyllic_Table_Changeset {
 
     /**
      * Note that an index was added
-     * @param Modyllic_Index $index
+     * @param Modyllic_Schema_Index $index
      */
     function add_index($index) {
         $this->add['indexes'][] = $index;
@@ -601,7 +601,7 @@ class Modyllic_Table_Changeset {
 
     /**
      * Note that an index was removed
-     * @param Modyllic_Index $index
+     * @param Modyllic_Schema_Index $index
      */
     function remove_index($index) {
         $this->remove['indexes'][] = $index;

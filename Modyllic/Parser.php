@@ -1017,13 +1017,13 @@ class Modyllic_Parser {
             }
         }
         if ( $is_primary ) {
-            $index = new Modyllic_Index('!PRIMARY KEY');
+            $index = new Modyllic_Schema_Index('!PRIMARY KEY');
             $index->primary = true;
             $index->columns = array($column->name => false);
             $this->add_index( $index );
         }
         else if ( $is_unique ) {
-            $index = new Modyllic_Index($column->name);
+            $index = new Modyllic_Schema_Index($column->name);
             $index->unique = true;
             $index->columns = array($column->name => false);
             $this->add_index( $index );
@@ -1045,7 +1045,7 @@ class Modyllic_Parser {
     }
 
     function load_regular_key($token) {
-        $key = new Modyllic_Index();
+        $key = new Modyllic_Schema_Index();
         while ( 1 ) {
             $this->assert_reserved();
             if ( $token == 'PRIMARY KEY' ) {
@@ -1225,7 +1225,7 @@ class Modyllic_Parser {
                 }
             }
             if ( ! $matched ) {
-                $regkey = new Modyllic_Index($name);
+                $regkey = new Modyllic_Schema_Index($name);
                 $regkey->columns = $key->columns;
                 if ( ! $regkey->name ) {
                     $this->gen_index_name($regkey);
