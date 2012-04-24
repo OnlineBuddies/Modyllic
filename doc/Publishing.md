@@ -7,6 +7,12 @@ And checkout the OLB pear repository:
 
 1. git clone git@github.com:OnlineBuddies/pear.git
 
+Merge in the Wiki docs:
+
+1. git remote add upstream-wiki git://github.com/OnlineBuddies/Modyllic.wiki 
+2. git fetch upstream-wiki
+3. git merge -s subtree upstream-wiki/master
+
 To publish a new release, from your Modyllic checkout:
 
 1. Update the version: ./release-version #.#.# beta
