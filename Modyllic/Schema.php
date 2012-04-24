@@ -12,6 +12,7 @@ require_once "Modyllic/Types.php";
 // Components
 require_once "Modyllic/Schema/Index.php";
 require_once "Modyllic/Schema/Index/Foreign.php";
+require_once "Modyllic/Schema/Column.php";
 
 /**
  * A base class for various schema objects.  Handles generic things like
@@ -259,7 +260,7 @@ class Modyllic_Table extends Modyllic_Diffable {
 
 
     /**
-     * @param Modyllic_Column $column
+     * @param Modyllic_Schema_Column $column
      */
     function add_column($column) {
         if ( isset($this->last_column) ) {
@@ -390,46 +391,6 @@ class Modyllic_Table extends Modyllic_Diffable {
         return $where;
     }
 
-}
-
-/**
- * A collection of attributes describing a column in a table
- */
-class Modyllic_Column extends Modyllic_Diffable {
-    public $name;
-    public $aliases = array();
-    public $previously;
-    public $type;
-    public $null = true;
-    public $default = "NULL";
-    public $auto_increment = false;
-    public $on_update;
-    public $docs = "";
-    public $after;
-    public $is_primary;
-
-    /**
-     * @param string $name
-     */
-    function __construct($name) {
-        $this->name = $name;
-    }
-
-
-    /**
-     * @param Modyllic_Column $other
-     * @returns bool True if $other is equivalent to $this
-     */
-    function equal_to($other) {
-        if ( $this->name != $other->name ) { return false; }
-        if ( ! $this->type->equal_to( $other->type ) ) { return false; }
-        if ( $this->null != $other->null ) { return false; }
-        if ( $this->default != $other->default ) { return false; }
-        if ( $this->auto_increment != $other->auto_increment ) { return false; }
-        if ( $this->on_update != $other->on_update ) { return false; }
-        if ( $this->aliases != $other->aliases ) { return false; }
-        return true;
-    }
 }
 
 class Modyllic_CodeBody extends Modyllic_Diffable {

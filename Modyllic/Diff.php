@@ -569,7 +569,7 @@ class Modyllic_Table_Changeset {
 
     /**
      * Note that a column was added
-     * @param Modyllic_Column $column
+     * @param Modyllic_Schema_Column $column
      */
     function add_column($column) {
         $this->add['columns'][$column->name] = $column;
@@ -577,7 +577,7 @@ class Modyllic_Table_Changeset {
 
     /**
      * Note that a column was removed
-     * @param Modyllic_Column $column
+     * @param Modyllic_Schema_Column $column
      */
     function remove_column($column) {
         $this->remove['columns'][$column->name] = $column;
@@ -585,7 +585,7 @@ class Modyllic_Table_Changeset {
 
     /**
      * Note that a column was updated
-     * @param Modyllic_Column $column
+     * @param Modyllic_Schema_Column $column
      */
     function update_column($column) {
         $this->update['columns'][$column->name] = $column;

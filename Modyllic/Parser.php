@@ -914,7 +914,7 @@ class Modyllic_Parser {
     function load_column() {
         // ident type [NOT NULL|NULL] [DEFAULT value] [ON UPDATE token] [AUTO_INCREMENT]
         //   [PRIMARY KEY] [COMMENT string] [ALIASES (token,...)]
-        $column = $this->ctx->add_column(new Modyllic_Column( $this->assert_ident() ));
+        $column = $this->ctx->add_column(new Modyllic_Schema_Column( $this->assert_ident() ));
         $column->type = $this->get_type();
 
         $is_unique = false;
