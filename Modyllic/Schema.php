@@ -12,6 +12,7 @@ require_once "Modyllic/Types.php";
 // Components
 require_once "Modyllic/Schema/View.php";
 require_once "Modyllic/Schema/Table.php";
+require_once "Modyllic/Schema/CodeBody.php";
 
 /**
  * A base class for various schema objects.  Handles generic things like
@@ -220,38 +221,10 @@ class Modyllic_Schema extends Modyllic_Diffable {
 }
 
 
-class Modyllic_CodeBody extends Modyllic_Diffable {
-    public $body = "BEGIN\nEND";
-    /**
-     * @returns string Strips any comments from the body of the routine--
-     * this allows the body to be compared to the one in the database,
-     * which never has comments.
-     */
-    function _body_no_comments() {
-        $stripped = $this->body;
-        # Strip C style comments
-        $stripped = preg_replace('{/[*].*?[*]/}s', '', $stripped);
-        # Strip shell and SQL style comments
-        $stripped = preg_replace('/(#|--).*/', '', $stripped);
-        # Strip leading and trailing whitespace
-        $stripped = preg_replace('/^[ \t]+|[ \t]+$/m', '', $stripped);
-        # Collapse repeated newlines
-        $stripped = preg_replace('/\n+/', "\n", $stripped);
-        return $stripped;
-    }
-
-    function equal_to($other) {
-        if ( get_class($other) != get_class($this) )   { return false; }
-        if ( $this->_body_no_comments() != $other->_body_no_comments() ) { return false; }
-        return true;
-    }
-
-}
-
 /**
  * A collection of attributes describing an event
  */
-class Modyllic_Event extends Modyllic_CodeBody {
+class Modyllic_Event extends Modyllic_Schema_CodeBody {
     public $name;
     public $schedule;
     public $preserve = false;
@@ -277,7 +250,7 @@ class Modyllic_Event extends Modyllic_CodeBody {
 /**
  * A collection of attributes describing an event
  */
-class Modyllic_Trigger extends Modyllic_CodeBody {
+class Modyllic_Trigger extends Modyllic_Schema_CodeBody {
     public $name;
     public $time;
     public $event;
@@ -304,7 +277,7 @@ class Modyllic_Trigger extends Modyllic_CodeBody {
 /**
  * A collection of attributes describing a stored routine
  */
-class Modyllic_Routine extends Modyllic_CodeBody {
+class Modyllic_Routine extends Modyllic_Schema_CodeBody {
     public $name;
     public $args = array();
     const ARGS_TYPE_DEFAULT = "LIST";
