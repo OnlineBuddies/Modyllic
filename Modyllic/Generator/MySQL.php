@@ -803,15 +803,15 @@ class Modyllic_Generator_MySQL {
 
     function routine_meta($routine) {
         $meta = array();
-        if ( $routine->args_type != Modyllic_Routine::ARGS_TYPE_DEFAULT ) {
+        if ( $routine->args_type != Modyllic_Schema_Routine::ARGS_TYPE_DEFAULT ) {
             $meta["args_type"] = $routine->args_type;
         }
-        if ( $routine instanceOf Modyllic_Proc ) {
-            if ( $routine->returns["type"] != Modyllic_Proc::RETURNS_TYPE_DEFAULT ) {
+        if ( $routine instanceOf Modyllic_Schema_Proc ) {
+            if ( $routine->returns["type"] != Modyllic_Schema_Proc::RETURNS_TYPE_DEFAULT ) {
                 $meta["returns"] = $routine->returns;
             }
         }
-        if ( $routine->txns != Modyllic_Routine::TXNS_DEFAULT ) {
+        if ( $routine->txns != Modyllic_Schema_Routine::TXNS_DEFAULT ) {
             $meta["txns"] = $routine->txns;
         }
         return $meta;
@@ -821,7 +821,7 @@ class Modyllic_Generator_MySQL {
         if ( $routine instanceOf Modyllic_Func ) {
             $this->create_function( $routine );
         }
-        else if ($routine instanceOf Modyllic_Proc ) {
+        else if ($routine instanceOf Modyllic_Schema_Proc ) {
             $this->create_procedure( $routine );
         }
         else {
@@ -848,7 +848,7 @@ class Modyllic_Generator_MySQL {
         if ( $routine instanceOf Modyllic_Func ) {
             $this->drop_function( $routine );
         }
-        else if ($routine instanceOf Modyllic_Proc ) {
+        else if ($routine instanceOf Modyllic_Schema_Proc ) {
             $this->drop_procedure( $routine );
         }
         else {
@@ -861,10 +861,10 @@ class Modyllic_Generator_MySQL {
     }
 
     function routine_attrs( $routine ) {
-        if ( $routine->access != Modyllic_Routine::ACCESS_DEFAULT ) {
+        if ( $routine->access != Modyllic_Schema_Routine::ACCESS_DEFAULT ) {
             $this->extend( $routine->access );
         }
-        if ( $routine->deterministic != Modyllic_Routine::DETERMINISTIC_DEFAULT ) {
+        if ( $routine->deterministic != Modyllic_Schema_Routine::DETERMINISTIC_DEFAULT ) {
             $this->extend( $routine->deterministic ? "DETERMINISTIC" : "NOT DETERMINISTIC" );
         }
         return $this;

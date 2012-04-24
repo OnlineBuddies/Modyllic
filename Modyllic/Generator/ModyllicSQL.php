@@ -59,12 +59,12 @@ class Modyllic_Generator_ModyllicSQL extends Modyllic_Generator_MySQL {
         }
     }
     function routine_attrs( $routine ) {
-        if ( $routine->args_type != Modyllic_Routine::ARGS_TYPE_DEFAULT ) {
+        if ( $routine->args_type != Modyllic_Schema_Routine::ARGS_TYPE_DEFAULT ) {
             $this->extend("ARGS %lit",$routine->args_type);
         }
-        if ( $routine instanceOf Modyllic_Proc ) {
+        if ( $routine instanceOf Modyllic_Schema_Proc ) {
             switch ($routine->returns["type"]) {
-            case Modyllic_Proc::RETURNS_TYPE_DEFAULT:
+            case Modyllic_Schema_Proc::RETURNS_TYPE_DEFAULT:
                 break;
             case "COLUMN":
             case "LIST":
@@ -78,15 +78,15 @@ class Modyllic_Generator_ModyllicSQL extends Modyllic_Generator_MySQL {
             }
         }
         switch ( $routine->txns ) {
-            case Modyllic_Routine::TXNS_DEFAULT:
+            case Modyllic_Schema_Routine::TXNS_DEFAULT:
                 break;
-            case Modyllic_Routine::TXNS_HAS:
+            case Modyllic_Schema_Routine::TXNS_HAS:
                 $this->extend("CONTAINS TRANSACTIONS");
                 break;
-            case Modyllic_Routine::TXNS_CALL:
+            case Modyllic_Schema_Routine::TXNS_CALL:
                 $this->extend("CALL IN TRANSACTION");
                 break;
-            case Modyllic_Routine::TXNS_NONE:
+            case Modyllic_Schema_Routine::TXNS_NONE:
                 $this->extend("NO TRANSACTIONS");
                 break;
         }

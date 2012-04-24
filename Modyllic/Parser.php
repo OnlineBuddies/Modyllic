@@ -569,7 +569,7 @@ class Modyllic_Parser {
         // CREATE PROCEDURE sp_name ([proc_parameter[,...]])
         // [RETURNS {ROW|COLUMN colname|MAP (key,val)|STH|TABLE|NONE}]
         // [characteristic ...] routine_body
-        $proc = $this->schema->add_routine( new Modyllic_Proc( $this->get_ident() ) );
+        $proc = $this->schema->add_routine( new Modyllic_Schema_Proc( $this->get_ident() ) );
         $proc->args = $this->get_args();
         $proc->docs = $this->cmddocs;
         $proc->returns = array('type'=>'NONE');
@@ -632,13 +632,13 @@ class Modyllic_Parser {
                     $routine->access = $this->cur()->token();
                     break;
                 case 'CONTAINS TRANSACTIONS':
-                    $routine->txns = Modyllic_Routine::TXNS_HAS;
+                    $routine->txns = Modyllic_Schema_Routine::TXNS_HAS;
                     break;
                 case 'CALL IN TRANSACTION':
-                    $routine->txns = Modyllic_Routine::TXNS_CALL;
+                    $routine->txns = Modyllic_Schema_Routine::TXNS_CALL;
                     break;
                 case 'NO TRANSACTIONS':
-                    $routine->txns = Modyllic_Routine::TXNS_NONE;
+                    $routine->txns = Modyllic_Schema_Routine::TXNS_NONE;
                     break;
                 case 'NOT DETERMINISTIC':
                     $routine->deterministic = false;
@@ -681,7 +681,7 @@ class Modyllic_Parser {
             if ( $this->cur() instanceOf Modyllic_Token_EOC ) {
                 throw $this->error("Command ended while looking for close of argument list");
             }
-            $arg = new Modyllic_Arg();
+            $arg = new Modyllic_Schema_Arg();
             while ( $this->cur() instanceOf Modyllic_Token_Comment ) {
                 if ( isset($lastarg) ) {
                     $lastarg->docs = trim( $lastarg->docs . " " . $this->cur()->value() );

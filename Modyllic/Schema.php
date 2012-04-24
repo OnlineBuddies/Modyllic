@@ -14,6 +14,7 @@ require_once "Modyllic/Schema/View.php";
 require_once "Modyllic/Schema/Table.php";
 require_once "Modyllic/Schema/Event.php";
 require_once "Modyllic/Schema/Trigger.php";
+require_once "Modyllic/Schema/Proc.php";
 
 /**
  * A base class for various schema objects.  Handles generic things like
@@ -103,7 +104,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     }
 
     /**
-     * @param Modyllic_Routine $routine
+     * @param Modyllic_Schema_Routine $routine
      */
     function add_routine( $routine ) {
         $this->routines[$routine->name] = $routine;
@@ -221,102 +222,13 @@ class Modyllic_Schema extends Modyllic_Diffable {
     }
 }
 
-
-/**
- * A collection of attributes describing a stored routine
- */
-class Modyllic_Routine extends Modyllic_Schema_CodeBody {
-    public $name;
-    public $args = array();
-    const ARGS_TYPE_DEFAULT = "LIST";
-    public $args_type = self::ARGS_TYPE_DEFAULT;
-    const DETERMINISTIC_DEFAULT = false;
-    public $deterministic = self::DETERMINISTIC_DEFAULT;
-    const ACCESS_DEFAULT = "CONTAINS SQL";
-    public $access = self::ACCESS_DEFAULT;
-    public $returns;
-    const TXNS_NONE = 0;
-    const TXNS_CALL = 1;
-    const TXNS_HAS  = 2;
-    const TXNS_DEFAULT = self::TXNS_NONE;
-    public $txns = self::TXNS_DEFAULT;
-    public $docs = '';
-
-    /**
-     * @param string $name
-     */
-    function __construct($name) {
-        $this->name = $name;
-    }
-
-    /**
-     * @param Modyllic_Routine $other
-     * @returns bool True if $other is equivalent to $this
-     */
-    function equal_to($other) {
-        if ( ! parent::equal_to($other) ) { return false; }
-        if ( $this->deterministic != $other->deterministic ) { return false; }
-        if ( $this->access        != $other->access )        { return false; }
-        if ( $this->args_type     != $other->args_type )     { return false; }
-        if ( $this->txns          != $other->txns )          { return false; }
-        $thisargc = count($this->args);
-        $otherargc = count($other->args);
-        if ( $thisargc != $otherargc ) { return false; }
-        for ( $ii=0; $ii<$thisargc; ++$ii ) {
-            if ( ! $this->args[$ii]->equal_to( $other->args[$ii] ) ) { return false; }
-        }
-        return true;
-    }
-}
-
-/**
- * A stored procedure, which is exactly like the base routine class
- */
-class Modyllic_Proc extends Modyllic_Routine {
-    const RETURNS_TYPE_DEFAULT = "NONE";
-    public $returns = array("type"=>self::RETURNS_TYPE_DEFAULT);
-    function equal_to($other) {
-        if ( ! parent::equal_to( $other ) ) { return false; }
-        if ( $this->returns != $other->returns ) { return false; }
-        return true;
-    }
-}
-
 /**
  * A collection of attributes describing a stored function
  */
-class Modyllic_Func extends Modyllic_Routine {
+class Modyllic_Func extends Modyllic_Schema_Routine {
     function equal_to($other) {
         if ( ! parent::equal_to( $other ) ) { return false; }
         if ( ! $this->returns->equal_to( $other->returns ) ) { return false; }
         return true;
     }
 }
-
-/**
- * A collection of attributes describing an argument to a stored procedure
- * or function.
- */
-class Modyllic_Arg extends Modyllic_Diffable {
-    public $name;
-    public $type;
-    public $dir = "IN";
-    public $docs = "";
-    function to_sql() {
-        $sql = "";
-        if ( $dir != "IN" ) {
-            $sql .= "$dir ";
-        }
-        $sql .= Modyllic_SQL::quote_ident($name)." ";
-        $sql .= $type->to_sql();
-        return $sql;
-    }
-    function equal_to($other) {
-        if ( $this->name != $other->name ) { return false; }
-        if ( $this->dir != $other->dir ) { return false; }
-        if ( ! $this->type->equal_to($other->type) ) { return false; }
-        return true;
-    }
-}
-
-

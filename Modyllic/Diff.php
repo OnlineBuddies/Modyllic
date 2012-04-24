@@ -438,7 +438,7 @@ class Modyllic_Changeset {
 
     /**
      * Note that a routine was added
-     * @param Modyllic_Routine $routine
+     * @param Modyllic_Schema_Routine $routine
      */
     function add_routine( $routine ) {
         $this->add['routines'][$routine->name] = $routine;
@@ -446,7 +446,7 @@ class Modyllic_Changeset {
 
     /**
      * Note that a routine was removed
-     * @param Modyllic_Routine $routine
+     * @param Modyllic_Schema_Routine $routine
      */
     function remove_routine( $routine ) {
         $this->remove['routines'][$routine->name] = $routine;
@@ -454,7 +454,7 @@ class Modyllic_Changeset {
 
     /**
      * Note that a routine was updated
-     * @param Modyllic_Routine $routine
+     * @param Modyllic_Schema_Routine $routine
      */
     function update_routine( $routine ) {
         $this->update['routines'][$routine->name] = $routine;
