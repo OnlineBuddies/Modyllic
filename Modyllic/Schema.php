@@ -10,9 +10,10 @@ require_once "Modyllic/SQL.php";
 require_once "Modyllic/Types.php";
 
 // Components
+require_once "Modyllic/Schema/View.php";
+require_once "Modyllic/Schema/Column.php";
 require_once "Modyllic/Schema/Index.php";
 require_once "Modyllic/Schema/Index/Foreign.php";
-require_once "Modyllic/Schema/Column.php";
 
 /**
  * A base class for various schema objects.  Handles generic things like
@@ -126,7 +127,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     }
 
     /**
-     * @param Modyllic_View $view
+     * @param Modyllic_Schema_View $view
      */
     function add_view( $view ) {
         $this->views[$view->name] = $view;
@@ -216,21 +217,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
         foreach ($this->views as $key=>&$view) {
             if ( ! $view->equal_to( $other->views[$key] ) ) { return false; }
         }
-        return true;
-    }
-}
-
-class Modyllic_View extends Modyllic_Diffable {
-    public $name;
-    public $def;
-    /**
-     * @param string $name
-     */
-    function __construct($name) {
-        $this->name = $name;
-    }
-    function equal_to( $other ) {
-        if ( $this->def != $other->def ) { return false; }
         return true;
     }
 }

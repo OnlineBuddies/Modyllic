@@ -560,7 +560,7 @@ class Modyllic_Parser {
         if ( isset($this->schema->tables[$name]) ) {
             throw $this->error("Can't create VIEW $name when a table of that name already exists");
         }
-        $view = $this->schema->add_view( new Modyllic_View( $name ) );
+        $view = $this->schema->add_view( new Modyllic_Schema_View( $name ) );
         ## Minimal support for views currently
         $view->def = $this->rest();
     }
