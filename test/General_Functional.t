@@ -30,14 +30,14 @@ is( count($schema->tables), 2, "Parsed two table" );
 is( count($schema->routines), 0, "Parsed no routines" );
 
 $test_table = $schema->tables['test'];
-ok( $test_table instanceOf Modyllic_Table, "We got an Modyllic_Schema_Table object for the table test" );
+ok( $test_table instanceOf Modyllic_Schema_Table, "We got an Modyllic_Schema_Table object for the table test" );
 is( $test_table->name, "test", "The name attribute got set" );
 is( $test_table->engine, "InnoDB", "The default engine got set" );
 is( $test_table->charset, "utf8", "The default charset got set" );
 is( count($test_table->columns), 1, "One column found" );
 is( count($test_table->indexes), 0, "No indexes found" );
 $column = $test_table->columns['id'];
-ok( $column instanceOf Modyllic_Column, "Column id isa Modyllic_Column" );
+ok( $column instanceOf Modyllic_Schema_Column, "Column id isa Modyllic_Schema_Column" );
 is( $column->name, "id", "Column name set" );
 is( count($column->aliases), 0, "No aliases" );
 ok( $column->type instanceOf Modyllic_Integer, "Column type set" );

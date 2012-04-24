@@ -396,7 +396,7 @@ class Modyllic_Generator_MySQL {
 // TABLE
 
     function table_meta($table) {
-        if ( $table->static != Modyllic_Table::STATIC_DEFAULT ) {
+        if ( $table->static != Modyllic_Schema_Table::STATIC_DEFAULT ) {
             return array( "static"=>$table->static );
         }
         else {
@@ -629,8 +629,8 @@ class Modyllic_Generator_MySQL {
     }
 
     function index_meta($index) {
-        if ( $index instanceOf Modyllic_Index_Foreign ) {
-            if ( $index->weak != Modyllic_Index_Foreign::WEAK_DEFAULT ) {
+        if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
+            if ( $index->weak != Modyllic_Schema_Index_Foreign::WEAK_DEFAULT ) {
                 return array( "weak" => $index->weak );
             }
             else {
@@ -648,7 +648,7 @@ class Modyllic_Generator_MySQL {
     }
 
     function drop_index( $index ) {
-        if ( $index instanceOf Modyllic_Index_Foreign ) {
+        if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
             $this->extend("DROP FOREIGN KEY %id", $index->cname);
         }
         else if ( $index->primary ) {
@@ -665,7 +665,7 @@ class Modyllic_Generator_MySQL {
     }
 
     function ignore_index( $index ) {
-        if ( $index instanceOf Modyllic_Index_Foreign and $index->weak ) {
+        if ( $index instanceOf Modyllic_Schema_Index_Foreign and $index->weak ) {
             return true;
         }
         else {
@@ -681,7 +681,7 @@ class Modyllic_Generator_MySQL {
             $this->partial($prefix);
         }
         $this->extend();
-        if ( $index instanceOf Modyllic_Index_Foreign ) {
+        if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
             if ( ! $index->dynamic_name and $index->cname ) {
                 $this->add( "CONSTRAINT %id ", $index->cname );
             }
@@ -717,7 +717,7 @@ class Modyllic_Generator_MySQL {
             }
         }
         $this->add( ")" );
-        if ( $index instanceOf Modyllic_Index_Foreign ) {
+        if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
             $this->foreign_key( $index );
         }
         if ( isset($index->using) ) {
@@ -803,25 +803,25 @@ class Modyllic_Generator_MySQL {
 
     function routine_meta($routine) {
         $meta = array();
-        if ( $routine->args_type != Modyllic_Routine::ARGS_TYPE_DEFAULT ) {
+        if ( $routine->args_type != Modyllic_Schema_Routine::ARGS_TYPE_DEFAULT ) {
             $meta["args_type"] = $routine->args_type;
         }
-        if ( $routine instanceOf Modyllic_Proc ) {
-            if ( $routine->returns["type"] != Modyllic_Proc::RETURNS_TYPE_DEFAULT ) {
+        if ( $routine instanceOf Modyllic_Schema_Proc ) {
+            if ( $routine->returns["type"] != Modyllic_Schema_Proc::RETURNS_TYPE_DEFAULT ) {
                 $meta["returns"] = $routine->returns;
             }
         }
-        if ( $routine->txns != Modyllic_Routine::TXNS_DEFAULT ) {
+        if ( $routine->txns != Modyllic_Schema_Routine::TXNS_DEFAULT ) {
             $meta["txns"] = $routine->txns;
         }
         return $meta;
     }
 
     function create_routine( $routine, $dometa=true ) {
-        if ( $routine instanceOf Modyllic_Func ) {
+        if ( $routine instanceOf Modyllic_Schema_Func ) {
             $this->create_function( $routine );
         }
-        else if ($routine instanceOf Modyllic_Proc ) {
+        else if ($routine instanceOf Modyllic_Schema_Proc ) {
             $this->create_procedure( $routine );
         }
         else {
@@ -845,10 +845,10 @@ class Modyllic_Generator_MySQL {
     }
 
     function drop_routine( $routine, $dometa=true ) {
-        if ( $routine instanceOf Modyllic_Func ) {
+        if ( $routine instanceOf Modyllic_Schema_Func ) {
             $this->drop_function( $routine );
         }
-        else if ($routine instanceOf Modyllic_Proc ) {
+        else if ($routine instanceOf Modyllic_Schema_Proc ) {
             $this->drop_procedure( $routine );
         }
         else {
@@ -861,10 +861,10 @@ class Modyllic_Generator_MySQL {
     }
 
     function routine_attrs( $routine ) {
-        if ( $routine->access != Modyllic_Routine::ACCESS_DEFAULT ) {
+        if ( $routine->access != Modyllic_Schema_Routine::ACCESS_DEFAULT ) {
             $this->extend( $routine->access );
         }
-        if ( $routine->deterministic != Modyllic_Routine::DETERMINISTIC_DEFAULT ) {
+        if ( $routine->deterministic != Modyllic_Schema_Routine::DETERMINISTIC_DEFAULT ) {
             $this->extend( $routine->deterministic ? "DETERMINISTIC" : "NOT DETERMINISTIC" );
         }
         return $this;

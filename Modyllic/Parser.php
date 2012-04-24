@@ -462,7 +462,7 @@ class Modyllic_Parser {
     function cmd_CREATE_TRIGGER() {
         // TRIGGER trigger_name trigger_time trigger_event
         //  ON tbl_name FOR EACH ROW trigger_body
-        $trigger = $this->schema->add_trigger( new Modyllic_Trigger( $this->get_ident() ) );
+        $trigger = $this->schema->add_trigger( new Modyllic_Schema_Trigger( $this->get_ident() ) );
         $trigger->time = $this->get_reserved(array('BEFORE','AFTER'));
         $trigger->event = $this->get_reserved(array('INSERT','UPDATE','DELETE'));
         $this->get_reserved('ON');
@@ -472,7 +472,7 @@ class Modyllic_Parser {
     }
 
     function cmd_CREATE_EVENT() {
-        $this->ctx = $this->schema->add_event( new Modyllic_Event( $this->get_ident() ) );
+        $this->ctx = $this->schema->add_event( new Modyllic_Schema_Event( $this->get_ident() ) );
         $this->get_reserved('ON SCHEDULE');
         $this->get_schedule();
         if ( $this->maybe('ON COMPLETION') ) {
@@ -560,7 +560,7 @@ class Modyllic_Parser {
         if ( isset($this->schema->tables[$name]) ) {
             throw $this->error("Can't create VIEW $name when a table of that name already exists");
         }
-        $view = $this->schema->add_view( new Modyllic_View( $name ) );
+        $view = $this->schema->add_view( new Modyllic_Schema_View( $name ) );
         ## Minimal support for views currently
         $view->def = $this->rest();
     }
@@ -569,7 +569,7 @@ class Modyllic_Parser {
         // CREATE PROCEDURE sp_name ([proc_parameter[,...]])
         // [RETURNS {ROW|COLUMN colname|MAP (key,val)|STH|TABLE|NONE}]
         // [characteristic ...] routine_body
-        $proc = $this->schema->add_routine( new Modyllic_Proc( $this->get_ident() ) );
+        $proc = $this->schema->add_routine( new Modyllic_Schema_Proc( $this->get_ident() ) );
         $proc->args = $this->get_args();
         $proc->docs = $this->cmddocs;
         $proc->returns = array('type'=>'NONE');
@@ -605,7 +605,7 @@ class Modyllic_Parser {
 
     function cmd_CREATE_FUNCTION() {
         // CREATE FUNCTION sp_name ([proc_parameter[,...]]) RETURNS type [characteristic ...] routine_body
-        $func = $this->schema->add_routine( new Modyllic_Func( $this->get_ident() ) );
+        $func = $this->schema->add_routine( new Modyllic_Schema_Func( $this->get_ident() ) );
         $func->args = $this->get_args();
         $func->docs = $this->cmddocs;
         $this->get_reserved('RETURNS');
@@ -632,13 +632,13 @@ class Modyllic_Parser {
                     $routine->access = $this->cur()->token();
                     break;
                 case 'CONTAINS TRANSACTIONS':
-                    $routine->txns = Modyllic_Routine::TXNS_HAS;
+                    $routine->txns = Modyllic_Schema_Routine::TXNS_HAS;
                     break;
                 case 'CALL IN TRANSACTION':
-                    $routine->txns = Modyllic_Routine::TXNS_CALL;
+                    $routine->txns = Modyllic_Schema_Routine::TXNS_CALL;
                     break;
                 case 'NO TRANSACTIONS':
-                    $routine->txns = Modyllic_Routine::TXNS_NONE;
+                    $routine->txns = Modyllic_Schema_Routine::TXNS_NONE;
                     break;
                 case 'NOT DETERMINISTIC':
                     $routine->deterministic = false;
@@ -681,7 +681,7 @@ class Modyllic_Parser {
             if ( $this->cur() instanceOf Modyllic_Token_EOC ) {
                 throw $this->error("Command ended while looking for close of argument list");
             }
-            $arg = new Modyllic_Arg();
+            $arg = new Modyllic_Schema_Arg();
             while ( $this->cur() instanceOf Modyllic_Token_Comment ) {
                 if ( isset($lastarg) ) {
                     $lastarg->docs = trim( $lastarg->docs . " " . $this->cur()->value() );
@@ -803,7 +803,7 @@ class Modyllic_Parser {
         }
         $this->get_symbol('(');
 
-        $this->ctx = $this->schema->add_table( new Modyllic_Table($table) );
+        $this->ctx = $this->schema->add_table( new Modyllic_Schema_Table($table) );
         $this->ctx->charset = $this->schema->charset;
         $this->ctx->collate = $this->schema->collate;
         $this->ctx->docs = $this->cmddocs;
@@ -858,7 +858,7 @@ class Modyllic_Parser {
             }
         }
         foreach ($this->ctx->indexes as &$index) {
-            if ($index instanceOf Modyllic_Index_Foreign ) {
+            if ($index instanceOf Modyllic_Schema_Index_Foreign ) {
                 $this->add_foreign_key_index( '', $index );
             }
         }
@@ -914,7 +914,7 @@ class Modyllic_Parser {
     function load_column() {
         // ident type [NOT NULL|NULL] [DEFAULT value] [ON UPDATE token] [AUTO_INCREMENT]
         //   [PRIMARY KEY] [COMMENT string] [ALIASES (token,...)]
-        $column = $this->ctx->add_column(new Modyllic_Column( $this->assert_ident() ));
+        $column = $this->ctx->add_column(new Modyllic_Schema_Column( $this->assert_ident() ));
         $column->type = $this->get_type();
 
         $is_unique = false;
@@ -979,7 +979,7 @@ class Modyllic_Parser {
                 $column->aliases += $this->get_array();
             }
             else if ( $this->cur()->token() == 'REFERENCES' ) {
-                $key = new Modyllic_Index_Foreign();
+                $key = new Modyllic_Schema_Index_Foreign();
                 if ( $this->peek_next()->token() == 'WEAKLY' ) {
                     $this->get_reserved();
                     $key->weak = true;
@@ -1017,13 +1017,13 @@ class Modyllic_Parser {
             }
         }
         if ( $is_primary ) {
-            $index = new Modyllic_Index('!PRIMARY KEY');
+            $index = new Modyllic_Schema_Index('!PRIMARY KEY');
             $index->primary = true;
             $index->columns = array($column->name => false);
             $this->add_index( $index );
         }
         else if ( $is_unique ) {
-            $index = new Modyllic_Index($column->name);
+            $index = new Modyllic_Schema_Index($column->name);
             $index->unique = true;
             $index->columns = array($column->name => false);
             $this->add_index( $index );
@@ -1045,7 +1045,7 @@ class Modyllic_Parser {
     }
 
     function load_regular_key($token) {
-        $key = new Modyllic_Index();
+        $key = new Modyllic_Schema_Index();
         while ( 1 ) {
             $this->assert_reserved();
             if ( $token == 'PRIMARY KEY' ) {
@@ -1093,7 +1093,7 @@ class Modyllic_Parser {
     }
 
     function load_foreign_key($token) {
-        $key = new Modyllic_Index_Foreign();
+        $key = new Modyllic_Schema_Index_Foreign();
         if ( $token == 'CONSTRAINT' ) {
             $key->cname = $this->get_ident();
             $token = $this->get_reserved();
@@ -1212,7 +1212,7 @@ class Modyllic_Parser {
             // Scan to see if another key would meet our needs
             $matched = false;
             foreach ( $this->ctx->indexes as &$other_key ) {
-                if ( $other_key instanceOf Modyllic_Index_Foreign ) { continue; }
+                if ( $other_key instanceOf Modyllic_Schema_Index_Foreign ) { continue; }
                 if ( count($key->columns) <= count($other_key->columns) ) {
                     $matched = true;
                     foreach ( $key->columns as $idx=>&$colname ) {
@@ -1225,7 +1225,7 @@ class Modyllic_Parser {
                 }
             }
             if ( ! $matched ) {
-                $regkey = new Modyllic_Index($name);
+                $regkey = new Modyllic_Schema_Index($name);
                 $regkey->columns = $key->columns;
                 if ( ! $regkey->name ) {
                     $this->gen_index_name($regkey);
