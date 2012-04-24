@@ -73,3 +73,8 @@ Would say that we have a column named total that in other versions was
 called amount.  If the migration tool finds a column named amount it will
 rename it to total.
 
+---
+
+A `TRUNCATE TABLE` statement indicates that you want to specify its content
+statically in the schema itself in `INSERT INTO` statements.
+
