@@ -5,7 +5,7 @@ PROVE := prove -r --exec $(PHP)
 
 default:
 
-.PHONY: test install
+.PHONY: test test-verbose package-validate install uninstall
 
 install:
 	pear channel-discover onlinebuddies.github.com/pear ; pear install package.xml
@@ -13,8 +13,11 @@ install:
 uninstall:
 	pear uninstall OnlineBuddies/Modyllic
 
-test:
+package-validate:
+	@pear package-validate package.xml | egrep -v 'Analyzing|Validation' > pvout ; grep ^Warning: pvout ; if grep ^Error: pvout; then rm pvout; exit 1; else rm pvout; exit 0; fi
+
+test: package-validate
 	$(PROVE) test
 
-test-verbose:
+test-verbose: package-validate
 	$(PROVE) -v test
