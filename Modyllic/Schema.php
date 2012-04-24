@@ -12,7 +12,7 @@ require_once "Modyllic/Types.php";
 // Components
 require_once "Modyllic/Schema/View.php";
 require_once "Modyllic/Schema/Table.php";
-require_once "Modyllic/Schema/CodeBody.php";
+require_once "Modyllic/Schema/Event.php";
 
 /**
  * A base class for various schema objects.  Handles generic things like
@@ -110,7 +110,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     }
 
     /**
-     * @param Modyllic_Event $event
+     * @param Modyllic_Schema_Event $event
      */
     function add_event( $event ) {
         $this->events[$event->name] = $event;
@@ -220,32 +220,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
     }
 }
 
-
-/**
- * A collection of attributes describing an event
- */
-class Modyllic_Event extends Modyllic_Schema_CodeBody {
-    public $name;
-    public $schedule;
-    public $preserve = false;
-    public $status;
-    public $docs = "";
-
-    /**
-     * @param string $name
-     */
-    function __construct($name) {
-        $this->name = $name;
-    }
-
-    function equal_to($other) {
-        if ( ! parent::equal_to($other) ) { return false; }
-        if ( $this->schedule != $other->schedule ) { return false; }
-        if ( $this->preserve != $other->preserve ) { return false; }
-        if ( $this->status != $other->status ) { return false; }
-        return true;
-    }
-}
 
 /**
  * A collection of attributes describing an event

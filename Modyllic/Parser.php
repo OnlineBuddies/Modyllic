@@ -472,7 +472,7 @@ class Modyllic_Parser {
     }
 
     function cmd_CREATE_EVENT() {
-        $this->ctx = $this->schema->add_event( new Modyllic_Event( $this->get_ident() ) );
+        $this->ctx = $this->schema->add_event( new Modyllic_Schema_Event( $this->get_ident() ) );
         $this->get_reserved('ON SCHEDULE');
         $this->get_schedule();
         if ( $this->maybe('ON COMPLETION') ) {

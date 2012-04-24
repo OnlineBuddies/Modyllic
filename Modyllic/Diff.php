@@ -461,7 +461,7 @@ class Modyllic_Changeset {
     }
 
     /**
-     * @param Modyllic_Event $event
+     * @param Modyllic_Schema_Event $event
      */
     function add_event( $event ) {
         $this->add['events'][$event->name] = $event;
@@ -475,7 +475,7 @@ class Modyllic_Changeset {
     }
 
     /**
-     * @param Modyllic_Event $event
+     * @param Modyllic_Schema_Event $event
      */
     function remove_event( $event ) {
         $this->remove['events'][$event->name] = $event;
