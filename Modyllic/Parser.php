@@ -803,7 +803,7 @@ class Modyllic_Parser {
         }
         $this->get_symbol('(');
 
-        $this->ctx = $this->schema->add_table( new Modyllic_Table($table) );
+        $this->ctx = $this->schema->add_table( new Modyllic_Schema_Table($table) );
         $this->ctx->charset = $this->schema->charset;
         $this->ctx->collate = $this->schema->collate;
         $this->ctx->docs = $this->cmddocs;

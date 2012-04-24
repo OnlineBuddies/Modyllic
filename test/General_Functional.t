@@ -30,7 +30,7 @@ is( count($schema->tables), 2, "Parsed two table" );
 is( count($schema->routines), 0, "Parsed no routines" );
 
 $test_table = $schema->tables['test'];
-ok( $test_table instanceOf Modyllic_Table, "We got an Modyllic_Schema_Table object for the table test" );
+ok( $test_table instanceOf Modyllic_Schema_Table, "We got an Modyllic_Schema_Table object for the table test" );
 is( $test_table->name, "test", "The name attribute got set" );
 is( $test_table->engine, "InnoDB", "The default engine got set" );
 is( $test_table->charset, "utf8", "The default charset got set" );

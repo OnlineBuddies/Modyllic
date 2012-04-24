@@ -396,7 +396,7 @@ class Modyllic_Generator_MySQL {
 // TABLE
 
     function table_meta($table) {
-        if ( $table->static != Modyllic_Table::STATIC_DEFAULT ) {
+        if ( $table->static != Modyllic_Schema_Table::STATIC_DEFAULT ) {
             return array( "static"=>$table->static );
         }
         else {

@@ -393,7 +393,7 @@ class Modyllic_Changeset {
 
     /**
      * Note that a table was added
-     * @param Modyllic_Table $table
+     * @param Modyllic_Schema_Table $table
      */
     function add_table( $table ) {
         $this->add['tables'][$table->name] = $table;
@@ -401,7 +401,7 @@ class Modyllic_Changeset {
 
     /**
      * Note that a table was removed
-     * @param Modyllic_Table $table
+     * @param Modyllic_Schema_Table $table
      */
     function remove_table( $table ) {
         $this->remove['tables'][$table->name] = $table;
