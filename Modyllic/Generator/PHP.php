@@ -974,7 +974,7 @@ class Modyllic_Generator_PHP {
         return $this;
     }
     function returns_docs($routine) {
-        if ( $routine instanceOf Modyllic_Func ) {
+        if ( $routine instanceOf Modyllic_Schema_Func ) {
             $this->func_returns_docs($routine->returns);
         }
         else if ( $routine instanceOf Modyllic_Schema_Proc ) {
@@ -1016,7 +1016,7 @@ class Modyllic_Generator_PHP {
     }
 
     function call_sql($routine) {
-        if ( $routine instanceOf Modyllic_Func ) {
+        if ( $routine instanceOf Modyllic_Schema_Func ) {
             $this->func_call_sql($routine);
         }
         else if ( $routine instanceOf Modyllic_Schema_Proc ) {
@@ -1109,7 +1109,7 @@ class Modyllic_Generator_PHP {
     }
     function returns($routine) {
         $this->begin_try();
-        if ( $routine instanceOf Modyllic_Func ) {
+        if ( $routine instanceOf Modyllic_Schema_Func ) {
             $this->func_returns($routine);
         }
         else if ( $routine instanceOf Modyllic_Schema_Proc ) {

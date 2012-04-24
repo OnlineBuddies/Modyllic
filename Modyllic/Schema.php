@@ -15,6 +15,7 @@ require_once "Modyllic/Schema/Table.php";
 require_once "Modyllic/Schema/Event.php";
 require_once "Modyllic/Schema/Trigger.php";
 require_once "Modyllic/Schema/Proc.php";
+require_once "Modyllic/Schema/Func.php";
 
 /**
  * A base class for various schema objects.  Handles generic things like
@@ -218,17 +219,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
         foreach ($this->views as $key=>&$view) {
             if ( ! $view->equal_to( $other->views[$key] ) ) { return false; }
         }
-        return true;
-    }
-}
-
-/**
- * A collection of attributes describing a stored function
- */
-class Modyllic_Func extends Modyllic_Schema_Routine {
-    function equal_to($other) {
-        if ( ! parent::equal_to( $other ) ) { return false; }
-        if ( ! $this->returns->equal_to( $other->returns ) ) { return false; }
         return true;
     }
 }

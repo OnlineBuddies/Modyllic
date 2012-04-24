@@ -818,7 +818,7 @@ class Modyllic_Generator_MySQL {
     }
 
     function create_routine( $routine, $dometa=true ) {
-        if ( $routine instanceOf Modyllic_Func ) {
+        if ( $routine instanceOf Modyllic_Schema_Func ) {
             $this->create_function( $routine );
         }
         else if ($routine instanceOf Modyllic_Schema_Proc ) {
@@ -845,7 +845,7 @@ class Modyllic_Generator_MySQL {
     }
 
     function drop_routine( $routine, $dometa=true ) {
-        if ( $routine instanceOf Modyllic_Func ) {
+        if ( $routine instanceOf Modyllic_Schema_Func ) {
             $this->drop_function( $routine );
         }
         else if ($routine instanceOf Modyllic_Schema_Proc ) {

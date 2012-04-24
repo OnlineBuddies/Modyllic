@@ -605,7 +605,7 @@ class Modyllic_Parser {
 
     function cmd_CREATE_FUNCTION() {
         // CREATE FUNCTION sp_name ([proc_parameter[,...]]) RETURNS type [characteristic ...] routine_body
-        $func = $this->schema->add_routine( new Modyllic_Func( $this->get_ident() ) );
+        $func = $this->schema->add_routine( new Modyllic_Schema_Func( $this->get_ident() ) );
         $func->args = $this->get_args();
         $func->docs = $this->cmddocs;
         $this->get_reserved('RETURNS');
