@@ -462,7 +462,7 @@ class Modyllic_Parser {
     function cmd_CREATE_TRIGGER() {
         // TRIGGER trigger_name trigger_time trigger_event
         //  ON tbl_name FOR EACH ROW trigger_body
-        $trigger = $this->schema->add_trigger( new Modyllic_Trigger( $this->get_ident() ) );
+        $trigger = $this->schema->add_trigger( new Modyllic_Schema_Trigger( $this->get_ident() ) );
         $trigger->time = $this->get_reserved(array('BEFORE','AFTER'));
         $trigger->event = $this->get_reserved(array('INSERT','UPDATE','DELETE'));
         $this->get_reserved('ON');

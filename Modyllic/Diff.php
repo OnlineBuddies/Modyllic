@@ -482,21 +482,21 @@ class Modyllic_Changeset {
     }
 
     /**
-     * @param Modyllic_Trigger $trigger
+     * @param Modyllic_Schema_Trigger $trigger
      */
     function add_trigger( $trigger ) {
         $this->add['triggers'][$trigger->name] = $trigger;
     }
 
     /**
-     * @param Modyllic_Trigger_Changeset $trigger
+     * @param Modyllic_Schema_Trigger_Changeset $trigger
      */
     function update_trigger( $trigger ) {
         $this->update['triggers'][$trigger->name] = $trigger;
     }
 
     /**
-     * @param Modyllic_Trigger $trigger
+     * @param Modyllic_Schema_Trigger $trigger
      */
     function remove_trigger( $trigger ) {
         $this->remove['triggers'][$trigger->name] = $trigger;

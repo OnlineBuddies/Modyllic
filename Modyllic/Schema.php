@@ -13,6 +13,7 @@ require_once "Modyllic/Types.php";
 require_once "Modyllic/Schema/View.php";
 require_once "Modyllic/Schema/Table.php";
 require_once "Modyllic/Schema/Event.php";
+require_once "Modyllic/Schema/Trigger.php";
 
 /**
  * A base class for various schema objects.  Handles generic things like
@@ -118,7 +119,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     }
 
     /**
-     * @param Modyllic_Trigger $trigger
+     * @param Modyllic_Schema_Trigger $trigger
      */
     function add_trigger( $trigger ) {
         $this->triggers[$trigger->name] = $trigger;
@@ -220,33 +221,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
     }
 }
 
-
-/**
- * A collection of attributes describing an event
- */
-class Modyllic_Trigger extends Modyllic_Schema_CodeBody {
-    public $name;
-    public $time;
-    public $event;
-    public $table;
-    public $body;
-    public $docs = "";
-
-    /**
-     * @param string $name
-     */
-    function __construct($name) {
-        $this->name = $name;
-    }
-
-    function equal_to($other) {
-        if ( ! parent::equal_to($other)     ) { return false; }
-        if ( $this->time != $other->time   ) { return false; }
-        if ( $this->event != $other->event ) { return false; }
-        if ( $this->body != $other->body   ) { return false; }
-        return true;
-    }
-}
 
 /**
  * A collection of attributes describing a stored routine
