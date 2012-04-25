@@ -35,6 +35,11 @@
    <file name="Modyllic/CommandLine.php" role="php" />
    <file name="Modyllic/Diff.php" role="php" />
    <file name="Modyllic/Generator.php" role="php" />
+   <file name="Modyllic/Generator/AssertMySQL.php" role="php" />
+   <file name="Modyllic/Generator/PHP.php" role="php" />
+   <file name="Modyllic/Generator/ModyllicSQL.php" role="php" />
+   <file name="Modyllic/Generator/MySQL.php" role="php" />
+   <file name="Modyllic/Generator/StrippedMySQL.php" role="php" />
    <file name="Modyllic/Loader.php" role="php" />
    <file name="Modyllic/Loader/DB.php" role="php" />
    <file name="Modyllic/Loader/DB/MySQL.php" role="php" />
@@ -42,14 +47,21 @@
    <file name="Modyllic/Loader/File.php" role="php" />
    <file name="Modyllic/Parser.php" role="php" />
    <file name="Modyllic/Schema.php" role="php" />
+   <file name="Modyllic/Schema/Arg.php" role="php" />
+   <file name="Modyllic/Schema/CodeBody.php" role="php" />
+   <file name="Modyllic/Schema/Column.php" role="php" />
+   <file name="Modyllic/Schema/Event.php" role="php" />
+   <file name="Modyllic/Schema/Func.php" role="php" />
+   <file name="Modyllic/Schema/Index.php" role="php" />
+   <file name="Modyllic/Schema/Index/Foreign.php" role="php" />
+   <file name="Modyllic/Schema/Proc.php" role="php" />
+   <file name="Modyllic/Schema/Routine.php" role="php" />
+   <file name="Modyllic/Schema/Table.php" role="php" />
+   <file name="Modyllic/Schema/View.php" role="php" />
+   <file name="Modyllic/Schema/Trigger.php" role="php" />
    <file name="Modyllic/Status.php" role="php" />
    <file name="Modyllic/Tokenizer.php" role="php" />
    <file name="Modyllic/Types.php" role="php" />
-   <file name="Modyllic/Generator/ModyllicSQL.php" role="php" />
-   <file name="Modyllic/Generator/StrippedMySQL.php" role="php" />
-   <file name="Modyllic/Generator/PHP.php" role="php" />
-   <file name="Modyllic/Generator/MySQL.php" role="php" />
-   <file name="Modyllic/Generator/AssertMySQL.php" role="php" />
    <file baseinstalldir="/" name="scripts/migrate" role="script" />
    <file baseinstalldir="/" name="scripts/sqlcolorize" role="script" />
    <file baseinstalldir="/" name="scripts/sqldiff" role="script" />
@@ -72,15 +84,26 @@
    <file name="testlib/test/inc_false.php" role="test" />
    <file name="testlib/test/inc_true.php" role="test" />
    <file name="testlib/test/test.php" role="test" />
-   <file name="DIALECT_SUPPORT.md" role="doc" />
-   <file name="HACKING.md" role="doc" />
+   <file name="doc/Dialect-Refactor.md" role="doc" />
+   <file name="doc/Dialect.md" role="doc" />
+   <file name="doc/Extensions.md" role="doc" />
+   <file name="doc/Home.md" role="doc" />
+   <file name="doc/Limitations.md" role="doc" />
+   <file name="doc/Parser-Refactor.md" role="doc" />
+   <file name="doc/Prior-Art.md" role="doc" />
+   <file name="doc/Schema-Change-Events.md" role="doc" />
+   <file name="doc/migrate.md" role="doc" />
+   <file name="doc/schemas.md" role="doc" />
+   <file name="doc/sqlcolorize.md" role="doc" />
+   <file name="doc/sqldiff.md" role="doc" />
+   <file name="doc/sqldrop.md" role="doc" />
+   <file name="doc/sqldump.md" role="doc" />
+   <file name="doc/sqlpreparse.md" role="doc" />
+   <file name="doc/sqltophp.md" role="doc" />
+   <file name="doc/Hacking.md" role="doc" />
+   <file name="doc/Publishing.md" role="doc" />
    <file name="LICENSE.md" role="doc" />
-   <file name="LIMITATIONS.md" role="doc" />
    <file name="README.md" role="doc" />
-   <file name="SCHEMA_CHANGE_EVENTS.md" role="doc" />
-   <file name="SQL_DIALECT.md" role="doc" />
-   <file name="SQL_EXTENSIONS.md" role="doc" />
-   <file name="TODO.md" role="doc" />
   </dir>
  </contents>
  <dependencies>
@@ -107,6 +130,24 @@
    <install as="sqldump" name="scripts/sqldump" />
    <install as="sqlpreparse" name="scripts/sqlpreparse" />
    <install as="sqltophp" name="scripts/sqltophp" />
+   <install as="Dialect-Refactor.md" name="doc/Dialect-Refactor.md" />
+   <install as="Dialect.md" name="doc/Dialect.md" />
+   <install as="Extensions.md" name="doc/Extensions.md" />
+   <install as="Home.md" name="doc/Home.md" />
+   <install as="Limitations.md" name="doc/Limitations.md" />
+   <install as="Parser-Refactor.md" name="doc/Parser-Refactor.md" />
+   <install as="Prior-Art.md" name="doc/Prior-Art.md" />
+   <install as="Schema-Change-Events.md" name="doc/Schema-Change-Events.md" />
+   <install as="migrate.md" name="doc/migrate.md" />
+   <install as="schemas.md" name="doc/schemas.md" />
+   <install as="sqlcolorize.md" name="doc/sqlcolorize.md" />
+   <install as="sqldiff.md" name="doc/sqldiff.md" />
+   <install as="sqldrop.md" name="doc/sqldrop.md" />
+   <install as="sqldump.md" name="doc/sqldump.md" />
+   <install as="sqlpreparse.md" name="doc/sqlpreparse.md" />
+   <install as="sqltophp.md" name="doc/sqltophp.md" />
+   <install as="Hacking.md" name="doc/Hacking.md" />
+   <install as="Publishing.md" name="doc/Publishing.md" />
   </filelist>
  </phprelease>
  <changelog>
