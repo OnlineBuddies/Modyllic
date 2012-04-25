@@ -45,7 +45,7 @@ class Modyllic_CommandLine {
     static function get_args( $arg_spec ) {
         global $argv;
         if ( in_array("--version",$argv) ) {
-            fputs(STDERR,"Modyllic Version: 0.1.8 alpha\n");
+            fputs(STDERR,"Modyllic Version: @VERSION@ @STATE@\n");
             exit();
         }
         $parser = self::get_parser();

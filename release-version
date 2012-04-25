@@ -1,15 +1,26 @@
 #!/bin/bash
-MODYLLIC_PATH=$(dirname "$0")
-PACKAGE="$MODYLLIC_PATH/package.xml"
-MODYLLIC_COMMANDLINE="$MODYLLIC_PATH/Modyllic/CommandLine.php"
-VERSION=$(grep release $PACKAGE | head -1 | perl -ne'm{(\d+[.]\d+[.]\d+)} and print $1')
-RELEASE=$(grep release $PACKAGE | head -2 | tail -1 | perl -ne'm{>(\w+)<} and print $1')
-
-NEW_VERSION=${1-$VERSION}
-NEW_RELEASE=${2-$RELEASE}
-
-perl -pi -e 's{^  <release>'"$VERSION"'</release>}{  <release>'"$NEW_VERSION"'</release>}' $PACKAGE
-perl -pi -e 's{^  <release>'"$RELEASE"'</release>}{  <release>'"$NEW_RELEASE"'</release>}' $PACKAGE
-perl -pi -e 's{"Modyllic Version: .*?"}{"Modyllic Version: '"$NEW_VERSION"' '"$NEW_RELEASE"'"}' $MODYLLIC_COMMANDLINE
-
-echo "Version number bumped to: $NEW_VERSION $NEW_RELEASE"
+VERSION=$1
+DEFAULT_STABILITY=beta
+STABILITY=${2-$DEFAULT_STABILITY}
+if [ "$1." == . ]; then
+	echo "Form: release-version version [stability]"
+	echo "If you don't specify a stability it will default to $DEFAULT_STABILITY"
+	exit 1
+fi
+git tag | perl -ne 'next unless /^v(\d+)[.](\d+)[.](\d+)$/; printf "%03d.%03d.%03d,%s",$1,$2,$3,$_' | sort > release_tags.txt
+CURRENT=`tail -1 release_tags.txt | cut -d, -f2`
+echo "# Edit this list of commits down to something a user would want to read" > CHANGELOG.new
+git log --format="* %s (%aN)" ${CURRENT}.. --ancestry-path  --no-merges >> CHANGELOG.new
+VISUAL=${VISUAL-${EDITOR-`which sensible-editor || which vi`}}
+$VISUAL CHANGELOG.new
+grep -v '^#' CHANGELOG.new > CHANGELOG
+rm CHANGELOG.new
+php build-package-xml package.xml build.xml $VERSION $STABILITY
+git fetch upstream-wiki
+git merge -s subtree upstream-wiki/master
+git fetch upstream-testlib
+git merge -s subtree upstream-testlib/master
+git add CHANGELOG
+git commit -m"Release Modyllic-$VERSION"
+git tag "v$VERSION"
+pear package build.xml
