@@ -3,8 +3,8 @@ Setting up
 
 First, you need to have Pirum installed:
 
-1. pear channel-discover pear.pirum-project.org
-2. pear install pirum/Pirum-beta
+1. `pear channel-discover pear.pirum-project.org`
+2. `pear install pirum/Pirum-beta`
 
 You also need to have PEAR_PackageManager_Git installed.  For now, you'll need @iarna's fork of it:
 
