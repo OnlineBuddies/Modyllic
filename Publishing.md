@@ -13,6 +13,7 @@ You also need to have PEAR_PackageManager_Git installed.  For now, you'll need @
 3. `pear install package.xml`
 
 When @armen takes @iarna's pull request, the instructions will be:
+
 1. DONOTUSE: `pear channel-discover pear.vardump.org`
 2. DONOTUSE: `pear install vd/PEAR_PackageFileManager_Git`
 
