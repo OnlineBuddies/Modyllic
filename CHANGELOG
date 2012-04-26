@@ -1,0 +1,3 @@
+* Add IF EXISTS to all of our DROPs
+* Fix bugs in --only support
+* Fix bugs in tracking sqlmeta_exists
