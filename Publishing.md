@@ -1,37 +1,43 @@
-Before you begin you'll need to install Pirum:
+Setting up
+==========
 
-1. `pear channel-discover pear.pirum-project.org`
-2. `pear install pirum/Pirum-beta`
+First, you need to have Pirum installed:
 
-And checkout the OLB pear repository:
+1. pear channel-discover pear.pirum-project.org
+2. pear install pirum/Pirum-beta
 
-1. `git clone git@github.com:OnlineBuddies/pear.git`
+You also need to have PEAR_PackageManager_Git installed.  For now, you'll need @iarna's fork of it:
 
-Merge in the Wiki docs:
+1. `git clone git://github.com/iarna/PEAR_PackageFileManager_Git.git`
+2. `cd PEAR_PackageFileManager_Git`
+3. `pear install package.xml`
 
-1. `git remote add upstream-wiki git://github.com/OnlineBuddies/Modyllic.wiki`
-2. `git fetch upstream-wiki`
-3. `git merge -s subtree upstream-wiki/master`
+When @armen takes @iarna's pull request, the instructions will be:
+1. DONOTUSE: `pear channel-discover pear.vardump.org`
+2. DONOTUSE: `pear install vd/PEAR_PackageFileManager_Git`
 
-To publish a new release, from your Modyllic checkout:
 
-1. Update the version: `./release-version #.#.# beta`
-2. Edit the package.xml to:
-   a. Add notes
-   b. Update the date and time
-   c. Copy the current release section down to the changelog (don't forget to delete the time section from the changelog)
-3. Make sure there are no errors or warnings:
-   `make package-validate`
-4. `git add package.xml Modyllic/CommandLine.php`
-5. `git commit -m'Release Modyllic-#.#.#'`
-6. `git tag v#.#.#`
-7. Build a tarball: `pear package package.xml`
-8. This will give you a Modyllic-#.#.#.tgz
-9. Bump the version for future edits: `./release-version #.#.#+1 alpha`
-10. Edit the package.xml to clear the notes section
-11. `git add package.xml Modyllic/CommandLine.php`
-12. `git commit -m'Begin Modyllic-#.#.#+1'`
-5. `git push`
+You'll need to have the OLB pear repository, in order to publish the PEAR update:
+
+1. `git clone git://github.com/OnlineBuddies/pear.git`
+
+You'll of course, also need the Modyllic repository:
+
+1. `git clone git://github.com/OnlineBuddies/Modyllic.git`
+
+Inside your Modyllic repository, you'll need to ensure a few 
+
+1. `git remote add upstream-wiki git://github.com/OnlineBuddies/Modyllic.wiki.git`
+2. `git remote add upstream-testlib git://github.com/shiflett/testmore.git`
+
+
+Actually Publishing
+===================
+From your Modyllic checkout:
+
+1. `./release-version #.#.# beta`
+2. This will give you a Modyllic-#.#.#.tgz it will also commit the CHANGELOG for this release and create a tag.
+3. `git push`
 
 Now in go to your previously checked out copy of the OLB pear repository:
 
