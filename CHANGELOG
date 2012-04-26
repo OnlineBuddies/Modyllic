@@ -1,0 +1,3 @@
+* Packaging updates to use our own channel and document releases
+* Class rename bug in SQL generators
+* Loader fix required for static tables, spread across multiple files
