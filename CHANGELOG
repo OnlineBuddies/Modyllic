@@ -1,0 +1,10 @@
+* Add a debug flag to aid in debugging parser errors
+* Remove verbose output from debugging
+* Fix innumerable problems with migrate since the commandline refactor
+* Allow colons or semicolons in dsns, to make command lines less painful
+* Fix bug where the database name wasn't being emitted in some circumstances
+* SQLMETA updates were bogus, changed to just delete and insert. 
+* The static property on tables wasn't being emitted correctly.
+* Fix bugs in primary key handling caused by support for key lengths
+* Fix bug in how dynamically named indexes were emitted. Now use the name for the purposes of diffs but don't emit it
+* Fix the file roles   
