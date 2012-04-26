@@ -1,0 +1,4 @@
+* Remove unused method Modyllic_Loader::from_db
+* Correct DSN loading to allow equals signs in values.
+* URL decode DSN values prior to using them.
+* Change terminal detection to only run tput if it can plausibly work.
