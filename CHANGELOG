@@ -1,0 +1,6 @@
+* Add IF EXISTS to events. Fixes #93.
+* Stop using 5.3 Exception form and just rethrow non-general errors
+* RETURNS COLUMN assertions should allow empty result sets (#56)
+* Implement support for extended inserts (#88)
+* Fix missing is_primary attribute on columns
+* Improve error messages for invalid delimiters (#82)
