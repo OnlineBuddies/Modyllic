@@ -6,17 +6,10 @@ First, you need to have Pirum installed:
 1. `pear channel-discover pear.pirum-project.org`
 2. `pear install pirum/Pirum-beta`
 
-You also need to have PEAR_PackageManager_Git installed.  For now, you'll need @iarna's fork of it:
+You also need to have PEAR_PackageManager_Git installed:
 
-1. `git clone git://github.com/iarna/PEAR_PackageFileManager_Git.git`
-2. `cd PEAR_PackageFileManager_Git`
-3. `pear install package.xml`
-
-When @armen takes @iarna's pull request, the instructions will be:
-
-1. DONOTUSE: `pear channel-discover pear.vardump.org`
-2. DONOTUSE: `pear install vd/PEAR_PackageFileManager_Git`
-
+1. `pear channel-discover pear.vardump.org`
+2. `pear install vd/PEAR_PackageFileManager_Git`
 
 You'll need to have the OLB pear repository, in order to publish the PEAR update:
 
