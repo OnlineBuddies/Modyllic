@@ -7,3 +7,4 @@ pear.php
 *.diff
 test.php
 PEAR*.tgz
+package.xml

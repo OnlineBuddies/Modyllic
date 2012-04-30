@@ -74,17 +74,23 @@ catch (Modyllic_Exception $e) {
     }
 }
 
-require_once "Modyllic/Loader.php";
 
-list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/test1.sql" );
-is( $loader, "Modyllic_Loader_File", "Plain file schema are loaded with File" );
-list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/test2.sql" );
-is( $loader, "Modyllic_Loader_File", "Symlinks to plain file schema are loaded with File" );
-list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/test3" );
-is( $loader, "Modyllic_Loader_Dir", "Directory schema are loaded with Dir" );
-list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/test4" );
-is( $loader, "Modyllic_Loader_Dir", "Symlinks to directory schema are loaded with Dir" );
-list( $source, $loader ) = Modyllic_Loader::determine_loader( "mysql:dbname=test" );
-is( $loader, "Modyllic_Loader_DB", "DSN schema are loaded with DB" );
-list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/invalid" );
-is( $loader, null, "Invalid schema result in no loader" );
+if ( is_dir(dirname(__FILE__)."/test_schema") ) {
+    require_once "Modyllic/Loader.php";
+
+    list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/test1.sql" );
+    is( $loader, "Modyllic_Loader_File", "Plain file schema are loaded with File" );
+    list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/test2.sql" );
+    is( $loader, "Modyllic_Loader_File", "Symlinks to plain file schema are loaded with File" );
+    list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/test3" );
+    is( $loader, "Modyllic_Loader_Dir", "Directory schema are loaded with Dir" );
+    list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/test4" );
+    is( $loader, "Modyllic_Loader_Dir", "Symlinks to directory schema are loaded with Dir" );
+    list( $source, $loader ) = Modyllic_Loader::determine_loader( "mysql:dbname=test" );
+    is( $loader, "Modyllic_Loader_DB", "DSN schema are loaded with DB" );
+    list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/invalid" );
+    is( $loader, null, "Invalid schema result in no loader" );
+}
+else {
+    skip("Test schema not found, not doing loader tests",6);
+}
