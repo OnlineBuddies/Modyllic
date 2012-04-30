@@ -20,8 +20,7 @@ discover-channel:
 	pear channel-discover onlinebuddies.github.com/pear || true
 
 install-build-prereqs:
-	pear channel-discover pear.vardump.org || true
-	pear install vd/PEAR_PackageFileManager_Git
+	pear install OnlineBuddies/PEAR_PackageFileManager_Gitrepoonly
 
 install: build-package-xml discover-channel uninstall
 	pear install $(BUILDXML)
