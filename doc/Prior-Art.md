@@ -19,3 +19,7 @@ A PHP 5.3 project that will generate ALTER statements when comparing between two
 ### [SchemaCrawler](http://schemacrawler.sourceforge.net/)
 
 A JDBC tool for showing the differences between schemas.
+
+### [SchemaDiff](https://github.com/iamcal/SchemaDiff)
+
+A simple PHP tool for running diff on files containing DDL representations of schema.
