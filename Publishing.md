@@ -6,11 +6,6 @@ First, you need to have Pirum installed:
 1. `pear channel-discover pear.pirum-project.org`
 2. `pear install pirum/Pirum-beta`
 
-You also need to have PEAR_PackageManager_Git installed:
-
-1. `pear channel-discover pear.vardump.org`
-2. `pear install vd/PEAR_PackageFileManager_Git`
-
 You'll need to have the OLB pear repository, in order to publish the PEAR update:
 
 1. `git clone git://github.com/OnlineBuddies/pear.git`
@@ -19,7 +14,11 @@ You'll of course, also need the Modyllic repository:
 
 1. `git clone git://github.com/OnlineBuddies/Modyllic.git`
 
-Inside your Modyllic repository, you'll need to ensure a few 
+From inside your Modyllic repository, run:
+
+1. `make install-build-prereqs`
+
+You'll also need to setup some remote upstreams:
 
 1. `git remote add upstream-wiki git://github.com/OnlineBuddies/Modyllic.wiki.git`
 2. `git remote add upstream-testlib git://github.com/shiflett/testmore.git`
@@ -32,6 +31,7 @@ From your Modyllic checkout:
 1. `./release-version #.#.# beta`
 2. This will give you a Modyllic-#.#.#.tgz it will also commit the CHANGELOG for this release and create a tag.
 3. `git push`
+4. `git push --tags`
 
 Now in go to your previously checked out copy of the OLB pear repository:
 
