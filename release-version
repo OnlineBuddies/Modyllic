@@ -10,7 +10,12 @@ fi
 git tag | perl -ne 'next unless /^v(\d+)[.](\d+)[.](\d+)$/; printf "%03d.%03d.%03d,%s",$1,$2,$3,$_' | sort > release_tags.txt
 CURRENT=`tail -1 release_tags.txt | cut -d, -f2`
 echo "# Edit this list of commits down to something a user would want to read" > CHANGELOG.new
-git log --format="* %s (%aN)" ${CURRENT}.. --ancestry-path  --no-merges >> CHANGELOG.new
+git log --format="* %s (%aN)" ${CURRENT}.. --ancestry-path  --no-merges > git.log
+if [ ! -s git.log ]; then
+	git log --format="* %s (%aN)" ${CURRENT}.. --topo-order  --no-merges > git.log
+fi
+cat git.log >> CHANGELOG.new
+rm git.log
 VISUAL=${VISUAL-${EDITOR-`which sensible-editor || which vi`}}
 $VISUAL CHANGELOG.new
 grep -v '^#' CHANGELOG.new > CHANGELOG

@@ -36,8 +36,11 @@ if ( ! isset($version) ) {
     $rel = $prev['rel'] + 1;
     $version = "{$prev['major']}.{$prev['minor']}.{$rel}";
     $state = "alpha";
-    $res->setNotes( "NOTE: This version was built from source:\n".
-                    trim(`git log --format="* %s (%aN)" {$prev['name']}.. --ancestry-path  --no-merges`) );
+    $log = trim(`git log --format='* %s (%aN)' {$prev['name']}.. --ancestry-path  --no-merges`);
+    if ( $log == "" ) {
+        $log = trim(`git log --format='* %s (%aN)' {$prev['name']}.. --topo-order  --no-merges`);
+    }
+    $res->setNotes( "NOTE: This version was built from source:\n$log" );
 }
 else {
     $res->setNotes( file_get_contents('CHANGELOG') );
@@ -46,7 +49,7 @@ else {
 
 $options = $res->getOptions();
 $options['clearchangelog'] = false;
-$options['filelistgenerator'] = 'git';
+$options['filelistgenerator'] = 'gitRepoOnly';
 $options['packagedirectory'] = '.';
 $options['packagefile'] = $output;
 $options['roles']['md'] = "doc";
@@ -117,6 +120,7 @@ foreach ( $res->getFilelist() as $name=>$info ) {
     }
 }
 print "Writing $output\n";
+@unlink($output);
 $error = $res->writePackageFile();
 if ( $error instanceof PEAR_Error ) {
     fputs(STDERR, $error->message."\n");
