@@ -2,13 +2,34 @@
 VERSION=$1
 DEFAULT_STABILITY=beta
 STABILITY=${2-$DEFAULT_STABILITY}
+
 if [ "$1." == . ]; then
 	echo "Form: release-version version [stability]"
 	echo "If you don't specify a stability it will default to $DEFAULT_STABILITY"
 	exit 1
 fi
-git tag | perl -ne 'next unless /^v(\d+)[.](\d+)[.](\d+)$/; printf "%03d.%03d.%03d,%s",$1,$2,$3,$_' | sort > release_tags.txt
-CURRENT=`tail -1 release_tags.txt | cut -d, -f2`
+
+if [ `git remote | grep -c upstream-testlib` -ne 1 ]; then
+	echo "In order to use this script you must have an upstream-testlib remote setup.  You can do so by issuing the following command:"
+	echo "    git remote add upstream-testlib git://github.com/shiflett/testmore.git"
+	exit 1
+fi
+
+if [ `git remote | grep -c upstream-wiki` -ne 1 ]; then
+	echo "In order to use this script you must have an upstream-wiki remote setup.  You can do so by issuing the following command:"
+	echo "    git remote add upstream-wiki git://github.com/OnlineBuddies/Modyllic.wiki.git"
+	exit 1
+fi
+
+if [ `pear list-channels | grep -c onlinebuddies.github.com/pear` -ne 1 -o `pear list -c OnlineBuddies | grep -c PEAR_PackageFileManager_Gitrepoonly` -ne 1 ]; then
+	echo "You need to install the build prerequisites, run:"
+	echo "    make install-build-prereqs"
+fi
+
+# Fetch all the tags, sort them and extract the most recent released version
+CURRENT=`git tag | perl -ne 'next unless /^v(\d+)[.](\d+)[.](\d+)$/; printf "%03d.%03d.%03d,%s",$1,$2,$3,$_' | sort | tail -1 | cut -d, -f2`
+
+# Fetch all the commits since the most recent release and put them in the changelog
 echo "# Edit this list of commits down to something a user would want to read" > CHANGELOG.new
 git log --format="* %s (%aN)" ${CURRENT}.. --ancestry-path  --no-merges > git.log
 if [ ! -s git.log ]; then
@@ -16,16 +37,32 @@ if [ ! -s git.log ]; then
 fi
 cat git.log >> CHANGELOG.new
 rm git.log
+
+# Have the user edit the changelog into something human readable, using
+# in order of preference, $VISUAL, $EDITOR, sensible-editor or vi.
 VISUAL=${VISUAL-${EDITOR-`which sensible-editor || which vi`}}
 $VISUAL CHANGELOG.new
 grep -v '^#' CHANGELOG.new > CHANGELOG
 rm CHANGELOG.new
-php build-package-xml package.xml build.xml $VERSION $STABILITY
+
+# Build a package.xml
+php build-package-xml base.xml package.xml $VERSION $STABILITY
+
+# Merge the wiki
 git fetch upstream-wiki
 git merge -s subtree upstream-wiki/master
+
+# Merge the test library
 git fetch upstream-testlib
 git merge -s subtree upstream-testlib/master
+
+# Commit the changelog
 git add CHANGELOG
 git commit -m"Release Modyllic-$VERSION"
+
 git tag "v$VERSION"
+
 pear package build.xml
+
+echo "Release $VERSION built."
+echo "Don't forget to run 'git push' and 'git push --tags'"
