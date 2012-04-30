@@ -75,6 +75,9 @@ $options['ignore'][] = 'Makefile';
 $options['ignore'][] = 'release-version';
 $options['ignore'][] = 'build-package-xml';
 
+// This includes symlinks, which PHP can't package
+$options['ignore'][] = 'test/test_schema/*';
+
 // Build nice, human readable output without MD5s
 $options['simpleoutput'] = true;
 
