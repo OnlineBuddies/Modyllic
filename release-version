@@ -50,11 +50,11 @@ php build-package-xml base.xml package.xml $VERSION $STABILITY
 
 # Merge the wiki
 git fetch upstream-wiki
-git merge -s subtree upstream-wiki/master
+git merge -s subtree upstream-wiki/master || $SHELL
 
 # Merge the test library
 git fetch upstream-testlib
-git merge -s subtree upstream-testlib/master
+git merge -s subtree upstream-testlib/master || $SHELL
 
 # Commit the changelog
 git add CHANGELOG
