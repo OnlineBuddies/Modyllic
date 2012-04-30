@@ -6,6 +6,8 @@ if ( $argc < 3 or $argc > 5 ) {
     exit(1);
 }
 @list($program,$input,$output,$version,$state) = $argv;
+
+// Load a list of all of our tagged releases thus far
 $prev_versions = array();
 foreach (explode("\n",trim(`git for-each-ref --sort='-refname' --format='%(refname:short) %(authordate:short)' refs/tags/v*.*.*`)) as $tag) {
     list($tag_name,$tag_date) = explode(" ",$tag);
@@ -23,7 +25,10 @@ foreach (explode("\n",trim(`git for-each-ref --sort='-refname' --format='%(refna
 
 // PEAR can't live with strict, so make sure it's off.
 ini_set("error_reporting",E_ALL);
+
 require_once "PEAR/PackageFileManager2.php";
+
+// Load our template package.xml...
 $pfm = new PEAR_PackageFileManager2();
 $res = @$pfm->importOptions( $input );
 if ( $res instanceof PEAR_Error ) {
@@ -31,39 +36,55 @@ if ( $res instanceof PEAR_Error ) {
     exit(1);
 }
 
+// If we weren't given a version...
 if ( ! isset($version) ) {
+    // Then this is an alpha (source build) of the next release...
     $prev = $prev_versions[0];
     $rel = $prev['rel'] + 1;
     $version = "{$prev['major']}.{$prev['minor']}.{$rel}";
     $state = "alpha";
+    // Just pull in the commit log as the changelog, no need for this to be edited
     $log = trim(`git log --format='* %s (%aN)' {$prev['name']}.. --ancestry-path  --no-merges`);
     if ( $log == "" ) {
         $log = trim(`git log --format='* %s (%aN)' {$prev['name']}.. --topo-order  --no-merges`);
     }
     $res->setNotes( "NOTE: This version was built from source:\n$log" );
 }
+// If we were given a version...
 else {
+    // We get our notes from the CHANGELOG file, which will be created and edited by release-version
     $res->setNotes( file_get_contents('CHANGELOG') );
 }
 
-
+// Update our options...
 $options = $res->getOptions();
 $options['clearchangelog'] = false;
-$options['filelistgenerator'] = 'gitRepoOnly';
+$options['filelistgenerator'] = 'gitRepoOnly'; // This does a `git ls-files` to determine the file list
+$options['baseinstalldir'] = '/';
 $options['packagedirectory'] = '.';
 $options['packagefile'] = $output;
-$options['roles']['md'] = "doc";
-$options['dir_roles']['testlib'] = "test";
-$options['baseinstalldir'] = "/";
-$options['ignore'][] = "Makefile";
-$options['ignore'][] = "release-version";
+
+// Types for various extensions and folders
+$options['roles']['md'] = 'doc';
+$options['roles']['t'] = 'test';
+$options['dir_roles']['testlib'] = 'test';
+$options['dir_roles']['tests'] = 'test';
+
+// Don't bundle our build files
+$options['ignore'][] = 'Makefile';
+$options['ignore'][] = 'release-version';
+$options['ignore'][] = 'build-package-xml';
+
+// Build nice, human readable output without MD5s
 $options['simpleoutput'] = true;
+
 $res->setOptions($options);
 $res->setAPIVersion( $version );
 $res->setReleaseVersion( $version );
 $res->setAPIStability( $state );
 $res->setReleaseStability( $state );
 
+// Add the changelogs for previous releases
 foreach ($prev_versions as $index=>$prev) {
     $changes = trim(`git show {$prev['name']}:CHANGELOG 2> /dev/null`);
     if ( $changes == "" ) {
@@ -89,36 +110,21 @@ foreach ($prev_versions as $index=>$prev) {
         "notes" => $changes,
         ));
 }
-/*
-$res->setChangeLogEntry( $version, array(
-    "version" => array(
-        "release" => $version,
-        "api"     => $version,
-    ),
-    "stability" => array(
-        "release" => $state,
-        "api"     => $state,
-    ),
-    "date" => date("Y-m-d"),
-    "license" => array(
-        "attribs" => array(
-            "uri" => "http://www.opensource.org/licenses/bsd-license.php",
-        ),
-        "_content" => "BSD Style",
-    ),
-    "notes" => file_get_contents("CHANGELOG"),
-    ));
-*/
-if ( isset($version) ) { $res->setReleaseVersion($version); }
-if ( isset($state) ) { $res->setReleaseStability($state); }
+
+// These propagate the verison info to the commandline utils
 $res->addReplacement( "Modyllic/CommandLine.php", "package-info", "@VERSION@", "version" );
 $res->addReplacement( "Modyllic/CommandLine.php", "package-info", "@STATE@", "state" );
+
+// This actually produces the file list
 $res->generateContents();
+
+// All the docs and scripts should be installed without their folder name...
 foreach ( $res->getFilelist() as $name=>$info ) {
-    if ( preg_match( '{^(?:docs/|scripts/)(.*)}', $name, $match ) ) {
+    if ( preg_match( '{^(?:docs?/|scripts/)(.*)}', $name, $match ) ) {
         $res->addInstallAs( $name, $match[1] );
     }
 }
+
 print "Writing $output\n";
 @unlink($output);
 $error = $res->writePackageFile();
