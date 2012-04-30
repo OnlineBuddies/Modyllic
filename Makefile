@@ -19,7 +19,7 @@ build-package-xml:
 discover-channel:
 	pear channel-discover onlinebuddies.github.com/pear || true
 
-install-build-prereqs:
+install-build-prereqs: discover-channel
 	pear install OnlineBuddies/PEAR_PackageFileManager_Gitrepoonly
 
 install: build-package-xml discover-channel uninstall
