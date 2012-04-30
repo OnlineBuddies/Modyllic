@@ -2,8 +2,8 @@ CWD := $(shell pwd)
 PHP_INCLUDE_PATH := $(shell echo '<?php echo get_include_path();'|php)
 PHP := 'php -d include_path="$(CWD):$(PHP_INCLUDE_PATH)"'
 PROVE := prove -r --exec $(PHP)
-PACKAGEXML := package.xml
-BUILDXML := build.xml
+PACKAGEXML := base.xml
+BUILDXML := package.xml
 BUILDVAL := $(BUILDXML).validate
 
 default:
