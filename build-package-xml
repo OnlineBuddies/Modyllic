@@ -2,7 +2,7 @@
 <?php
 if ( $argc < 3 or $argc > 5 ) {
     fputs(STDERR, "Form: {$argv[0]} input.xml output.xml [version [state]]\n");
-    fputs(STDERR, "Ex: {$argv[0]} package.xml new.xml 1.0.0 beta\n");
+    fputs(STDERR, "Ex: {$argv[0]} base.xml package.xml 1.0.0 beta\n");
     exit(1);
 }
 @list($program,$input,$output,$version,$state) = $argv;
