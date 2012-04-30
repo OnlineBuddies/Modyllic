@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-print_r($argv);
 if ( $argc < 3 or $argc > 5 ) {
     fputs(STDERR, "Form: {$argv[0]} input.xml output.xml [version [state]]\n");
     fputs(STDERR, "Ex: {$argv[0]} package.xml new.xml 1.0.0 beta\n");
@@ -21,7 +20,6 @@ foreach (explode("\n",trim(`git for-each-ref --sort='-refname' --format='%(refna
         "rel"   => $tag_rel,
         );
 }
-print_r($prev_versions);
 
 // PEAR can't live with strict, so make sure it's off.
 ini_set("error_reporting",E_ALL);
