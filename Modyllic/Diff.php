@@ -248,7 +248,7 @@ class Modyllic_Diff {
             foreach ( $totable->indexes as $name=>$toindex ) {
                 $match = false;
                 foreach ($fromtable->indexes as $name=>$fromindex ) {
-                    $match = $toindex->equal_to( $fromindex );
+                    $match = $toindex->equal_to( $fromindex, $fromnames );
                     if ( $match ) { break; }
                 }
                 if ( ! $match ) {
@@ -259,7 +259,7 @@ class Modyllic_Diff {
             foreach ( $fromtable->indexes as $name=>$fromindex ) {
                 $match = false;
                 foreach ($totable->indexes as $name=>$toindex ) {
-                    $match = $fromindex->equal_to( $toindex );
+                    $match = $fromindex->equal_to( $toindex, $tonames );
                     if ( $match ) { break; }
                 }
                 if ( ! $match ) {
