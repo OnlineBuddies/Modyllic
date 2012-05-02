@@ -24,7 +24,9 @@ foreach (explode("\n",trim(`git for-each-ref --sort='-refname' --format='%(refna
 }
 
 // PEAR can't live with strict, so make sure it's off.
-ini_set("error_reporting",E_ALL);
+// PEAR also uses features deprecated in 5.3-- unfortunately the deprecated flag only exists in 5.3+ and thus this hack
+$E_DEPRECATED = defined('E_DEPRECATED') ? E_DEPRECATED : 0;
+ini_set("error_reporting", E_ALL ^ $E_DEPRECATED );
 
 require_once "PEAR/PackageFileManager2.php";
 
