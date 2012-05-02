@@ -516,7 +516,9 @@ class Modyllic_VarChar extends Modyllic_VarString {
         return $new;
     }
 }
-class Modyllic_VarBinary extends Modyllic_VarString {}
+class Modyllic_VarBinary extends Modyllic_VarString
+    function charset_collation($other) { return ""; }
+}
 
 class Modyllic_Char extends Modyllic_VarString {
     public $default_length = 1;
@@ -538,7 +540,9 @@ class Modyllic_Char extends Modyllic_VarString {
         return $new;
     }
 }
-class Modyllic_Binary extends Modyllic_Char { }
+class Modyllic_Binary extends Modyllic_Char {
+    function charset_collation($other) { return ""; }
+}
 
 class Modyllic_Text extends Modyllic_String {
     function __construct($type,$length) {
@@ -574,6 +578,7 @@ class Modyllic_Text extends Modyllic_String {
 }
 class Modyllic_Blob extends Modyllic_Text {
     function type_name($size) { return $size . "BLOB"; }
+    function charset_collation($other) { return ""; }
 }
 
 class Modyllic_Geometry extends Modyllic_String { }
