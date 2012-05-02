@@ -583,7 +583,7 @@ class Modyllic_Generator_MySQL {
         if ( $column->from ) {
             $this->reindent("--  ");
             $this->partial( "BEFORE        ");
-            $this->create_column( $column->from );
+            $this->create_column( $column->from, false );
             $this->reindent();
         }
         if ( $column->previously != $column->name ) {
@@ -592,7 +592,7 @@ class Modyllic_Generator_MySQL {
         else {
             $this->partial( "MODIFY COLUMN " );
         }
-        $this->create_column($column);
+        $this->create_column($column, false);
         return $this;
     }
 
@@ -601,7 +601,7 @@ class Modyllic_Generator_MySQL {
         return $this;
     }
 
-    function create_column( $column ) {
+    function create_column( $column, $with_key=true ) {
         if ( isset($column->from) ) {
             $this->extend("%id %lit", $column->name, $column->type->to_sql($column->from->type) );
         }
@@ -622,7 +622,7 @@ class Modyllic_Generator_MySQL {
         if ( $column->on_update ) {
             $this->add( " ON UPDATE %lit", $column->on_update );
         }
-        if ( $column->is_primary ) {
+        if ( $with_key and $column->is_primary ) {
             $this->add( " PRIMARY KEY" );
         }
         return $this;
@@ -1095,8 +1095,9 @@ class Modyllic_Generator_MySQL {
     function update_meta($kind,$which,array $meta) {
         if ( ! isset($this->what['sqlmeta']) ) { return; }
         if ( count($meta) > 0 ) {
-            $this->cmd( "INSERT INTO SQLMETA SET kind=%str, which=%str, value=%str ON DUPLICATE KEY UPDATE meta=%str",
-                 $kind, $which, $meta, $meta );
+            $meta_str = json_encode($meta);
+            $this->cmd( "INSERT INTO SQLMETA SET kind=%str, which=%str, value=%str ON DUPLICATE KEY UPDATE value=%str",
+                 $kind, $which, $meta_str, $meta_str );
         }
         else {
             if ( ! $this->to_sqlmeta_exists ) { return; }
