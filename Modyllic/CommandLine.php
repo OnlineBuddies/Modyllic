@@ -20,7 +20,7 @@ require_once "Console/CommandLine/Action.php";
 
 // A Modyllic generator dialect
 class Modyllic_Console_CommandLine_ActionDialect extends Console_CommandLine_Action {
-    public function execute($value=false, $params=array()) {
+    public function execute($value=false, array $params=array()) {
         $this->setResult( Modyllic_Generator::dialect_to_class($value) );
     }
 }

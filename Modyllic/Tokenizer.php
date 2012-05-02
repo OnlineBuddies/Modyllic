@@ -304,7 +304,7 @@ class Modyllic_Tokenizer {
      * Provides a couple of lines of context, with <---HERE---> marking the
      * current location of the tokenizer.
      */
-    public function context($token=null) {
+    public function context(Modyllic_Token $token=null) {
         if ( !isset($token) ) {
             $token = $this->cur;
         }
@@ -339,7 +339,7 @@ class Modyllic_Tokenizer {
     /**
      * Injects a token at the head of the token-stream
      */
-    public function inject($token) {
+    public function inject(Modyllic_Token $token) {
         array_unshift($this->injected,$token);
     }
 
@@ -378,7 +378,7 @@ class Modyllic_Tokenizer {
     function is_delimiter() {
         return isset($this->delimiter) and preg_match( "/\G\Q$this->delimiter\E/", $this->cmdstr, $matches, 0, $this->pos );
     }
-    function is_new_delimiter(&$matches) {
+    function is_new_delimiter(array &$matches) {
         return $this->prev instanceOf Modyllic_Token_SOC and preg_match( "/\G(DELIMITER\s+(\S+)([^\n]*?)(?=\n|\z))/i", $this->cmdstr, $matches, 0, $this->pos);
     }
     function is_string() {

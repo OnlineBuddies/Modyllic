@@ -15,7 +15,7 @@ require_once "Modyllic/Schema.php";
  */
 class Modyllic_Loader_DB_MySQL {
 
-    static function selectrow( $dbh, $query, array $bind = array() ) {
+    static function selectrow( PDO $dbh, $query, array $bind = array() ) {
         $sth = $dbh->prepare( $query );
         foreach ($bind as $key=>$value) {
             $sth->bindValue( $key+1, $value );
@@ -24,7 +24,7 @@ class Modyllic_Loader_DB_MySQL {
         return $sth->fetch(PDO::FETCH_ASSOC);
     }
 
-    static function query( $dbh, $query, array $bind = array() ) {
+    static function query( PDO $dbh, $query, array $bind = array() ) {
         $sth = $dbh->prepare( $query );
         foreach ($bind as $key=>$value) {
             if ( is_int($key) ) { $key ++; }
@@ -37,7 +37,7 @@ class Modyllic_Loader_DB_MySQL {
     /**
      * @returns Modyllic_Schema
      */
-    static function load($dbh, $dbname, $schema) {
+    static function load(PDO $dbh, $dbname, $schema) {
         $dbh->exec("USE information_schema");
         $dbschema = self::selectrow( $dbh, "SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM SCHEMATA WHERE SCHEMA_NAME=?", array($dbname) );
         if ( ! $dbschema ) {

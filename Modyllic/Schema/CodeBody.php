@@ -26,7 +26,7 @@ class Modyllic_Schema_CodeBody extends Modyllic_Diffable {
         return $stripped;
     }
 
-    function equal_to($other) {
+    function equal_to(Modyllic_Schema_CodeBody $other) {
         if ( get_class($other) != get_class($this) )   { return false; }
         if ( $this->_body_no_comments() != $other->_body_no_comments() ) { return false; }
         return true;

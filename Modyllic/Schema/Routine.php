@@ -37,10 +37,10 @@ class Modyllic_Schema_Routine extends Modyllic_Schema_CodeBody {
     }
 
     /**
-     * @param Modyllic_Schema_Routine $other
+     * @param Modyllic_Schema_CodeBody $other
      * @returns bool True if $other is equivalent to $this
      */
-    function equal_to($other) {
+    function equal_to(Modyllic_Schema_CodeBody $other) {
         if ( ! parent::equal_to($other) ) { return false; }
         if ( $this->deterministic != $other->deterministic ) { return false; }
         if ( $this->access        != $other->access )        { return false; }

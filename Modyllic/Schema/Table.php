@@ -37,7 +37,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
     /**
      * @param Modyllic_Schema_Column $column
      */
-    function add_column($column) {
+    function add_column(Modyllic_Schema_Column $column) {
         if ( isset($this->last_column) ) {
             $column->after = $this->last_column->name;
         }
@@ -48,7 +48,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
     /**
      * @param Modyllic_Schema_Index $index
      */
-    function add_index($index) {
+    function add_index(Modyllic_Schema_Index $index) {
         $name = $index->get_name();
         if ( isset($this->indexes[$name]) ) {
             throw new Exception("In table ".$this->name."- duplicate key name ".$name);
@@ -89,7 +89,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
      * @param Modyllic_Schema_Table $other
      * @returns bool True if $other is equivalent to $this
      */
-    function equal_to( $other ) {
+    function equal_to( Modyllic_Schema_Table $other ) {
         if ( $this->name != $other->name ) { return false; }
         if ( $this->engine != $other->engine ) { return false; }
         if ( $this->charset != $other->charset ) { return false; }
@@ -118,7 +118,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
      * Add a row of data to this table
      * @throws Exception when data is not yet initialized.
      */
-    function add_row( $row ) {
+    function add_row( array $row ) {
         if ( ! $this->static and $this->name != "SQLMETA" ) {
             throw new Exception("Cannot add data to ".$this->name.
                 ", not initialized for schema supplied data-- call TRUNCATE first.");
@@ -158,7 +158,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
      * on the primary key for this table.
      * @returns array
      */
-    function match_row($row) {
+    function match_row(array $row) {
         $where = array();
         foreach ($this->primary_key() as $key=>$len) {
              $where[$key] = @$row[$key];
