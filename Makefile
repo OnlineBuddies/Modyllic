@@ -37,7 +37,7 @@ package-validate: build-package-xml
 	if grep ^Error: $(BUILDVAL); then exit 1; else exit 0; fi
 
 test: package-validate
-	$(PROVE) tests
+	$(PROVE) test
 
 test-verbose: package-validate
-	$(PROVE) -v tests
+	$(PROVE) -v test
