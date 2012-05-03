@@ -15,6 +15,7 @@ require_once "Modyllic/Token/Comment.php";
 require_once "Modyllic/Token/String.php";
 require_once "Modyllic/Token/List.php";
 require_once "Modyllic/Token/Except.php";
+require_once "Modyllic/Token/EOC.php";
 
 /**
  * These are what are returned by the tokenizer

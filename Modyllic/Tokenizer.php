@@ -10,11 +10,6 @@ require_once "Modyllic/SQL.php";
 require_once "Modyllic/Token.php";
 
 /**
- * End of command-- tokens of this class mark the end of an SQL command.
- */
-class Modyllic_Token_EOC extends Modyllic_Token_Except {}
-
-/**
  * Indicates that we've hit the end of the string that we're parsing
  */
 class Modyllic_Token_EOF extends Modyllic_Token_EOC {}
