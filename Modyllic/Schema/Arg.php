@@ -5,6 +5,7 @@
  * @package Modyllic
  * @author bturner@online-buddies.com
  */
+require_once "Modyllic/Diffable.php";
 
 /**
  * A collection of attributes describing an argument to a stored procedure

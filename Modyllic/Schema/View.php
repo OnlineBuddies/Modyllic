@@ -5,6 +5,7 @@
  * @package Modyllic
  * @author bturner@online-buddies.com
  */
+require_once "Modyllic/Diffable.php";
 
 class Modyllic_Schema_View extends Modyllic_Diffable {
     public $name;

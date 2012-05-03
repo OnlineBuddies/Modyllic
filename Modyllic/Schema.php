@@ -16,15 +16,7 @@ require_once "Modyllic/Schema/Event.php";
 require_once "Modyllic/Schema/Trigger.php";
 require_once "Modyllic/Schema/Proc.php";
 require_once "Modyllic/Schema/Func.php";
-
-/**
- * A base class for various schema objects.  Handles generic things like
- * providing previous values for the diff engine.  In a perfect world this
- * would be a runtime trait applied by the diff engine.
- */
-class Modyllic_Diffable {
-    public $from;
-}
+require_once "Modyllic/Diffable.php";
 
 /**
  * A collection of SQL entities comprising a complete schema

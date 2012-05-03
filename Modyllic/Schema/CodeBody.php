@@ -5,6 +5,7 @@
  * @package Modyllic
  * @author bturner@online-buddies.com
  */
+require_once "Modyllic/Diffable.php";
 
 abstract class Modyllic_Schema_CodeBody extends Modyllic_Diffable {
     public $body = "BEGIN\nEND";
