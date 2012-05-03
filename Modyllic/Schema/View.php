@@ -15,7 +15,7 @@ class Modyllic_Schema_View extends Modyllic_Diffable {
     function __construct($name) {
         $this->name = $name;
     }
-    function equal_to( $other ) {
+    function equal_to( Modyllic_Schema_View $other ) {
         if ( $this->def != $other->def ) { return false; }
         return true;
     }

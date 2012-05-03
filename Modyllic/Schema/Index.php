@@ -32,10 +32,10 @@ class Modyllic_Schema_Index extends Modyllic_Diffable {
     }
 
     /**
-     * @param Modyllic_Index $other
+     * @param Modyllic_Schema_Index $other
      * @returns bool True if $other is equivalent to $this
      */
-    function equal_to($other, $fromnames=null) {
+    function equal_to(Modyllic_Schema_Index $other, array $fromnames=null) {
         if ( get_class($other) != get_class($this) )   { return false; }
         if ( isset($fromnames) ) {
             if ( count($this->columns) != count($other->columns) ) { return false; }
