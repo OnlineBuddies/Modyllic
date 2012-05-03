@@ -404,7 +404,7 @@ class Modyllic_Generator_MySQL {
         }
     }
 
-    function create_table( $table, $schema ) {
+    function create_table( Modyllic_Schema_Table $table, Modyllic_Schema $schema ) {
         $this->begin_cmd();
         $this->table_docs( $table );
         $this->extend( "CREATE TABLE %id (", $table->name );
@@ -544,7 +544,7 @@ class Modyllic_Generator_MySQL {
         return $this;
     }
 
-    function drop_table( $table ) {
+    function drop_table( Modyllic_Schema_Table $table ) {
         $this->cmd( "DROP TABLE IF EXISTS %id", $table->name );
         if ( count($this->table_meta($table)) > 0 ) {
             $this->delete_meta("TABLE",$table->name);
@@ -558,7 +558,7 @@ class Modyllic_Generator_MySQL {
         return $this;
     }
 
-    function column_meta($col) {
+    function column_meta( Modyllic_Schema_Column $col) {
         if ( count($col->aliases) ) {
             return array( "aliases" => $col->aliases );
         }
@@ -567,7 +567,7 @@ class Modyllic_Generator_MySQL {
         }
     }
 
-    function add_column( $column ) {
+    function add_column( Modyllic_Schema_Column $column ) {
         $this->partial("ADD COLUMN " );
         $this->create_column($column);
         if ( $column->after == "" ) {

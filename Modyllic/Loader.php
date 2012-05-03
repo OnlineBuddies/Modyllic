@@ -20,6 +20,8 @@ class Modyllic_Loader_Exception extends Exception {}
  * Factory class for creating Schema objects from various sources
  */
 class Modyllic_Loader {
+    // Static class only
+    private function __construct() {}
 
     static function determine_loader($source) {
         if ( is_dir($source) ) {

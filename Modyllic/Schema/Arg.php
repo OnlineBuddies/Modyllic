@@ -24,7 +24,7 @@ class Modyllic_Schema_Arg extends Modyllic_Diffable {
         $sql .= $type->to_sql();
         return $sql;
     }
-    function equal_to($other) {
+    function equal_to(Modyllic_Schema_Arg $other) {
         if ( $this->name != $other->name ) { return false; }
         if ( $this->dir != $other->dir ) { return false; }
         if ( ! $this->type->equal_to($other->type) ) { return false; }

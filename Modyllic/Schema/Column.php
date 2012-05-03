@@ -34,7 +34,7 @@ class Modyllic_Schema_Column extends Modyllic_Diffable {
      * @param Modyllic_Schema_Column $other
      * @returns bool True if $other is equivalent to $this
      */
-    function equal_to($other) {
+    function equal_to(Modyllic_Schema_Column $other) {
         if ( $this->name != $other->name ) { return false; }
         if ( ! $this->type->equal_to( $other->type ) ) { return false; }
         if ( $this->null != $other->null ) { return false; }

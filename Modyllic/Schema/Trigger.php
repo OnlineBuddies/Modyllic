@@ -26,7 +26,7 @@ class Modyllic_Schema_Trigger extends Modyllic_Schema_CodeBody {
         $this->name = $name;
     }
 
-    function equal_to($other) {
+    function equal_to(Modyllic_Schema_CodeBody $other) {
         if ( ! parent::equal_to($other)     ) { return false; }
         if ( $this->time != $other->time   ) { return false; }
         if ( $this->event != $other->event ) { return false; }
