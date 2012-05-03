@@ -10,19 +10,6 @@ require_once "Modyllic/SQL.php";
 require_once "Modyllic/Token.php";
 
 /**
- * Identifiers that were quoted (`` in MySQL, "" elsewhere)
- */
-class Modyllic_Token_Quoted_Ident extends Modyllic_Token_Ident {
-    function value() {
-        $quote = $this->value[0];
-        $unquoted = substr( $this->value, 1, -1 );
-        $unquoted = preg_replace("/$quote{2}/", $quote, $unquoted );
-        $unquoted = preg_replace('/\\\\(.)/', '$1', $unquoted );
-        return $unquoted;
-    }
-}
-
-/**
  * Reserved words
  */
 class Modyllic_Token_Reserved extends Modyllic_Token_Ident { }
@@ -609,7 +596,7 @@ class Modyllic_Tokenizer {
             }
         }
         if ( $quote == '`' ) {
-            return new Modyllic_Token_Quoted_Ident($this->pos,$str);
+            return new Modyllic_Token_Ident_Quoted($this->pos,$str);
         }
         else {
             $token = new Modyllic_Token_String($this->pos,$str);

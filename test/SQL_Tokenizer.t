@@ -67,10 +67,10 @@ foreach ( $ident_tests as $name=>$test ) {
     $token = $tok->next();
     ok( $token instanceOf Modyllic_Token_Ident, "$name is an Ident token" );
     if ( $token->value() != $token->literal() ) {
-        ok( $token instanceOf Modyllic_Token_Quoted_Ident, "$name is a Quoted Ident token" );
+        ok( $token instanceOf Modyllic_Token_Ident_Quoted, "$name is a Quoted Ident token" );
     }
     else {
-        ok( ! $token instanceOf Modyllic_Token_Quoted_Ident, "$name isn't a Quoted Ident token" );
+        ok( ! $token instanceOf Modyllic_Token_Ident_Quoted, "$name isn't a Quoted Ident token" );
     }
     is( $token->value(), $test['value'], "$name has the right value" );
     is( $token->literal(), $test['sql'], "$name is unchanged in its literal form" );

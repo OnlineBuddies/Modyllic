@@ -38,7 +38,7 @@ while ( !$tok->next(true) instanceOf Modyllic_Token_EOF ) {
     else if ( $tok->cur instanceOf Modyllic_Token_Symbol ) {
         $newcolor = BRIGHT_RED();
     }
-    else if ( $tok->cur instanceOf Modyllic_Token_Ident and ! $tok->cur instanceOf Modyllic_Token_Quoted_Ident and
+    else if ( $tok->cur instanceOf Modyllic_Token_Ident and ! $tok->cur instanceOf Modyllic_Token_Ident_Quoted and
               Modyllic_SQL::is_reserved($tok->cur->value()) ) {
         $newcolor = BRIGHT_RED();
     }

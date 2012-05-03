@@ -7,6 +7,7 @@
  */
 require_once "Modyllic/Token/Whitespace.php";
 require_once "Modyllic/Token/Ident.php";
+require_once "Modyllic/Token/Ident/Quoted.php";
 
 /**
  * These are what are returned by the tokenizer
