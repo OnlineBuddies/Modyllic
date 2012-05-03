@@ -12,6 +12,7 @@ require_once "Modyllic/Token/Reserved.php";
 require_once "Modyllic/Token/Num.php";
 require_once "Modyllic/Token/Symbol.php";
 require_once "Modyllic/Token/Comment.php";
+require_once "Modyllic/Token/String.php";
 
 /**
  * These are what are returned by the tokenizer
