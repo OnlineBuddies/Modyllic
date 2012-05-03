@@ -6,10 +6,12 @@
  * @author bturner@online-buddies.com
  */
 
+// Register our Dialect commandline argument type
+Console_CommandLine::registerAction('Dialect', 'Modyllic_Console_CommandLine_ActionDialect');
+
 /**
  * Helper class for commandline tools
  */
-
 class Modyllic_CommandLine {
 
     static function get_parser() {

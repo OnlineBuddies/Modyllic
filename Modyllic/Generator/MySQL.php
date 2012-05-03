@@ -598,7 +598,7 @@ class Modyllic_Generator_MySQL {
         return $this;
     }
 
-    function create_column( Modyllic_Schema_Column $column ) {
+    function create_column( Modyllic_Schema_Column $column, $with_key=true ) {
         if ( isset($column->from) ) {
             $this->extend("%id %lit", $column->name, $column->type->to_sql($column->from->type) );
         }

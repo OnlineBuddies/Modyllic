@@ -24,8 +24,8 @@ class Modyllic_Generator_ModyllicSQL extends Modyllic_Generator_MySQL {
         parent::add_column( $column );
         $this->column_aliases($column);
     }
-    function create_column( Modyllic_Schema_Column $column ) {
-        parent::create_column( $column );
+    function create_column( Modyllic_Schema_Column $column, $with_key=true ) {
+        parent::create_column( $column, $with_key );
         $this->column_aliases($column);
     }
     function column_aliases( Modyllic_Schema_Column $column ) {
