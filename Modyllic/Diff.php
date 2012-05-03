@@ -20,7 +20,7 @@ class Modyllic_Diff {
      * @param Modyllic_Schema $from
      * @param Modyllic_Schema $to
      */
-    function __construct($from, $to) {
+    function __construct(Modyllic_Schema $from, Modyllic_Schema $to) {
         $this->from = $from;
         $this->to   = $to;
         $this->calculate_changeset();
@@ -395,7 +395,7 @@ class Modyllic_Changeset {
      * Note that a table was added
      * @param Modyllic_Schema_Table $table
      */
-    function add_table( $table ) {
+    function add_table( Modyllic_Schema_Table $table ) {
         $this->add['tables'][$table->name] = $table;
     }
 
@@ -403,7 +403,7 @@ class Modyllic_Changeset {
      * Note that a table was removed
      * @param Modyllic_Schema_Table $table
      */
-    function remove_table( $table ) {
+    function remove_table( Modyllic_Schema_Table $table ) {
         $this->remove['tables'][$table->name] = $table;
     }
 
@@ -411,28 +411,28 @@ class Modyllic_Changeset {
      * Note that a table was updated (and how)
      * @param Modyllic_Table_Changeset $table
      */
-    function update_table( $table ) {
+    function update_table( Modyllic_Table_Changeset $table ) {
         $this->update['tables'][$table->name] = $table;
     }
 
     /**
      * @param Modyllic_Schema_View $view
      */
-    function add_view( $view ) {
+    function add_view( Modyllic_Schema_View $view ) {
         $this->add['views'][$view->name] = $view;
     }
 
     /**
-     * @param Modyllic_Schema_View_Changeset $view
+     * @param Modyllic_View_Changeset $view
      */
-    function update_view( $view ) {
+    function update_view( Modyllic_View_Changeset $view ) {
         $this->update['views'][$view->name] = $view;
     }
 
     /**
      * @param Modyllic_Schema_View $view
      */
-    function remove_view( $view ) {
+    function remove_view( Modyllic_Schema_View $view ) {
         $this->remove['views'][$view->name] = $view;
     }
 
@@ -440,7 +440,7 @@ class Modyllic_Changeset {
      * Note that a routine was added
      * @param Modyllic_Schema_Routine $routine
      */
-    function add_routine( $routine ) {
+    function add_routine( Modyllic_Schema_Routine $routine ) {
         $this->add['routines'][$routine->name] = $routine;
     }
 
@@ -448,7 +448,7 @@ class Modyllic_Changeset {
      * Note that a routine was removed
      * @param Modyllic_Schema_Routine $routine
      */
-    function remove_routine( $routine ) {
+    function remove_routine( Modyllic_Schema_Routine $routine ) {
         $this->remove['routines'][$routine->name] = $routine;
     }
 
@@ -456,40 +456,40 @@ class Modyllic_Changeset {
      * Note that a routine was updated
      * @param Modyllic_Schema_Routine $routine
      */
-    function update_routine( $routine ) {
+    function update_routine( Modyllic_Schema_Routine $routine ) {
         $this->update['routines'][$routine->name] = $routine;
     }
 
     /**
      * @param Modyllic_Schema_Event $event
      */
-    function add_event( $event ) {
+    function add_event( Modyllic_Schema_Event $event ) {
         $this->add['events'][$event->name] = $event;
     }
 
     /**
      * @param Modyllic_Event_Changeset $event
      */
-    function update_event( $event ) {
+    function update_event( Modyllic_Event_Changeset $event ) {
         $this->update['events'][$event->name] = $event;
     }
 
     /**
      * @param Modyllic_Schema_Event $event
      */
-    function remove_event( $event ) {
+    function remove_event( Modyllic_Schema_Event $event ) {
         $this->remove['events'][$event->name] = $event;
     }
 
     /**
      * @param Modyllic_Schema_Trigger $trigger
      */
-    function add_trigger( $trigger ) {
+    function add_trigger( Modyllic_Schema_Trigger $trigger ) {
         $this->add['triggers'][$trigger->name] = $trigger;
     }
 
     /**
-     * @param Modyllic_Schema_Trigger_Changeset $trigger
+     * @param Modyllic_Trigger_Changeset $trigger
      */
     function update_trigger( $trigger ) {
         $this->update['triggers'][$trigger->name] = $trigger;
@@ -498,7 +498,7 @@ class Modyllic_Changeset {
     /**
      * @param Modyllic_Schema_Trigger $trigger
      */
-    function remove_trigger( $trigger ) {
+    function remove_trigger( Modyllic_Schema_Trigger $trigger ) {
         $this->remove['triggers'][$trigger->name] = $trigger;
     }
 
@@ -571,7 +571,7 @@ class Modyllic_Table_Changeset {
      * Note that a column was added
      * @param Modyllic_Schema_Column $column
      */
-    function add_column($column) {
+    function add_column(Modyllic_Schema_Column $column) {
         $this->add['columns'][$column->name] = $column;
     }
 
@@ -579,7 +579,7 @@ class Modyllic_Table_Changeset {
      * Note that a column was removed
      * @param Modyllic_Schema_Column $column
      */
-    function remove_column($column) {
+    function remove_column(Modyllic_Schema_Column $column) {
         $this->remove['columns'][$column->name] = $column;
     }
 
@@ -587,7 +587,7 @@ class Modyllic_Table_Changeset {
      * Note that a column was updated
      * @param Modyllic_Schema_Column $column
      */
-    function update_column($column) {
+    function update_column(Modyllic_Schema_Column $column) {
         $this->update['columns'][$column->name] = $column;
     }
 
@@ -595,7 +595,7 @@ class Modyllic_Table_Changeset {
      * Note that an index was added
      * @param Modyllic_Schema_Index $index
      */
-    function add_index($index) {
+    function add_index(Modyllic_Schema_Index $index) {
         $this->add['indexes'][] = $index;
     }
 
@@ -603,7 +603,7 @@ class Modyllic_Table_Changeset {
      * Note that an index was removed
      * @param Modyllic_Schema_Index $index
      */
-    function remove_index($index) {
+    function remove_index(Modyllic_Schema_Index $index) {
         $this->remove['indexes'][] = $index;
     }
 
@@ -619,14 +619,14 @@ class Modyllic_Table_Changeset {
     /**
      * @param array $row
      */
-    function add_row($row) {
+    function add_row(array $row) {
         $this->add['data'][] = $row;
     }
 
     /**
      * @param array $row
      */
-    function remove_row($row) {
+    function remove_row(array $row) {
         $this->remove['data'][] = $row;
     }
 
@@ -634,7 +634,7 @@ class Modyllic_Table_Changeset {
      * @param array $updated
      * @param array $where
      */
-    function update_row($updated,$where,$from) {
+    function update_row(array $updated,array $where,array $from) {
         $this->update['data'][] = array("updated"=>$updated,"where"=>$where,"from"=>$from);
     }
 

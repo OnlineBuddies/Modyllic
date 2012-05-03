@@ -47,7 +47,7 @@ class Modyllic_Parser {
      * @param string $delim (default: "")
      * @returns array
      */
-    function partial($schema, $sql, $filename="SQL", $delim=null) {
+    function partial(Modyllic_Schema $schema, $sql, $filename="SQL", $delim=null) {
         $this->filename = $filename;
         $this->tok = new Modyllic_Tokenizer( $sql );
         $this->tok->set_delimiter( $delim );
@@ -616,7 +616,7 @@ class Modyllic_Parser {
         $this->load_routine_body($func);
     }
 
-    function load_routine_body($routine) {
+    function load_routine_body(Modyllic_Schema_CodeBody $routine) {
         // [characteristic ...] BEGIN routine_body END
         // characteristic:
         //   | [NOT] DETERMINISTIC
@@ -1168,7 +1168,7 @@ class Modyllic_Parser {
         return $columns;
     }
 
-    function add_index($key) {
+    function add_index(Modyllic_Schema_Index $key) {
         // If a semantically identical key already exists, replace it.
         $match = null;
         foreach ($this->ctx->indexes as $array_index=>&$index) {
@@ -1183,17 +1183,17 @@ class Modyllic_Parser {
         $this->ctx->add_index( $key );
     }
 
-    function gen_constraint_name($key) {
+    function gen_constraint_name(Modyllic_Schema_Index $key) {
         $key->cname = $this->ctx->gen_index_name( $this->ctx->name . "_ibfk", true );
         $key->dynamic_name = true;
     }
 
-    function gen_index_name($key) {
+    function gen_index_name(Modyllic_Schema_Index $key) {
         $key->name = $this->ctx->gen_index_name( current(array_keys($key->columns)) );
         $key->dynamic_name = true;
     }
 
-    function add_foreign_key_index( $name, $key ) {
+    function add_foreign_key_index( $name, Modyllic_Schema_Index $key ) {
         // If a name was specified and it already exists as an index, then that
         // index must be compatible
         if ( $name and isset( $this->ctx->indexes[$name] ) ) {
@@ -1389,7 +1389,7 @@ class Modyllic_Parser {
         return $this->next()->value();
     }
 
-    function _value_map( $token ) {
+    function _value_map( Modyllic_Token $token ) {
         return $token->value();
     }
 

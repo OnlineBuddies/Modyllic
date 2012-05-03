@@ -11,12 +11,12 @@ require_once "Modyllic/Generator/MySQL.php";
 require_once "Modyllic/Schema.php";
 
 class Modyllic_Generator_ModyllicSQL extends Modyllic_Generator_MySQL {
-    function sqlmeta_exists($schema) {
+    function sqlmeta_exists(Modyllic_Schema $schema) {
         return false;
     }
 
     // We include weak constraints as well as regular ones
-    function ignore_index( $index ) {
+    function ignore_index(Modyllic_Schema_Index $index ) {
         return false;
     }
 
@@ -24,15 +24,15 @@ class Modyllic_Generator_ModyllicSQL extends Modyllic_Generator_MySQL {
     function insert_meta($kind,$which,array $what) {}
     function delete_meta($kind,$which) {}
     function update_meta($kind,$which,array $meta) {}
-    function add_column( $column ) {
+    function add_column( Modyllic_Schema_Column $column ) {
         parent::add_column( $column );
         $this->column_aliases($column);
     }
-    function create_column( $column ) {
+    function create_column( Modyllic_Schema_Column $column ) {
         parent::create_column( $column );
         $this->column_aliases($column);
     }
-    function column_aliases( $column ) {
+    function column_aliases( Modyllic_Schema_Column $column ) {
         if ( count($column->aliases) ) {
             $this->add( " ALIASES (" );
             foreach ( $column->aliases as $num=>$alias ) {
@@ -42,7 +42,7 @@ class Modyllic_Generator_ModyllicSQL extends Modyllic_Generator_MySQL {
             $this->add( ")" );
         }
     }
-    function foreign_key($index) {
+    function foreign_key(Modyllic_Schema_Index $index) {
         if ( $index->weak != Modyllic_Schema_Index_Foreign::WEAK_DEFAULT ) {
             $this->add( " WEAKLY REFERENCES %id", $index->references['table'] );
         }
@@ -58,7 +58,7 @@ class Modyllic_Generator_ModyllicSQL extends Modyllic_Generator_MySQL {
            $this->add( " ON UPDATE %lit", $index->references['on_update'] );
         }
     }
-    function routine_attrs( $routine ) {
+    function routine_attrs( Modyllic_Schema_Routine $routine ) {
         if ( $routine->args_type != Modyllic_Schema_Routine::ARGS_TYPE_DEFAULT ) {
             $this->extend("ARGS %lit",$routine->args_type);
         }
