@@ -7,6 +7,8 @@
  */
 
 class Modyllic_Generator {
+    // Static class only
+    private function __construct() {}
     static private $dialect_map;
     static public function dialect_to_class($dialect) {
         if ( !isset(self::$dialect_map) ) { self::$dialect_map = array(); }
