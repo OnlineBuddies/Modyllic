@@ -10,11 +10,6 @@ require_once "Modyllic/SQL.php";
 require_once "Modyllic/Token.php";
 
 /**
- * Reserved words
- */
-class Modyllic_Token_Reserved extends Modyllic_Token_Ident { }
-
-/**
  * Things that look like numbers
  */
 class Modyllic_Token_Num extends Modyllic_Token {}
