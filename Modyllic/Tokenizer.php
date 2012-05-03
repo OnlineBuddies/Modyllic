@@ -9,8 +9,6 @@
 require_once "Modyllic/SQL.php";
 require_once "Modyllic/Token.php";
 
-class Modyllic_Token_NewDelim extends Modyllic_Token_Delim {}
-
 /**
  * The SQL tokenizer-- this takes one or more SQL commands as a string and
  * splits it into useful chunks.
