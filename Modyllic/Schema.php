@@ -7,7 +7,7 @@
  */
 
 require_once "Modyllic/SQL.php";
-require_once "Modyllic/Types.php";
+require_once "Modyllic/Type.php";
 
 // Components
 require_once "Modyllic/Schema/View.php";

@@ -53,7 +53,7 @@ $sql_types = array(
 
 plan( 15 + count($sql_types) );
 
-require_ok("Modyllic/Types.php");
+require_ok("Modyllic/Type.php");
 
 foreach ($sql_types as $sql_type=>$class) {
     $type = Modyllic_Type::create($sql_type);
