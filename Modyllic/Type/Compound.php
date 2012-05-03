@@ -7,7 +7,7 @@
  */
 
 abstract class Modyllic_Type_Compound extends Modyllic_Type_String {
-    public $values;
+    public $values = array();
     function clone_from(Modyllic_Type $old) {
         parent::clone_from($old);
         $this->values = $old->values;

@@ -832,7 +832,7 @@ class Modyllic_Generator_PHP {
         if ( $arg->type->unsigned ) {
             $this->validate_unsigned($arg->name);
         }
-        if ( $arg->type instanceOf Modyllic_Integer ) {
+        if ( $arg->type instanceOf Modyllic_Type_Integer ) {
             $this->validate_integer($arg->name);
         }
         return $this;
@@ -876,34 +876,34 @@ class Modyllic_Generator_PHP {
         return $this;
     }
     function arg_validate(Modyllic_Schema_Arg $arg) {
-        if ( $arg->type instanceOf Modyllic_Numeric ) {
+        if ( $arg->type instanceOf Modyllic_Type_Numeric ) {
             $this->arg_validate_numeric($arg);
         }
         else {
             $this->arg_validate_nonnumeric($arg);
         }
-        if ( $arg->type instanceOf Modyllic_String ) {
+        if ( $arg->type instanceOf Modyllic_Type_String ) {
             $this->arg_validate_string( $arg );
         }
-        if ( $arg->type instanceOf Modyllic_Date ) {
+        if ( $arg->type instanceOf Modyllic_Type_Date ) {
             $this->arg_validate_date( $arg );
         }
-        else if ( $arg->type instanceOf Modyllic_Datetime ) {
+        else if ( $arg->type instanceOf Modyllic_Type_Datetime ) {
             $this->arg_validate_datetime( $arg );
         }
-        else if ( $arg->type instanceOf Modyllic_Time ) {
+        else if ( $arg->type instanceOf Modyllic_Type_Time ) {
             $this->arg_validate_time( $arg );
         }
-        else if ( $arg->type instanceOf Modyllic_Timestamp ) {
+        else if ( $arg->type instanceOf Modyllic_Type_Timestamp ) {
             $this->arg_validate_timestamp( $arg );
         }
-        else if ( $arg->type instanceOf Modyllic_Year ) {
+        else if ( $arg->type instanceOf Modyllic_Type_Year ) {
             $this->arg_validate_year( $arg );
         }
-        else if ( $arg->type instanceOf Modyllic_Enum ) {
+        else if ( $arg->type instanceOf Modyllic_Type_Enum ) {
             $this->arg_validate_enum( $arg );
         }
-        else if ( $arg->type instanceOf Modyllic_Set ) {
+        else if ( $arg->type instanceOf Modyllic_Type_Set ) {
             $this->arg_validate_set( $arg );
         }
         return $this;
@@ -1064,7 +1064,7 @@ class Modyllic_Generator_PHP {
     function bind_params(Modyllic_Schema_Routine $routine) {
         foreach ($routine->args as $arg) {
             $pdo_type = 'PDO::PARAM_STR';
-            if ( $arg->type instanceOf Modyllic_Integer ) {
+            if ( $arg->type instanceOf Modyllic_Type_Integer ) {
                 $pdo_type = 'PDO::PARAM_INT';
                 if ( $arg->name == "BOOL" or $arg->name == "BOOLEAN" ) {
                     $php_type = "boolean";
@@ -1073,12 +1073,12 @@ class Modyllic_Generator_PHP {
                     $php_type = "integer";
                 }
             }
-            else if ($arg->type instanceOf Modyllic_Float) {
+            else if ($arg->type instanceOf Modyllic_Type_Float) {
                 $php_type = "float";
             }
-            else if ($arg->type instanceOf Modyllic_VarBinary or
-                     $arg->type instanceOf Modyllic_Binary or
-                     $arg->type instanceOf Modyllic_Blob) {
+            else if ($arg->type instanceOf Modyllic_Type_VarBinary or
+                     $arg->type instanceOf Modyllic_Type_Binary or
+                     $arg->type instanceOf Modyllic_Type_Blob) {
                 $php_type = "binary";
             }
             else {
