@@ -7,6 +7,9 @@
  */
 
 class Modyllic_Loader_File {
+    // Static class only
+    private function __construct() {}
+
     static function load( $file, $schema ) {
         # A preparsed schemafile will have a .sqlc extension
         $file_bits = explode(".",$file);

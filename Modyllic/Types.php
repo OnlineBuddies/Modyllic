@@ -95,15 +95,15 @@ class Modyllic_Type {
     function to_sql() {
         return $this->name;
     }
-    function equal_to($other) {
+    function equal_to(Modyllic_Type $other) {
         if ( !$this->isa_equivalent($other) and !$other->isa_equivalent($this) ) { return false; }
         return true;
     }
-    function isa_equivalent($other) {
+    function isa_equivalent(Modyllic_Type $other) {
         return get_class($this) == get_class($other);
     }
-    function clone_from($new) {}
-    function normalize($value) {
+    function clone_from(Modyllic_Type $new) {}
+    function normalize(Modyllic_Token $value) {
         return $value->value();
     }
     function is_valid() {
@@ -123,20 +123,20 @@ class Modyllic_Numeric extends Modyllic_Type {
         parent::__construct($type);
         $this->length = $this->default_length;
     }
-    function equal_to($other) {
+    function equal_to(Modyllic_Type $other) {
         if ( ! parent::equal_to($other) ) { return false; }
         if ( $this->unsigned != $other->unsigned ) { return false; }
         if ( $this->zerofill != $other->zerofill ) { return false; }
         if ( $this->length != $other->length) { return false; }
         return true;
     }
-    function clone_from($old) {
+    function clone_from(Modyllic_Type $old) {
         parent::clone_from($old);
         $this->unsigned = $old->unsigned;
         $this->zerofill = $old->zerofill;
         $this->length = $old->length;
     }
-    function numify($value) {
+    function numify(Modyllic_Token $value) {
         if ( $value instanceOf Modyllic_Token_String ) {
             $plain = $value->unquote() + 0;
         }
@@ -164,7 +164,7 @@ class Modyllic_Integer extends Modyllic_Numeric {
         }
         return $sql;
     }
-    function normalize($int) {
+    function normalize(Modyllic_Token $int) {
         if ( $int instanceOf Modyllic_Token_Reserved ) {
             return $int->value();
         }
@@ -178,7 +178,7 @@ class Modyllic_TinyInt extends Modyllic_Integer {
 
 class Modyllic_Boolean extends Modyllic_TinyInt {
     public $default_length = 1;
-    function isa_equivalent($other) {
+    function isa_equivalent(Modyllic_Type $other) {
         if ( parent::isa_equivalent($other) ) { return true; }
         if ( get_class($other) == "Modyllic_TinyInt" ) { return true; }
         return false;
@@ -219,16 +219,16 @@ class Modyllic_Decimal extends Modyllic_Numeric {
         }
         return $sql;
     }
-    function equal_to($other) {
+    function equal_to(Modyllic_Type $other) {
         if ( ! parent::equal_to($other) ) { return false; }
         if ( $this->scale != $other->scale) { return false; }
         return true;
     }
-    function clone_from($old) {
+    function clone_from(Modyllic_Type $old) {
         parent::clone_from($old);
         $this->scale = $old->scale;
     }
-    function normalize($num) {
+    function normalize(Modyllic_Token $num) {
         if ( $num instanceOf Modyllic_Token_Reserved ) {
             return $num->value();
         }
@@ -251,7 +251,7 @@ class Modyllic_Float extends Modyllic_Numeric {
         }
         return $sql;
     }
-    function equal_to($other) {
+    function equal_to(Modyllic_Type $other) {
         if ( get_class($this) != get_class($other) ) { return false; }
         if ( $this->unsigned != $other->unsigned ) { return false; }
         if ( $this->zerofill != $other->zerofill ) { return false; }
@@ -261,11 +261,11 @@ class Modyllic_Float extends Modyllic_Numeric {
         }
         return true;
     }
-    function clone_from($old) {
+    function clone_from(Modyllic_Type $old) {
         parent::clone_from($old);
         $this->decimals = $old->decimals;
     }
-    function normalize($float) {
+    function normalize(Modyllic_Token $float) {
         if ( $float instanceOf Modyllic_Token_Reserved ) {
             return $float->value();
         }
@@ -276,7 +276,7 @@ class Modyllic_Float extends Modyllic_Numeric {
 class Modyllic_Double_Float extends Modyllic_Float {}
 
 class Modyllic_Date extends Modyllic_Type {
-    function normalize($date) {
+    function normalize(Modyllic_Token $date) {
         if ( $date instanceOf Modyllic_Token_Reserved ) {
             return $date->value();
         }
@@ -301,7 +301,7 @@ class Modyllic_Date extends Modyllic_Type {
     }
 }
 class Modyllic_Datetime extends Modyllic_Type {
-    function normalize($date) {
+    function normalize(Modyllic_Token $date) {
         if ( $date instanceOf Modyllic_Token_Reserved ) {
             return $date->value();
         }
@@ -351,16 +351,16 @@ class Modyllic_Year extends Modyllic_Type {
         }
         return $sql;
     }
-    function equal_to($other) {
+    function equal_to(Modyllic_Type $other) {
         if ( ! parent::equal_to($other) ) { return false; }
         if ( $this->length != $other->length ) { return false; }
         return true;
     }
-    function clone_from($old) {
+    function clone_from(Modyllic_Type $old) {
         parent::clone_from($old);
         $this->length = $old->length;
     }
-    function normalize($year) {
+    function normalize(Modyllic_Token $year) {
         if ( $year instanceOf Modyllic_Token_Reserved ) {
             return $year->value();
         }
@@ -426,20 +426,20 @@ class Modyllic_String extends Modyllic_Type {
         }
     }
 
-    function equal_to($other) {
+    function equal_to(Modyllic_Type $other) {
         if ( ! parent::equal_to($other) ) { return false; }
         if ( $this->charset() != $other->charset() ) { return false; }
         if ( $this->collate() != $other->collate() ) { return false; }
         return true;
     }
-    function clone_from($old) {
+    function clone_from(Modyllic_Type $old) {
         parent::clone_from($old);
         $this->charset( $old->charset() );
         $this->collate( $old->collate() );
     }
 
 
-    function normalize($str) {
+    function normalize(Modyllic_Token $str) {
         if ( $str instanceOf Modyllic_Token_Reserved ) {
             return $str->value();
         }
@@ -460,7 +460,7 @@ class Modyllic_String extends Modyllic_Type {
         }
         return Modyllic_SQL::quote_str( $value );
     }
-    function charset_collation($other=null) {
+    function charset_collation(Modyllic_Type $other=null) {
         $other_charset = $other instanceOf Modyllic_String? $other->charset(): $this->default_charset;
         $other_collate = $other instanceOf Modyllic_String? $other->collate(): $this->default_collate;
         $diff_charset = $this->charset() != $other_charset;
@@ -490,16 +490,16 @@ class Modyllic_String extends Modyllic_Type {
 }
 
 class Modyllic_VarString extends Modyllic_String {
-    function equal_to($other) {
+    function equal_to(Modyllic_Type $other) {
         if ( ! parent::equal_to($other) ) { return false; }
         if ( $this->length != $other->length ) { return false; }
         return true;
     }
-    function clone_from($old) {
+    function clone_from(Modyllic_Type $old) {
         parent::clone_from($old);
         $this->length = $old->length;
     }
-    function to_sql($other=null) {
+    function to_sql(Modyllic_Type $other=null) {
         $sql = $this->name . "(".$this->length.")";
         $sql .= $this->charset_collation($other);
         return $sql;
@@ -516,9 +516,7 @@ class Modyllic_VarChar extends Modyllic_VarString {
         return $new;
     }
 }
-class Modyllic_VarBinary extends Modyllic_VarString
-    function charset_collation($other) { return ""; }
-}
+class Modyllic_VarBinary extends Modyllic_VarString {}
 
 class Modyllic_Char extends Modyllic_VarString {
     public $default_length = 1;
@@ -526,7 +524,7 @@ class Modyllic_Char extends Modyllic_VarString {
         parent::__construct($type);
         $this->length = $this->default_length;
     }
-    function to_sql($other=null) {
+    function to_sql(Modyllic_Type $other=null) {
         $sql = $this->name;
         if ( $this->length != $this->default_length ) {
             $sql .= "(".$this->length.")";
@@ -540,21 +538,19 @@ class Modyllic_Char extends Modyllic_VarString {
         return $new;
     }
 }
-class Modyllic_Binary extends Modyllic_Char {
-    function charset_collation($other) { return ""; }
-}
+class Modyllic_Binary extends Modyllic_Char { }
 
 class Modyllic_Text extends Modyllic_String {
     function __construct($type,$length) {
         parent::__construct($type);
         $this->length = $length;
     }
-    function clone_from($old) {
+    function clone_from(Modyllic_Type $old) {
         parent::clone_from($old);
         $this->length = $old->length;
     }
     function type_name($size) { return $size . "TEXT"; }
-    function to_sql($other=null) {
+    function to_sql(Modyllic_Type $other=null) {
         if ( $this->length < 256 ) { // 2^8
             $sql = $this->type_name("TINY");
         }
@@ -578,18 +574,17 @@ class Modyllic_Text extends Modyllic_String {
 }
 class Modyllic_Blob extends Modyllic_Text {
     function type_name($size) { return $size . "BLOB"; }
-    function charset_collation($other) { return ""; }
 }
 
 class Modyllic_Geometry extends Modyllic_String { }
 
 class Modyllic_Compound extends Modyllic_String {
     public $values;
-    function clone_from($old) {
+    function clone_from(Modyllic_Type $old) {
         parent::clone_from($old);
         $this->values = $old->values;
     }
-    function to_sql($other=null) {
+    function to_sql(Modyllic_Type $other=null) {
         $sql = $this->name . "(";
         $valuec = 0;
         foreach ( $this->values as $value ) {

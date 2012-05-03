@@ -7,6 +7,9 @@
  */
 
 class Modyllic_Loader_Dir {
+    // Static class only
+    private function __construct() {}
+
     static function load( $dir, $schema ) {
         $filelist = array_merge(
             glob("$dir/*.sql",GLOB_NOSORT),

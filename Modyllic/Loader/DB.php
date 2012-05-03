@@ -7,6 +7,9 @@
  */
 
 class Modyllic_Loader_DB {
+    // Static class only
+    private function __construct() {}
+
     static private $dialect_map;
     static public function db_driver($dialect) {
         if ( !isset(self::$dialect_map) ) { self::$dialect_map = array(); }

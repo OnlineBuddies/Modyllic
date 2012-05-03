@@ -7,6 +7,9 @@
  */
 
 class Modyllic_SQL {
+    // Static class only
+    private function __construct() {}
+
     /**
      * Quote an SQL identifier, but only if we need to.
      * @param string $str
