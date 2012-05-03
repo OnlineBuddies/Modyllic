@@ -358,6 +358,7 @@ class Modyllic_Diff {
     }
 }
 
+require_once "Modyllic/Changeset/Table/Options.php";
 /**
  * This represents how one particular table differs
  */
@@ -389,7 +390,7 @@ class Modyllic_Table_Changeset {
             "columns" => array(),
             "data"    => array(),
             );
-        $this->options = new Modyllic_Table_Options();
+        $this->options = new Modyllic_Changeset_Table_Options();
     }
 
     /**
@@ -480,17 +481,3 @@ class Modyllic_Table_Changeset {
          return $changed;
     }
 }
-
-class Modyllic_Table_Options {
-    public $charset;
-    public $collate;
-    public $engine;
-
-    /**
-     * @returns true if this object contains any changes
-     */
-    function has_changes() {
-        return isset($this->charset) or isset($this->collate) or isset($this->engine);
-    }
-}
-
