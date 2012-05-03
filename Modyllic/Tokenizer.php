@@ -10,13 +10,6 @@ require_once "Modyllic/SQL.php";
 require_once "Modyllic/Token.php";
 
 /**
- * The tokenizer doesn't produce token lists itself, but parsers may find it
- * useful to clump up a bunch of tokens and reinject them as a single token.
- * This is here to provide that facility.
- */
-class Modyllic_Token_List extends Modyllic_Token { }
-
-/**
  * Exception tokens, not generated directly.  These are various non-token
  * results.
  */
