@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
+ * Copyright © 2012 Online Buddies, Inc. - All Rights Reserved
  *
  * @package Modyllic
  * @author bturner@online-buddies.com
