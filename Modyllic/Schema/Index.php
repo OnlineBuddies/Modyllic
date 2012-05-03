@@ -5,7 +5,6 @@
  * @package Modyllic
  * @author bturner@online-buddies.com
  */
-require_once "Modyllic/Diffable.php";
 
 /**
  * A collection of attributes describing an index on a table

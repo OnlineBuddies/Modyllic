@@ -7,11 +7,9 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/../../testlib/testmore.php";
+require_once implode( DIRECTORY_SEPARATOR, array(dirname(__FILE__), "..", "test_environment.php") );
 
-plan( 18 );
-
-require_ok("Modyllic/Parser.php");
+plan( 16 );
 
 $parser = new Modyllic_Parser();
 
@@ -36,8 +34,6 @@ EOSQL;
 
 $schema1 = $parser->parse($trig1_sql);
 $schema2 = $parser->parse($trig2_sql);
-
-require_ok("Modyllic/Diff.php");
 
 $diff = new Modyllic_Diff($schema1,$schema2);
 

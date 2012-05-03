@@ -6,16 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Parser.php";
-require_once "Modyllic/Schema.php";
-require_once "Modyllic/Status.php";
-
-require_once "Modyllic/Loader/File.php";
-require_once "Modyllic/Loader/Dir.php";
-require_once "Modyllic/Loader/DB.php";
-
-require_once "Modyllic/Loader/Exception.php";
-
 /**
  * Factory class for creating Schema objects from various sources
  */

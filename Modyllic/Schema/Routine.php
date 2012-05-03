@@ -6,9 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Schema/CodeBody.php";
-require_once "Modyllic/Schema/Arg.php";
-
 /**
  * A collection of attributes describing a stored routine
  */

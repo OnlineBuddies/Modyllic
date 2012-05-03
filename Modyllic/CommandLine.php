@@ -10,16 +10,6 @@
  * Helper class for commandline tools
  */
 
-require_once "Modyllic/Tokenizer.php";
-require_once "Modyllic/Loader.php";
-require_once "Modyllic/Status.php";
-require_once "Modyllic/Generator.php";
-
-require_once "Console/CommandLine.php";
-require_once "Console/CommandLine/Action.php";
-
-require_once "Modyllic/Console/CommandLine/ActionDialect.php";
-
 class Modyllic_CommandLine {
 
     static function get_parser() {

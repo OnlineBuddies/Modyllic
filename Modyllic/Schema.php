@@ -6,18 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/SQL.php";
-require_once "Modyllic/Type.php";
-
-// Components
-require_once "Modyllic/Schema/View.php";
-require_once "Modyllic/Schema/Table.php";
-require_once "Modyllic/Schema/Event.php";
-require_once "Modyllic/Schema/Trigger.php";
-require_once "Modyllic/Schema/Proc.php";
-require_once "Modyllic/Schema/Func.php";
-require_once "Modyllic/Diffable.php";
-
 /**
  * A collection of SQL entities comprising a complete schema
  */

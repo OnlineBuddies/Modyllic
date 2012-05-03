@@ -6,9 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/SQL.php";
-require_once "Modyllic/Token.php";
-
 /**
  * The SQL tokenizer-- this takes one or more SQL commands as a string and
  * splits it into useful chunks.

@@ -7,7 +7,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/../testlib/testmore.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "test_environment.php";
 
 $ident_tests = array(
     'abc123' => 'abc123',
@@ -32,9 +32,7 @@ $str_tests = array(
     "eot".chr(26) => "'eot\\Z'",
 );
 
-plan( 1 + count($ident_tests) + count($str_tests) );
-
-require_ok("Modyllic/SQL.php");
+plan( count($ident_tests) + count($str_tests) );
 
 foreach ($ident_tests as $plain=>$quoted) {
     is( Modyllic_SQL::quote_ident($plain), $quoted, "Identifier $plain");

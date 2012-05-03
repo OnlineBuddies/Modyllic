@@ -7,11 +7,9 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/../testlib/testmore.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "test_environment.php";
 
-plan(29);
-
-require_ok("Modyllic/Parser.php");
+plan(28);
 
 $parser = new Modyllic_Parser();
 
@@ -76,8 +74,6 @@ catch (Modyllic_Exception $e) {
 
 
 if ( is_dir(dirname(__FILE__)."/test_schema") ) {
-    require_once "Modyllic/Loader.php";
-
     list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/test1.sql" );
     is( $loader, "Modyllic_Loader_File", "Plain file schema are loaded with File" );
     list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/test2.sql" );

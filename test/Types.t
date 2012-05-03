@@ -7,7 +7,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/../testlib/testmore.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "test_environment.php";
 
 $sql_types = array(
     "BIT"              => "Modyllic_Type_Bit",
@@ -51,9 +51,7 @@ $sql_types = array(
     );
 
 
-plan( 15 + count($sql_types) );
-
-require_ok("Modyllic/Type.php");
+plan( 14 + count($sql_types) );
 
 foreach ($sql_types as $sql_type=>$class) {
     $type = Modyllic_Type::create($sql_type);

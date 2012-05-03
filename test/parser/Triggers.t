@@ -7,11 +7,9 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/../../testlib/testmore.php";
+require_once implode( DIRECTORY_SEPARATOR, array(dirname(__FILE__), "..", "test_environment.php") );
 
-plan( 16 );
-
-require_ok("Modyllic/Parser.php");
+plan( 15 );
 
 $parser = new Modyllic_Parser();
 

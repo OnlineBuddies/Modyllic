@@ -6,9 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/SQL.php";
-require_once "Modyllic/Schema.php";
-
 class Modyllic_Generator_MySQL {
 
     protected $delim;

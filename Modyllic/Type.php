@@ -110,33 +110,3 @@ abstract class Modyllic_Type {
         return true;
     }
 }
-
-require_once "Modyllic/Type/Numeric.php";
-require_once "Modyllic/Type/Integer.php";
-require_once "Modyllic/Type/String.php";
-require_once "Modyllic/Type/VarString.php";
-require_once "Modyllic/Type/Char.php";
-require_once "Modyllic/Type/Text.php";
-require_once "Modyllic/Type/TinyInt.php";
-require_once "Modyllic/Type/Float.php";
-
-require_once "Modyllic/Type/BigInt.php";
-require_once "Modyllic/Type/Binary.php";
-require_once "Modyllic/Type/Bit.php";
-require_once "Modyllic/Type/Blob.php";
-require_once "Modyllic/Type/Boolean.php";
-require_once "Modyllic/Type/Compound.php";
-require_once "Modyllic/Type/Date.php";
-require_once "Modyllic/Type/Datetime.php";
-require_once "Modyllic/Type/Decimal.php";
-require_once "Modyllic/Type/DoubleFloat.php";
-require_once "Modyllic/Type/Enum.php";
-require_once "Modyllic/Type/Geometry.php";
-require_once "Modyllic/Type/MediumInt.php";
-require_once "Modyllic/Type/Set.php";
-require_once "Modyllic/Type/SmallInt.php";
-require_once "Modyllic/Type/Time.php";
-require_once "Modyllic/Type/Timestamp.php";
-require_once "Modyllic/Type/VarBinary.php";
-require_once "Modyllic/Type/VarChar.php";
-require_once "Modyllic/Type/Year.php";

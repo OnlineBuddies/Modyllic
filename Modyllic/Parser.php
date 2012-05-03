@@ -6,10 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Tokenizer.php";
-require_once "Modyllic/Schema.php";
-require_once "Modyllic/Exception.php";
-
 /**
  * Our SQL parser, this is intimately involved
  */

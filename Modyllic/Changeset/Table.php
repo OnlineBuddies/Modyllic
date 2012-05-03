@@ -6,7 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Changeset/Table/Options.php";
 /**
  * This represents how one particular table differs
  */

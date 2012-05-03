@@ -6,10 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Changeset/Schema.php";
-require_once "Modyllic/Changeset/Table.php";
-require_once "Modyllic/Changeset/Event.php";
-
 /**
  * This is the actual differences between two schema
  */

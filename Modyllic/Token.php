@@ -5,23 +5,6 @@
  * @package Modyllic
  * @author bturner@online-buddies.com
  */
-require_once "Modyllic/Token/Whitespace.php";
-require_once "Modyllic/Token/Ident.php";
-require_once "Modyllic/Token/Ident/Quoted.php";
-require_once "Modyllic/Token/Reserved.php";
-require_once "Modyllic/Token/Num.php";
-require_once "Modyllic/Token/Symbol.php";
-require_once "Modyllic/Token/Comment.php";
-require_once "Modyllic/Token/String.php";
-require_once "Modyllic/Token/List.php";
-require_once "Modyllic/Token/Except.php";
-require_once "Modyllic/Token/EOC.php";
-require_once "Modyllic/Token/EOF.php";
-require_once "Modyllic/Token/Error.php";
-require_once "Modyllic/Token/Error/Delimiter.php";
-require_once "Modyllic/Token/SOC.php";
-require_once "Modyllic/Token/Delim.php";
-require_once "Modyllic/Token/NewDelim.php";
 
 /**
  * These are what are returned by the tokenizer

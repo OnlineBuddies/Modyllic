@@ -6,10 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/SQL.php";
-require_once "Modyllic/Generator/MySQL.php";
-require_once "Modyllic/Schema.php";
-
 class Modyllic_Generator_ModyllicSQL extends Modyllic_Generator_MySQL {
     function sqlmeta_exists(Modyllic_Schema $schema) {
         return false;
