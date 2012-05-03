@@ -9,11 +9,6 @@
 require_once "Modyllic/SQL.php";
 require_once "Modyllic/Token.php";
 
-/**
- * Indicates that we found a command delimiter (; by default)
- */
-class Modyllic_Token_Delim extends Modyllic_Token_SOC {}
-
 class Modyllic_Token_NewDelim extends Modyllic_Token_Delim {}
 
 /**
