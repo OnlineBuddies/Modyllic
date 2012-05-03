@@ -14,6 +14,8 @@ require_once "Modyllic/Schema.php";
  * Class that knows how to construct a schema from a MySQL database
  */
 class Modyllic_Loader_DB_MySQL {
+    // Static class only
+    private function __construct() {}
 
     static function selectrow( PDO $dbh, $query, array $bind = array() ) {
         $sth = $dbh->prepare( $query );
