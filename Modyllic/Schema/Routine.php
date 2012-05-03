@@ -12,7 +12,7 @@ require_once "Modyllic/Schema/Arg.php";
 /**
  * A collection of attributes describing a stored routine
  */
-class Modyllic_Schema_Routine extends Modyllic_Schema_CodeBody {
+abstract class Modyllic_Schema_Routine extends Modyllic_Schema_CodeBody {
     public $name;
     public $args = array();
     const ARGS_TYPE_DEFAULT = "LIST";

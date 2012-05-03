@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Schema_CodeBody extends Modyllic_Diffable {
+abstract class Modyllic_Schema_CodeBody extends Modyllic_Diffable {
     public $body = "BEGIN\nEND";
     /**
      * @returns string Strips any comments from the body of the routine--
