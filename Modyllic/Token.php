@@ -10,6 +10,7 @@ require_once "Modyllic/Token/Ident.php";
 require_once "Modyllic/Token/Ident/Quoted.php";
 require_once "Modyllic/Token/Reserved.php";
 require_once "Modyllic/Token/Num.php";
+require_once "Modyllic/Token/Symbol.php";
 
 /**
  * These are what are returned by the tokenizer

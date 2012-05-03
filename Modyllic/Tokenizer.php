@@ -10,11 +10,6 @@ require_once "Modyllic/SQL.php";
 require_once "Modyllic/Token.php";
 
 /**
- * Things that look like symbols
- */
-class Modyllic_Token_Symbol extends Modyllic_Token { }
-
-/**
  * Comments, both C style and SQL style
  */
 class Modyllic_Token_Comment extends Modyllic_Token {
