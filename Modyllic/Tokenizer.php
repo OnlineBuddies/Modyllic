@@ -10,11 +10,6 @@ require_once "Modyllic/SQL.php";
 require_once "Modyllic/Token.php";
 
 /**
- * Indicates that we've hit the end of the string that we're parsing
- */
-class Modyllic_Token_EOF extends Modyllic_Token_EOC {}
-
-/**
  * Indicates that we've encountered a tokenization error.  Tokenization
  * errors do not consume any of the input string and as such, once you hit
  * one it will always be returned by next().
