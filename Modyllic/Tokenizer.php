@@ -10,12 +10,6 @@ require_once "Modyllic/SQL.php";
 require_once "Modyllic/Token.php";
 
 /**
- * Exception tokens, not generated directly.  These are various non-token
- * results.
- */
-class Modyllic_Token_Except extends Modyllic_Token {}
-
-/**
  * End of command-- tokens of this class mark the end of an SQL command.
  */
 class Modyllic_Token_EOC extends Modyllic_Token_Except {}
