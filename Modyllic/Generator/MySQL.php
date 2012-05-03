@@ -401,7 +401,7 @@ class Modyllic_Generator_MySQL {
         }
     }
 
-    function create_table( Modyllic_Schema_Table $table, Modyllic_Schema $schema ) {
+    function create_table( Modyllic_Schema_Table $table, $schema ) {
         $this->begin_cmd();
         $this->table_docs( $table );
         $this->extend( "CREATE TABLE %id (", $table->name );
