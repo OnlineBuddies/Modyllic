@@ -359,23 +359,6 @@ class Modyllic_Diff {
 }
 
 /**
- * This stores just schema global attributes
- */
-class Modyllic_Schema_Changeset {
-    public $name;
-    public $charset;
-    public $collate;
-    public $from;
-
-    /**
-     * Check to see if anything has actually been changed
-     */
-    function has_changes() {
-        return ( isset($this->charset) or isset($this->collate) );
-    }
-}
-
-/**
  * This represents how one particular table differs
  */
 class Modyllic_Table_Changeset {

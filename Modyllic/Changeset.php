@@ -6,6 +6,8 @@
  * @author bturner@online-buddies.com
  */
 
+require_once "Modyllic/Changeset/Schema.php";
+
 /**
  * This is the actual differences between two schema
  */
@@ -37,7 +39,7 @@ class Modyllic_Changeset {
             "views"  => array(),
             "triggers" => array(),
             );
-        $this->schema = new Modyllic_Schema_Changeset();
+        $this->schema = new Modyllic_Changeset_Schema();
     }
 
     /**
