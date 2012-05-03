@@ -14,7 +14,7 @@ require_once "Modyllic/Loader/File.php";
 require_once "Modyllic/Loader/Dir.php";
 require_once "Modyllic/Loader/DB.php";
 
-class Modyllic_Loader_Exception extends Exception {}
+require_once "Modyllic/Loader/Exception.php";
 
 /**
  * Factory class for creating Schema objects from various sources
