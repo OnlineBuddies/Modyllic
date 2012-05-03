@@ -18,15 +18,7 @@ require_once "Modyllic/Generator.php";
 require_once "Console/CommandLine.php";
 require_once "Console/CommandLine/Action.php";
 
-// A Modyllic generator dialect
-class Modyllic_Console_CommandLine_ActionDialect extends Console_CommandLine_Action {
-    public function execute($value=false, array $params=array()) {
-        $this->setResult( Modyllic_Generator::dialect_to_class($value) );
-    }
-}
-
-// then we can register our action
-Console_CommandLine::registerAction('Dialect', 'Modyllic_Console_CommandLine_ActionDialect');
+require_once "Modyllic/Console/CommandLine/ActionDialect.php";
 
 class Modyllic_CommandLine {
 
