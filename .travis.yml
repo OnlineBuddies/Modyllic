@@ -1,0 +1,9 @@
+language: "php"
+script: "make test"
+before_script:
+  - "pyrus install pear/Console_CommandLine"
+  - "phpenv rehash"
+
+php:
+  - 5.3
+  - 5.4
