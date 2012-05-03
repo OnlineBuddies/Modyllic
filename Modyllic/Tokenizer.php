@@ -10,15 +10,6 @@ require_once "Modyllic/SQL.php";
 require_once "Modyllic/Token.php";
 
 /**
- * Whitespace chunks, including newlines
- */
-class Modyllic_Token_Whitespace extends Modyllic_Token {
-    function value() {
-        return preg_replace('/\r/','',$this->value);
-    }
-}
-
-/**
  * Identifiers, eg, column names, table names, etc.
  */
 class Modyllic_Token_Ident extends Modyllic_Token {

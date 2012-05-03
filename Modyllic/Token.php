@@ -5,6 +5,7 @@
  * @package Modyllic
  * @author bturner@online-buddies.com
  */
+require_once "Modyllic/Token/Whitespace.php";
 
 /**
  * These are what are returned by the tokenizer
