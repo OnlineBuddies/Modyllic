@@ -516,7 +516,7 @@ class Modyllic_VarChar extends Modyllic_VarString {
         return $new;
     }
 }
-class Modyllic_VarBinary extends Modyllic_VarString
+class Modyllic_VarBinary extends Modyllic_VarString {
     function charset_collation($other) { return ""; }
 }
 
