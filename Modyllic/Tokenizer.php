@@ -10,20 +10,6 @@ require_once "Modyllic/SQL.php";
 require_once "Modyllic/Token.php";
 
 /**
- * Identifiers, eg, column names, table names, etc.
- */
-class Modyllic_Token_Ident extends Modyllic_Token {
-    private $upper;
-    function token() {
-        if ( isset($this->upper) ) {
-            return $this->upper;
-        }
-        else {
-            return $this->upper = strtoupper($this->value());
-        }
-    }
-}
-/**
  * Identifiers that were quoted (`` in MySQL, "" elsewhere)
  */
 class Modyllic_Token_Quoted_Ident extends Modyllic_Token_Ident {

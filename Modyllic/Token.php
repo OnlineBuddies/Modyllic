@@ -6,6 +6,7 @@
  * @author bturner@online-buddies.com
  */
 require_once "Modyllic/Token/Whitespace.php";
+require_once "Modyllic/Token/Ident.php";
 
 /**
  * These are what are returned by the tokenizer
