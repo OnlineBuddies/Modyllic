@@ -18,6 +18,7 @@ require_once "Modyllic/Token/Except.php";
 require_once "Modyllic/Token/EOC.php";
 require_once "Modyllic/Token/EOF.php";
 require_once "Modyllic/Token/Error.php";
+require_once "Modyllic/Token/Error/Delimiter.php";
 
 /**
  * These are what are returned by the tokenizer

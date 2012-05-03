@@ -9,12 +9,6 @@
 require_once "Modyllic/SQL.php";
 require_once "Modyllic/Token.php";
 
-class Modyllic_Token_Delimiter_Error extends Modyllic_Token_Error {
-    function value() {
-        return "Invalid delimiter declaration";
-    }
-}
-
 class Modyllic_Token_SOC extends Modyllic_Token_EOC {}
 
 /**
@@ -347,7 +341,7 @@ class Modyllic_Tokenizer {
                 if ( preg_match("/\S/",$matches[3], $offset, PREG_OFFSET_CAPTURE) ) {
                     $this->pos -= strlen($matches[3]);
                     $this->pos += $offset[0][1];
-                    $this->cur = new Modyllic_Token_Delimiter_Error($this->pos, $this->line(), $this->col() );
+                    $this->cur = new Modyllic_Token_Error_Delimiter($this->pos, $this->line(), $this->col() );
                 }
                 else {
                     $this->cur = new Modyllic_Token_NewDelim( $this->pos, $matches[1]);
