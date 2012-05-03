@@ -78,7 +78,7 @@ class Modyllic_Diff {
             }
             $fromevt = $this->from->events[$name];
             if ( ! $toevt->equal_to($fromevt) ) {
-                $updevt = new Modyllic_Event_Changeset();
+                $updevt = new Modyllic_Changeset_Event();
                 $updevt->name = $name;
                 $updevt->from = $fromevt;
                 if ( $toevt->schedule != $fromevt->schedule ) {
@@ -494,10 +494,3 @@ class Modyllic_Table_Options {
     }
 }
 
-class Modyllic_Event_Changeset extends Modyllic_Diffable {
-    public $name;
-    public $schedule;
-    public $preserve;
-    public $status;
-    public $body;
-}

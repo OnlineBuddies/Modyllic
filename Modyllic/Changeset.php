@@ -7,6 +7,7 @@
  */
 
 require_once "Modyllic/Changeset/Schema.php";
+require_once "Modyllic/Changeset/Event.php";
 
 /**
  * This is the actual differences between two schema
@@ -119,9 +120,9 @@ class Modyllic_Changeset {
     }
 
     /**
-     * @param Modyllic_Event_Changeset $event
+     * @param Modyllic_Changeset_Event $event
      */
-    function update_event( Modyllic_Event_Changeset $event ) {
+    function update_event( Modyllic_Changeset_Event $event ) {
         $this->update['events'][$event->name] = $event;
     }
 
