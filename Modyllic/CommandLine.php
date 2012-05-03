@@ -6,28 +6,12 @@
  * @author bturner@online-buddies.com
  */
 
+// Register our Dialect commandline argument type
+Console_CommandLine::registerAction('Dialect', 'Modyllic_Console_CommandLine_ActionDialect');
+
 /**
  * Helper class for commandline tools
  */
-
-require_once "Modyllic/Tokenizer.php";
-require_once "Modyllic/Loader.php";
-require_once "Modyllic/Status.php";
-require_once "Modyllic/Generator.php";
-
-require_once "Console/CommandLine.php";
-require_once "Console/CommandLine/Action.php";
-
-// A Modyllic generator dialect
-class Modyllic_Console_CommandLine_ActionDialect extends Console_CommandLine_Action {
-    public function execute($value=false, array $params=array()) {
-        $this->setResult( Modyllic_Generator::dialect_to_class($value) );
-    }
-}
-
-// then we can register our action
-Console_CommandLine::registerAction('Dialect', 'Modyllic_Console_CommandLine_ActionDialect');
-
 class Modyllic_CommandLine {
 
     static function get_parser() {

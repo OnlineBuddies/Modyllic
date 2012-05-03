@@ -7,8 +7,8 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/CommandLine.php";
-require_once "Modyllic/Generator.php";
+require_once "Modyllic/AutoLoader.php";
+Modyllic_AutoLoader::install();
 
 $args = Modyllic_CommandLine::get_args(array(
     'description' => 'Load one or more schema and print them out',

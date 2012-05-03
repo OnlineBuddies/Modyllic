@@ -6,10 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Schema/Column.php";
-require_once "Modyllic/Schema/Index.php";
-require_once "Modyllic/Schema/Index/Foreign.php";
-
 /**
  * A collection of columns, indexes and other information comprising a table
  */

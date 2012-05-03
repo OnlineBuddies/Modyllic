@@ -6,8 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Schema/Routine.php";
-
 class Modyllic_Schema_Proc extends Modyllic_Schema_Routine {
     const RETURNS_TYPE_DEFAULT = "NONE";
     public $returns = array("type"=>self::RETURNS_TYPE_DEFAULT);

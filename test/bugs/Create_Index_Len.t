@@ -7,11 +7,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/../../testlib/testmore.php";
-
-require_once "Modyllic/SQL.php";
-require_once "Modyllic/Parser.php";
-require_once "Modyllic/Schema.php";
+require_once implode( DIRECTORY_SEPARATOR, array(dirname(__FILE__), "..", "test_environment.php") );
 
 $parser = new Modyllic_Parser();
 $schema = new Modyllic_Schema();

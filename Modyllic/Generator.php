@@ -25,7 +25,6 @@ class Modyllic_Generator {
                 ) );
             foreach ($classes_to_try as $class) {
                 $file = preg_replace("/_/","/", $class) . ".php";
-                @include_once $file;
                 if ( class_exists($class) ) {
                     self::$dialect_map[$dialect] = $class;
                     self::$dialect_map[$class] = $class;
