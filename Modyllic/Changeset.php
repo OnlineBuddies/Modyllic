@@ -7,6 +7,7 @@
  */
 
 require_once "Modyllic/Changeset/Schema.php";
+require_once "Modyllic/Changeset/Table.php";
 require_once "Modyllic/Changeset/Event.php";
 
 /**
@@ -61,9 +62,9 @@ class Modyllic_Changeset {
 
     /**
      * Note that a table was updated (and how)
-     * @param Modyllic_Table_Changeset $table
+     * @param Modyllic_Changeset_Table $table
      */
-    function update_table( Modyllic_Table_Changeset $table ) {
+    function update_table( Modyllic_Changeset_Table $table ) {
         $this->update['tables'][$table->name] = $table;
     }
 
