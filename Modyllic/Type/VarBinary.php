@@ -6,6 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_VarBinary extends Modyllic_VarString {
+class Modyllic_Type_VarBinary extends Modyllic_Type_VarString {
     function charset_collation(Modyllic_Type $other=null) { return ""; }
 }

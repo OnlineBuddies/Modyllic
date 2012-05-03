@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Numeric extends Modyllic_Type {
+abstract class Modyllic_Type_Numeric extends Modyllic_Type {
     public $default_length = 11;
     public $length;
     public $unsigned = false;

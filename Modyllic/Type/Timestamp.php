@@ -6,4 +6,4 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Timestamp extends Modyllic_Type {}
+class Modyllic_Type_Timestamp extends Modyllic_Type {}

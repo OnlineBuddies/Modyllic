@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_MediumInt extends Modyllic_Integer {
+class Modyllic_Type_MediumInt extends Modyllic_Type_Integer {
     public $default_length = 9;
 }
 

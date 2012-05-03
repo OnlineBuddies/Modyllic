@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Float extends Modyllic_Numeric {
+class Modyllic_Type_Float extends Modyllic_Type_Numeric {
     public $decimals;
     function to_sql() {
         $sql = $this->name;

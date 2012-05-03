@@ -6,5 +6,5 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Bit extends Modyllic_Type {}
+class Modyllic_Type_Bit extends Modyllic_Type {}
 

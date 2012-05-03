@@ -6,6 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_TinyInt extends Modyllic_Integer {
+class Modyllic_Type_TinyInt extends Modyllic_Type_Integer {
     public $default_length = 4;
 }

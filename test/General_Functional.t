@@ -40,7 +40,7 @@ $column = $test_table->columns['id'];
 ok( $column instanceOf Modyllic_Schema_Column, "Column id isa Modyllic_Schema_Column" );
 is( $column->name, "id", "Column name set" );
 is( count($column->aliases), 0, "No aliases" );
-ok( $column->type instanceOf Modyllic_Integer, "Column type set" );
+ok( $column->type instanceOf Modyllic_Type_Integer, "Column type set" );
 ok( $column->null, "Column is nullable by default" );
 is( $column->default, "NULL", "Column is nullable and therefor has an implicit default of NULL" );
 ok( ! $column->auto_increment,  "Column is not autoincrement" );

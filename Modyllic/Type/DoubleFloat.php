@@ -6,5 +6,5 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Double_Float extends Modyllic_Float {}
+class Modyllic_Type_DoubleFloat extends Modyllic_Type_Float {}
 

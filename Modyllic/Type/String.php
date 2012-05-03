@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_String extends Modyllic_Type {
+abstract class Modyllic_Type_String extends Modyllic_Type {
     protected $default_charset = "utf8";
     protected $default_collate = "utf8_general_ci";
     private $charset;
@@ -75,8 +75,8 @@ class Modyllic_String extends Modyllic_Type {
         return Modyllic_SQL::quote_str( $value );
     }
     function charset_collation(Modyllic_Type $other=null) {
-        $other_charset = $other instanceOf Modyllic_String? $other->charset(): $this->default_charset;
-        $other_collate = $other instanceOf Modyllic_String? $other->collate(): $this->default_collate;
+        $other_charset = $other instanceOf Modyllic_Type_String? $other->charset(): $this->default_charset;
+        $other_collate = $other instanceOf Modyllic_Type_String? $other->collate(): $this->default_collate;
         $diff_charset = $this->charset() != $other_charset;
         $diff_collate = $this->collate() != $other_collate;
         if ( $diff_charset or $diff_collate ) {

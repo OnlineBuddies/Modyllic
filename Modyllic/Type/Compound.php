@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Compound extends Modyllic_String {
+abstract class Modyllic_Type_Compound extends Modyllic_Type_String {
     public $values;
     function clone_from(Modyllic_Type $old) {
         parent::clone_from($old);

@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Decimal extends Modyllic_Numeric {
+class Modyllic_Type_Decimal extends Modyllic_Type_Numeric {
     public $default_length = 10;
     public $default_scale  = 0;
     public $scale;

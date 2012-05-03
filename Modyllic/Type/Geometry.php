@@ -6,4 +6,4 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Geometry extends Modyllic_String { }
+class Modyllic_Type_Geometry extends Modyllic_Type_String { }

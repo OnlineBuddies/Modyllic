@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Datetime extends Modyllic_Type {
+class Modyllic_Type_Datetime extends Modyllic_Type {
     function normalize(Modyllic_Token $date) {
         if ( $date instanceOf Modyllic_Token_Reserved ) {
             return $date->value();

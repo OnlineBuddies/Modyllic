@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Year extends Modyllic_Type {
+class Modyllic_Type_Year extends Modyllic_Type {
     public $default_length = 4;
     public $length;
     function __construct($type) {

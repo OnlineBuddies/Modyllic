@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Text extends Modyllic_String {
+class Modyllic_Type_Text extends Modyllic_Type_String {
     function __construct($type,$length) {
         parent::__construct($type);
         $this->length = $length;
@@ -33,7 +33,7 @@ class Modyllic_Text extends Modyllic_String {
         return $sql;
     }
     function binary() {
-        $new = new Modyllic_Blob("BLOB");
+        $new = new Modyllic_Type_Blob("BLOB");
         $new->clone_from($this);
         return $new;
     }

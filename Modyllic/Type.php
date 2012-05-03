@@ -9,80 +9,80 @@
 /**
  * A collection of attributes describing a type declaration
  */
-class Modyllic_Type {
+abstract class Modyllic_Type {
     static function create($type) {
         switch ($type) {
             case "BIT":
-                return new Modyllic_Bit($type);
+                return new Modyllic_Type_Bit($type);
             case "BOOL":
             case "BOOLEAN":
-                return new Modyllic_Boolean($type);
+                return new Modyllic_Type_Boolean($type);
             case "TINYINT":
-                return new Modyllic_TinyInt($type);
+                return new Modyllic_Type_TinyInt($type);
             case "SMALLINT":
-                return new Modyllic_SmallInt($type);
+                return new Modyllic_Type_SmallInt($type);
             case "MEDIUMINT":
-                return new Modyllic_MediumInt($type);
+                return new Modyllic_Type_MediumInt($type);
             case "INT":
             case "INTEGER":
-                return new Modyllic_Integer($type);
+                return new Modyllic_Type_Integer($type);
             case "BIGINT":
-                return new Modyllic_BigInt($type);
+                return new Modyllic_Type_BigInt($type);
             case "SERIAL":
-                $new = new Modyllic_BigInt($type);
+                $new = new Modyllic_Type_BigInt($type);
                 $new->unsigned = true;
                 return $new;
             case "FLOAT":
-                return new Modyllic_Float($type);
+                return new Modyllic_Type_Float($type);
             case "REAL":
             case "DOUBLE":
             case "DOUBLE PRECISION":
-                return new Modyllic_Double_Float($type);
+                return new Modyllic_Type_DoubleFloat($type);
             case "DEC":
             case "FIXED":
             case "NUMERIC":
             case "DECIMAL":
-                return new Modyllic_Decimal($type);
+                return new Modyllic_Type_Decimal($type);
             case "CHAR":
-                return new Modyllic_Char($type);
+                return new Modyllic_Type_Char($type);
             case "BINARY":
-                return new Modyllic_Binary($type);
+                return new Modyllic_Type_Binary($type);
             case "VARCHAR":
-                return new Modyllic_VarChar($type);
+                return new Modyllic_Type_VarChar($type);
             case "VARBINARY":
-                return new Modyllic_VarBinary($type);
+                return new Modyllic_Type_VarBinary($type);
             case "TINYTEXT":
-                return new Modyllic_Text($type,255); // 2^8 -1
+                return new Modyllic_Type_Text($type,255); // 2^8 -1
             case "TINYBLOB":
-                return new Modyllic_Blob($type,255); // 2^8 -1
+                return new Modyllic_Type_Blob($type,255); // 2^8 -1
             case "TEXT":
-                return new Modyllic_Text($type,65535); // 2^16 -1
+                return new Modyllic_Type_Text($type,65535); // 2^16 -1
             case "BLOB":
-                return new Modyllic_Blob($type,65535); // 2^16 -1
+                return new Modyllic_Type_Blob($type,65535); // 2^16 -1
             case "MEDIUMTEXT":
-                return new Modyllic_Text($type,16777215); // 2^24 -1
+                return new Modyllic_Type_Text($type,16777215); // 2^24 -1
             case "MEDIUMBLOB":
-                return new Modyllic_Blob($type,16777215); // 2^24 -1
+                return new Modyllic_Type_Blob($type,16777215); // 2^24 -1
             case "LONGTEXT":
-                return new Modyllic_Text($type,4294967295); // 2^32 -1
+                return new Modyllic_Type_Text($type,4294967295); // 2^32 -1
             case "LONGBLOB":
-                return new Modyllic_Blob($type,4294967295); // 2^32 -1
+                return new Modyllic_Type_Blob($type,4294967295); // 2^32 -1
             case "ENUM":
-                return new Modyllic_Enum($type);
+                return new Modyllic_Type_Enum($type);
             case "SET":
-                return new Modyllic_Set($type);
+                return new Modyllic_Type_Set($type);
             case "DATE":
-                return new Modyllic_Date($type);
+                return new Modyllic_Type_Date($type);
             case "DATETIME":
-                return new Modyllic_Datetime($type);
+                return new Modyllic_Type_Datetime($type);
             case "TIMESTAMP":
-                return new Modyllic_Timestamp($type);
+                return new Modyllic_Type_Timestamp($type);
             case "TIME":
-                return new Modyllic_Time($type);
+                return new Modyllic_Type_Time($type);
             case "YEAR":
-                return new Modyllic_Year($type);
+                return new Modyllic_Type_Year($type);
             case "GEOMETRY":
-                return new Modyllic_Geometry($type);
+                return new Modyllic_Type_Geometry($type);
             default:
                 throw new Exception("Unknown SQL type: $type" );
         }

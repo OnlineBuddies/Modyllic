@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_VarChar extends Modyllic_VarString {
+class Modyllic_Type_VarChar extends Modyllic_Type_VarString {
     function binary() {
         $new = new Modyllic_VarBinary("VARBINARY");
         $new->clone_from($this);

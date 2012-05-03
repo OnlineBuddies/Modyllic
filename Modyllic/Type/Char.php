@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Char extends Modyllic_VarString {
+class Modyllic_Type_Char extends Modyllic_Type_VarString {
     public $default_length = 1;
     function __construct($type) {
         parent::__construct($type);
@@ -21,7 +21,7 @@ class Modyllic_Char extends Modyllic_VarString {
         return $sql;
     }
     function binary() {
-        $new = new Modyllic_Binary("BINARY");
+        $new = new Modyllic_Type_Binary("BINARY");
         $new->clone_from($this);
         return $new;
     }

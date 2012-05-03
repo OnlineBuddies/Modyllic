@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Integer extends Modyllic_Numeric {
+class Modyllic_Type_Integer extends Modyllic_Type_Numeric {
     function to_sql() {
         $sql = $this->name;
         if ( $this->length != $this->default_length ) {

@@ -6,4 +6,4 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_Set extends Modyllic_Compound { }
+class Modyllic_Type_Set extends Modyllic_Type_Compound { }

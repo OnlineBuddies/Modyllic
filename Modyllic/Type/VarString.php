@@ -6,7 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
-class Modyllic_VarString extends Modyllic_String {
+abstract class Modyllic_Type_VarString extends Modyllic_Type_String {
     function equal_to(Modyllic_Type $other) {
         if ( ! parent::equal_to($other) ) { return false; }
         if ( $this->length != $other->length ) { return false; }
