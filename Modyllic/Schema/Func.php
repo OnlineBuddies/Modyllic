@@ -6,8 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Schema/Routine.php";
-
 /**
  * A collection of attributes describing a stored function
  */

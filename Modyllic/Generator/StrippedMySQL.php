@@ -6,8 +6,6 @@
  * @author astewart@online-buddies.com
  */
 
-require_once "Modyllic/Generator/MySQL.php";
-
 class Modyllic_Generator_StrippedMySQL extends Modyllic_Generator_MySQL {
     // We include weak constraints as well as regular ones
     function ignore_index( $index ) {

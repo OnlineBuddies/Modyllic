@@ -7,8 +7,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/../testlib/testmore.php";
-
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "test_environment.php";
 
 $num_tests = array(
    "Positive Integer"  => array( "sql"=>    "50",          "value"=>    "50"          ),
@@ -43,9 +42,7 @@ $comment_tests = array(
     "SQL Commetns"     => array( "sql"=>"-- this is a test",    "value"=>"this is a test" ),
     );
 
-plan( count($num_tests)*2 + count($str_tests)*3 + count($ident_tests)*4 + count($comment_tests)*2 + 13 );
-
-require_ok("Modyllic/Tokenizer.php");
+plan( count($num_tests)*2 + count($str_tests)*3 + count($ident_tests)*4 + count($comment_tests)*2 + 12 );
 
 foreach ( $num_tests as $name=>$test ) {
     $tok = new Modyllic_Tokenizer($test['sql']);
@@ -67,10 +64,10 @@ foreach ( $ident_tests as $name=>$test ) {
     $token = $tok->next();
     ok( $token instanceOf Modyllic_Token_Ident, "$name is an Ident token" );
     if ( $token->value() != $token->literal() ) {
-        ok( $token instanceOf Modyllic_Token_Quoted_Ident, "$name is a Quoted Ident token" );
+        ok( $token instanceOf Modyllic_Token_Ident_Quoted, "$name is a Quoted Ident token" );
     }
     else {
-        ok( ! $token instanceOf Modyllic_Token_Quoted_Ident, "$name isn't a Quoted Ident token" );
+        ok( ! $token instanceOf Modyllic_Token_Ident_Quoted, "$name isn't a Quoted Ident token" );
     }
     is( $token->value(), $test['value'], "$name has the right value" );
     is( $token->literal(), $test['sql'], "$name is unchanged in its literal form" );

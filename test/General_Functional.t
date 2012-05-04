@@ -7,11 +7,9 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/../testlib/testmore.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "test_environment.php";
 
-plan(29);
-
-require_ok("Modyllic/Parser.php");
+plan(28);
 
 $parser = new Modyllic_Parser();
 
@@ -40,7 +38,7 @@ $column = $test_table->columns['id'];
 ok( $column instanceOf Modyllic_Schema_Column, "Column id isa Modyllic_Schema_Column" );
 is( $column->name, "id", "Column name set" );
 is( count($column->aliases), 0, "No aliases" );
-ok( $column->type instanceOf Modyllic_Integer, "Column type set" );
+ok( $column->type instanceOf Modyllic_Type_Integer, "Column type set" );
 ok( $column->null, "Column is nullable by default" );
 is( $column->default, "NULL", "Column is nullable and therefor has an implicit default of NULL" );
 ok( ! $column->auto_increment,  "Column is not autoincrement" );
@@ -76,8 +74,6 @@ catch (Modyllic_Exception $e) {
 
 
 if ( is_dir(dirname(__FILE__)."/test_schema") ) {
-    require_once "Modyllic/Loader.php";
-
     list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/test1.sql" );
     is( $loader, "Modyllic_Loader_File", "Plain file schema are loaded with File" );
     list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/test2.sql" );

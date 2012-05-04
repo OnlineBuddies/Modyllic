@@ -7,7 +7,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__)."/../../testlib/testmore.php";
+require_once implode( DIRECTORY_SEPARATOR, array(dirname(__FILE__), "..", "test_environment.php") );
 
 $delim = "DELIMITER ;;\n";
 $create_sql = array();
@@ -29,13 +29,10 @@ $drop_sql[] = "DROP TRIGGER IF EXISTS trig2";
 
 plan( 7 + count($create_sql) );
 
-require_once("Modyllic/Parser.php");
-
 $parser = new Modyllic_Parser();
 
 $schema = $parser->parse($delim.implode(";;",$create_sql));
 
-require_once("Modyllic/Generator.php");
 $gen_class = Modyllic_Generator::dialect_to_class("Modyllic");
 $gen = new $gen_class();
 $gen_sql = $gen->create_triggers( $schema->triggers )->sql_commands();
@@ -72,8 +69,6 @@ EOSQL;
 
 $schema1 = $parser->parse($trig1_sql);
 $schema2 = $parser->parse($trig2_sql);
-
-require_once("Modyllic/Diff.php");
 
 $diff = new Modyllic_Diff($schema1,$schema2);
 

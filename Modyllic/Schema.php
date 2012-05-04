@@ -6,26 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/SQL.php";
-require_once "Modyllic/Types.php";
-
-// Components
-require_once "Modyllic/Schema/View.php";
-require_once "Modyllic/Schema/Table.php";
-require_once "Modyllic/Schema/Event.php";
-require_once "Modyllic/Schema/Trigger.php";
-require_once "Modyllic/Schema/Proc.php";
-require_once "Modyllic/Schema/Func.php";
-
-/**
- * A base class for various schema objects.  Handles generic things like
- * providing previous values for the diff engine.  In a perfect world this
- * would be a runtime trait applied by the diff engine.
- */
-class Modyllic_Diffable {
-    public $from;
-}
-
 /**
  * A collection of SQL entities comprising a complete schema
  */

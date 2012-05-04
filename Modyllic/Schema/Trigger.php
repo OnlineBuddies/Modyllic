@@ -6,8 +6,6 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Schema/CodeBody.php";
-
 /**
  * A collection of attributes describing an event
  */

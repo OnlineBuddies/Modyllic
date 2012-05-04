@@ -7,8 +7,8 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/Tokenizer.php";
-require_once "Modyllic/SQL.php";
+require_once "Modyllic/AutoLoader.php";
+Modyllic_AutoLoader::install();
 
 $filename = "php://stdin";
 if ( count($argv)==2 ) {
@@ -38,7 +38,7 @@ while ( !$tok->next(true) instanceOf Modyllic_Token_EOF ) {
     else if ( $tok->cur instanceOf Modyllic_Token_Symbol ) {
         $newcolor = BRIGHT_RED();
     }
-    else if ( $tok->cur instanceOf Modyllic_Token_Ident and ! $tok->cur instanceOf Modyllic_Token_Quoted_Ident and
+    else if ( $tok->cur instanceOf Modyllic_Token_Ident and ! $tok->cur instanceOf Modyllic_Token_Ident_Quoted and
               Modyllic_SQL::is_reserved($tok->cur->value()) ) {
         $newcolor = BRIGHT_RED();
     }
