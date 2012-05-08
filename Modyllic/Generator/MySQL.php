@@ -183,7 +183,7 @@ class Modyllic_Generator_MySQL {
     function create_sqlmeta() {
         $this->begin_cmd();
         $this->extend( "-- This is used to store metadata used by the schema management tool" );
-        $this->extend("CREATE TABLE SQLMETA IF NOT EXISTS (");
+        $this->extend("CREATE TABLE IF NOT EXISTS SQLMETA (");
         $this->indent();
         $this->begin_list();
         $this->extend("kind CHAR(9) NOT NULL");
