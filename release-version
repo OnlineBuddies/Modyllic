@@ -65,4 +65,4 @@ git tag "v$VERSION"
 pear package package.xml
 
 echo "Release $VERSION built."
-echo "Don't forget to run 'git push' and 'git push --tags'"
+echo "Don't forget to run 'git push upstream' and 'git push --tags upstream'"
