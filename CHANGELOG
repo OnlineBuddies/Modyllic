@@ -1,12 +1,12 @@
-* Rework our package build process to be more palatable
-* Rename schema classes to be Modyllic_Schema_*
-* Move more documentation into the wiki and update the publishing document (Aria Stewart)
-* Rename SQL generator dialects to be more useful
-* Rename Modyllic_Commandline->Modyllic_CommandLine to match Console_CommandLine
-* Add support for --version to all of the commandline tools
-* Remove unused sqlmeta_exists from changeset support
-* Remove now unused schema level sqlmeta tracking
-* #103 Converting from static to non-static no longer results in deleted rows
-* Fix strict error-- array_shift must take a variable as an argument
-* #85 Recursive scan directories for .sql files
-* Fix #110 - In sqlcolorize, on exit reset colors rather then explicitly setting white
+* Call CREATE TABLE correctly for SQLMETA
+* Full support for 5.2-5.4 testing via Travis-CI
+* Switch to using an auto loader
+  NOTE: This means that any commandline tools will need to be updated to
+  load the autoloader.
+* Lots of refactoring to support the autoloader
+* Strictness related cleanup:
+  * Declare our abstract classes
+  * Add private constructors to static-only classes
+* Add type hints to our methods (#140)
+* Fix #109, allow index comparisions able to be aware of column name aliases.
+* Fix #33-- binary types never emit charset data
