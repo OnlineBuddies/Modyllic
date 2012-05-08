@@ -62,7 +62,7 @@ git commit -m"Release Modyllic-$VERSION"
 
 git tag "v$VERSION"
 
-pear package build.xml
+pear package package.xml
 
 echo "Release $VERSION built."
 echo "Don't forget to run 'git push' and 'git push --tags'"
