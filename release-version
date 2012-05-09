@@ -84,7 +84,7 @@ php build-package-xml base.xml package.xml $VERSION $STABILITY
 # Add the changelog to the wiki
 php build-changelog v$VERSION CHANGELOG > Changes.md-new
 git checkout upstream-wiki
-git pull upstream-wiki/master
+git pull upstream-wiki master
 mv Changes.md-new Changes.md
 git add Changes.md
 git commit -m"Release Modyllic-$VERSION"
@@ -107,7 +107,7 @@ pear package package.xml
 
 git checkout upstream-pear
 
-git pull upstream-pear/gh-pages
+git pull upstream-pear gh-pages
 
 ./release "Modyllic-$VERSION.tgz"
 git add -A feed.xml index.html rest/*
