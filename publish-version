@@ -1,0 +1,4 @@
+#!/bin/bash
+git push --tags upstream master:master
+git push upstream-pear upstream-pear:gh-pages
+git push upstream-wiki upstream-wiki:master
