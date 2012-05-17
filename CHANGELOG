@@ -1,12 +1,3 @@
-* Call CREATE TABLE correctly for SQLMETA
-* Full support for 5.2-5.4 testing via Travis-CI
-* Switch to using an auto loader
-  NOTE: This means that any commandline tools will need to be updated to
-  load the autoloader.
-* Lots of refactoring to support the autoloader
-* Strictness related cleanup:
-  * Declare our abstract classes
-  * Add private constructors to static-only classes
-* Add type hints to our methods (#140)
-* Fix #109, allow index comparisions able to be aware of column name aliases.
-* Fix #33-- binary types never emit charset data
+* Add aliases for the old dialect names and warnings if you use them
+* Fix method signature mismatch and bogus defaults
+* Correct type hints from bulk type hint change
