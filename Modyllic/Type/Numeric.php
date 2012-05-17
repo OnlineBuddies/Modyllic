@@ -29,7 +29,7 @@ abstract class Modyllic_Type_Numeric extends Modyllic_Type {
         $this->zerofill = $old->zerofill;
         $this->length = $old->length;
     }
-    function numify(Modyllic_Token $value) {
+    function numify($value) {
         if ( $value instanceOf Modyllic_Token_String ) {
             $plain = $value->unquote() + 0;
         }

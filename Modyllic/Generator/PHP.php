@@ -538,7 +538,7 @@ class Modyllic_Generator_PHP {
              ->end_func();
         return $this;
     }
-    function begin_func(Modyllic_Schema_Func $routine) {
+    function begin_func(Modyllic_Schema_Routine $routine) {
         $this->begin_cmd( 'public static function '.$routine->name.'(' )
                ->args($routine)
              ->end_cmd(') {');
@@ -563,7 +563,7 @@ class Modyllic_Generator_PHP {
                    ->end_throw()
                  ->end_block();
         }
-        else if ($routine->txns == Modyllic_ROUTINE::TXNS_CALL ) {
+        else if ($routine->txns == Modyllic_Schema_Routine::TXNS_CALL ) {
             $this->begin_cmd( 'if ( ! ')
                    ->dbh()
                    ->method( 'inTransaction' )
@@ -980,11 +980,11 @@ class Modyllic_Generator_PHP {
         }
         return $this;
     }
-    function func_returns_docs(Modyllic_Schema_Routine $returns) {
-            $this->phpdoc( "@returns ".$returns->to_sql() );
+    function func_returns_docs(Modyllic_Type $returns) {
+        $this->phpdoc( "@returns ".$returns->to_sql());
         return $this;
     }
-    function proc_returns_docs(Modyllic_Schema_Routine $returns) {
+    function proc_returns_docs(array $returns) {
         switch ($returns['type']) {
             case "ROW":
                 $this->phpdoc( "@returns row" );

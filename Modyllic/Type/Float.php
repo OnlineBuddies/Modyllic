@@ -35,7 +35,7 @@ class Modyllic_Type_Float extends Modyllic_Type_Numeric {
         parent::clone_from($old);
         $this->decimals = $old->decimals;
     }
-    function normalize(Modyllic_Token $float) {
+    function normalize($float) {
         if ( $float instanceOf Modyllic_Token_Reserved ) {
             return $float->value();
         }
