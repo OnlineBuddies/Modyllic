@@ -10,7 +10,7 @@ default:
 .PHONY: test test-verbose install uninstall clean build-package-xml discover-channel
 
 clean:
-	rm $BUILDXML
+	rm $BUILDXML tmp coverage
 
 build-package-xml:
 	php build-package-xml $(PACKAGEXML) $(BUILDXML)
@@ -32,6 +32,12 @@ package: build-package-xml
 
 test:
 	$(PROVE) test
+
+test-cover:
+	rm -rf tmp/test coverage
+	TEST_COVERAGE=1 $(PROVE) test
+	phpcov --merge --html coverage tmp/test/coverage
+	rm -rf tmp/test
 
 test-verbose:
 	$(PROVE) -v test
