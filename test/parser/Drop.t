@@ -30,15 +30,15 @@ END ;;
 
 CREATE TRIGGER trigger1 BEFORE INSERT ON table1 FOR EACH ROW SET col2=col1 ;;
 
-CREATE PROCEDURE proc1()
-COMMENT 'proc1 comment'
+CREATE FUNCTION routine1()
+RETURNS INT
 BEGIN
-    SELECT 1;
+    RETURN 1;
 END ;;
 
-CREATE PROCEDURE proc2()
-COMMENT 'proc1 comment'
-CALL proc1();;
+CREATE PROCEDURE routine2()
+COMMENT 'routine1 comment'
+CALL routine1();;
 
 CREATE VIEW view1 AS SELECT * from table1;;
 
@@ -50,10 +50,10 @@ ok( isset($schema->views['view1']), "We created a view" );
 $parser->partial($schema,"DROP VIEW view1");
 is( count($schema->views), 0, "We dropped a view" );
 
-ok( isset($schema->routines['proc1']), "We created a proc" );
-ok( isset($schema->routines['proc2']), "We created proc without a begin block" );
-$parser->partial($schema,"DROP PROCEDURE proc1");
-ok( ! isset($schema->routines['proc1']), "We dropped a proc" );
+ok( isset($schema->routines['routine1']), "We created a routine" );
+ok( isset($schema->routines['routine2']), "We created routine without a begin block" );
+$parser->partial($schema,"DROP PROCEDURE routine1");
+ok( ! isset($schema->routines['routine1']), "We dropped a routine" );
 
 ok( isset($schema->triggers['trigger1']), "We created a trigger" );
 $parser->partial($schema,"DROP TRIGGER trigger1");
@@ -74,4 +74,4 @@ is( count($schema->tables), 0, "We dropped a table" );
 is( $schema->name, 'db1', "Our database is named" );
 $parser->partial($schema,"DROP DATABASE db1" );
 is( $schema->name, 'database', "Dropping the database reset its name");
-is( count($schema->routines), 0, "Dropping the database dropped the last proc");
+is( count($schema->routines), 0, "Dropping the database dropped the last routine");
