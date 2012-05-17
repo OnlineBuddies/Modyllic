@@ -20,7 +20,7 @@ class Modyllic_Type_Integer extends Modyllic_Type_Numeric {
         }
         return $sql;
     }
-    function normalize(Modyllic_Token $int) {
+    function normalize($int) {
         if ( $int instanceOf Modyllic_Token_Reserved ) {
             return $int->value();
         }

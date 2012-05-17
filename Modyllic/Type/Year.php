@@ -30,7 +30,7 @@ class Modyllic_Type_Year extends Modyllic_Type {
         parent::clone_from($old);
         $this->length = $old->length;
     }
-    function normalize(Modyllic_Token $year) {
+    function normalize($year) {
         if ( $year instanceOf Modyllic_Token_Reserved ) {
             return $year->value();
         }

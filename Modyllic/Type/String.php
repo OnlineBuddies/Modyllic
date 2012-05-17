@@ -53,7 +53,7 @@ abstract class Modyllic_Type_String extends Modyllic_Type {
     }
 
 
-    function normalize(Modyllic_Token $str) {
+    function normalize($str) {
         if ( $str instanceOf Modyllic_Token_Reserved ) {
             return $str->value();
         }

@@ -37,7 +37,7 @@ class Modyllic_Type_Decimal extends Modyllic_Type_Numeric {
         parent::clone_from($old);
         $this->scale = $old->scale;
     }
-    function normalize(Modyllic_Token $num) {
+    function normalize($num) {
         if ( $num instanceOf Modyllic_Token_Reserved ) {
             return $num->value();
         }
