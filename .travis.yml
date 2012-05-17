@@ -1,5 +1,5 @@
 language: "php"
-script: "make test"
+script: "make test-verbose"
 # We install our prerequisite by hand here because Travis doesn't support
 # pear, only pyrus, and pyrus isn't available for 5.2.
 before_script:
