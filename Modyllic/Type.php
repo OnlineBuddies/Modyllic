@@ -103,8 +103,13 @@ abstract class Modyllic_Type {
         return get_class($this) == get_class($other);
     }
     function clone_from(Modyllic_Type $new) {}
-    function normalize(Modyllic_Token $value) {
-        return $value->value();
+    function normalize($value) {
+        if ( $value instanceOf Modyllic_Token ) {
+            return $value->value();
+        }
+        else {
+            return "$value";
+        }
     }
     function is_valid() {
         return true;
