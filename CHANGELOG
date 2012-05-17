@@ -1,3 +1,3 @@
 * Add aliases for the old dialect names and warnings if you use them
-* Fix method signature mismatch and bogus defaults
+* Fix method signature mismatches and bogus defaults
 * Correct type hints from bulk type hint change
