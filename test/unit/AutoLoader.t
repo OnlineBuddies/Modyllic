@@ -13,7 +13,16 @@ define('AUTO_SETUP_ENV', false);
 require_once implode(DIRECTORY_SEPARATOR, array(
     dirname(__FILE__), '..', 'test_environment.php' ));
 
-plan(20);
+// We have to be a little weird here in order to get coverage loaded earlier
+// without the autoloader installed.
+if (getenv("TEST_COVERAGE")) {
+    __begin_coverage();
+}
+
+plan(19);
+
+$old_include = get_include_path();
+set_include_path( dirname(__FILE__) );
 
 $new_include_path = Modyllic_AutoLoader::get_new_include_path();
 isnt( $new_include_path, get_include_path(), 'We know how to add ourselves to the include path' );
@@ -26,8 +35,6 @@ is( Modyllic_AutoLoader::class_to_filename('\main\test\Example'), 'main/test/Exa
 is( Modyllic_AutoLoader::class_to_filename('\main_test\Example'), 'main_test/Example.php', '>= 5.3 namespaces with underscores');
 is( Modyllic_AutoLoader::class_to_filename('\main_test\Example_Test'), 'main_test/Example/Test.php', '>= 5.3 namespaces with underscores and 5.2 style class name');
 
-$old_include = get_include_path();
-set_include_path( dirname(__FILE__) );
 
 $example_path = Modyllic_AutoLoader::find_in_path('AutoLoader/Example.php');
 ok( isset($example_path), 'We can find Example.php in our path' );
@@ -49,8 +56,6 @@ $autoloaders = spl_autoload_functions();
 ok( ! $autoloaders, 'No autoloaders have yet been configured' );
 
 __setup_env();
-
-is( $new_include_path, get_include_path(), 'Installing the autoloader resulted in an appropriately updated include path');
 
 $autoloaders = spl_autoload_functions();
 
