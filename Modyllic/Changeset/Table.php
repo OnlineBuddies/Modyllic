@@ -111,20 +111,24 @@ class Modyllic_Changeset_Table {
         $this->update['data'][] = array("updated"=>$updated,"where"=>$where,"from"=>$from);
     }
 
+    function has_data_changes() {
+         return count($this->add['data']) + count($this->remove['data']) + count($this->update['data']);
+    }
+
     /**
      * Check to see if this object actually contains any changes
      */
     function has_changes() {
-         $changed_data = count($this->add['data']) + count($this->remove['data']) + count($this->update['data']);
-         return $this->has_schema_changes() or $changed_data!=0;
+         return $this->has_schema_changes() or $this->has_data_changes();
     }
 
     function has_schema_changes() {
         $changed
             = count($this->add['columns']) + count($this->remove['columns']) + count($this->update['columns'])
-            + count($this->add['indexes']) + count($this->remove['indexes']) + ($this->static != $this->from->static )
+            + count($this->add['indexes']) + count($this->remove['indexes']) + isset($this->static)
             + $this->options->has_changes()
             ;
          return $changed;
     }
+
 }

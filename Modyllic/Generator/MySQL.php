@@ -504,39 +504,37 @@ class Modyllic_Generator_MySQL {
         if ( isset($table->static) and $table->static and ! $table->from->static ) {
             $this->cmd("TRUNCATE %id", $table->name);
         }
-        if ( $table->static ) {
-            foreach ($table->remove['data'] as $row ) {
-                $this->begin_cmd();
-                $this->partial( "DELETE FROM %id WHERE ", $table->name);
-                $this->begin_list( " AND " );
-                foreach ($row as $col=>$val) {
-                    $this->next_list_item();
-                    $this->partial( "%id=%lit", $col, $val );
-                }
-                $this->end_list();
-                $this->end_cmd();
+        foreach ($table->remove['data'] as $row ) {
+            $this->begin_cmd();
+            $this->partial( "DELETE FROM %id WHERE ", $table->name);
+            $this->begin_list( " AND " );
+            foreach ($row as $col=>$val) {
+                $this->next_list_item();
+                $this->partial( "%id=%lit", $col, $val );
             }
-            foreach ($table->update['data'] as $row ) {
-                $this->begin_cmd();
-                $this->partial( "UPDATE %id SET ", $table->name );
-                $this->begin_list();
-                foreach ($row['updated'] as $col=>$val) {
-                    $this->next_list_item();
-                    $this->partial( "%id=%lit", $col, $val );
-                }
-                $this->end_list();
-                $this->partial(" WHERE ");
-                $this->begin_list(" AND ");
-                foreach ($row['where'] as $col=>$val) {
-                    $this->next_list_item();
-                    $this->partial( "%id=%lit", $col, $val );
-                }
-                $this->end_list();
-                $this->end_cmd();
+            $this->end_list();
+            $this->end_cmd();
+        }
+        foreach ($table->update['data'] as $row ) {
+            $this->begin_cmd();
+            $this->partial( "UPDATE %id SET ", $table->name );
+            $this->begin_list();
+            foreach ($row['updated'] as $col=>$val) {
+                $this->next_list_item();
+                $this->partial( "%id=%lit", $col, $val );
             }
-            foreach ($table->add['data'] as $row ) {
-                $this->create_data( $table, $row );
+            $this->end_list();
+            $this->partial(" WHERE ");
+            $this->begin_list(" AND ");
+            foreach ($row['where'] as $col=>$val) {
+                $this->next_list_item();
+                $this->partial( "%id=%lit", $col, $val );
             }
+            $this->end_list();
+            $this->end_cmd();
+        }
+        foreach ($table->add['data'] as $row ) {
+            $this->create_data( $table, $row );
         }
         return $this;
     }
