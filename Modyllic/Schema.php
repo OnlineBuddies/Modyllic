@@ -37,10 +37,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $this->docs           = "";
     }
 
-    function name_is_default() {
-        return ($this->name == self::DEFAULT_NAME);
-    }
-
     function set_name( $name ) {
         $this->name_is_default = ( $name == self::DEFAULT_NAME );
         $this->name = $name;
