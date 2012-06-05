@@ -44,10 +44,11 @@ class Modyllic_Loader_DB_MySQL {
 
         $parser = new Modyllic_Parser();
 
-        $schema->name = $dbschema['SCHEMA_NAME'];
-        $schema->name_is_default = false;
-        $schema->charset = $dbschema['DEFAULT_CHARACTER_SET_NAME'];
-        $schema->collate = $dbschema['DEFAULT_COLLATION_NAME'];
+        if ( $schema->name_is_default ) {
+            $schema->set_name( $dbschema['SCHEMA_NAME'] );
+            $schema->charset = $dbschema['DEFAULT_CHARACTER_SET_NAME'];
+            $schema->collate = $dbschema['DEFAULT_COLLATION_NAME'];
+        }
 
         $table_sth = self::query( $dbh, "SELECT TABLE_NAME FROM TABLES WHERE TABLE_SCHEMA=? AND TABLE_TYPE='BASE TABLE'", array($dbname) );
         $tables = array();
