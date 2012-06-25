@@ -42,4 +42,11 @@ class Modyllic_Token {
    function debug() {
        return get_class($this).":'".$this->value."'";
    }
+   
+   /**
+    * We stringify int our debug value
+    */
+   function __toString() {
+       return $this->debug();
+   }
 }

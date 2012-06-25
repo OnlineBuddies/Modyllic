@@ -16,17 +16,17 @@ class Modyllic_Type_Date extends Modyllic_Type {
                 return "'0000-00-00'";
             }
             else {
-                throw new Exception("Invalid default for date: ".$date->debug());
+                throw new Exception("Invalid default for date: $date");
             }
         }
         if ( ! $date instanceOf Modyllic_Token_String ) {
-            throw new Exception("Invalid default for date: ".$date->debug());
+            throw new Exception("Invalid default for date: $date");
         }
         if ( $date->value() == '0' ) {
             return "'0000-00-00'";
         }
         if ( ! preg_match( '/^\d\d\d\d-\d\d-\d\d$/', $date->unquote() ) ) {
-            throw new Exception("Invalid default for date: ".$date->debug());
+            throw new Exception("Invalid default for date: $date");
         }
         return $date->value();
     }

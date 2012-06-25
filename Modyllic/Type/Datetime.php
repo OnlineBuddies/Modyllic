@@ -8,24 +8,19 @@
 
 class Modyllic_Type_Datetime extends Modyllic_Type {
     function normalize($date) {
-        if ( $date instanceOf Modyllic_Token_Reserved ) {
-            return $date->value();
+        $is_object = is_object($date);
+        $value = $is_object ? $date->value() : $date;
+        $unquoted = $is_object ? $date->unquote() : $date;
+        if ( $date instanceOf Modyllic_Token_Reserved or (!$is_object and Modyllic_SQL::is_reserved($value) ) ) {
+            return $value;
         }
-        if ( $date instanceOf Modyllic_Token_Num ) {
-            if ( $date->value() == 0 ) {
-                return "'0000-00-00 00:00:00'";
-            }
-            else {
-                throw new Exception("Invalid default for date: ".$date->debug());
-            }
-        }
-        if ( ! $date instanceOf Modyllic_Token_String ) {
-            throw new Exception("Invalid default for date: ".$date->debug());
-        }
-        if ( $date->value() == '0' ) {
+        if ( $value == 0 ) {
             return "'0000-00-00 00:00:00'";
         }
-        if ( preg_match( '/^(\d{1,4})-(\d\d?)-(\d\d?)(?: (\d\d?)(?::(\d\d?)(?::(\d\d?))?)?)?$/', $date->unquote(), $matches ) ) {
+        if ( $is_object and ! $date instanceOf Modyllic_Token_String ) {
+            throw new Exception("Invalid date value: $date");
+        }
+        if ( preg_match( '/^(\d{1,4})-(\d\d?)-(\d\d?)(?: (\d\d?)(?::(\d\d?)(?::(\d\d?))?)?)?$/', $unquoted, $matches ) ) {
             $year = $matches[1];
             $mon  = $matches[2];
             $day  = $matches[3];
@@ -36,7 +31,7 @@ class Modyllic_Type_Datetime extends Modyllic_Type {
             return sprintf("'%04d-%02d-%02d %02d:%02d:%02d'", $year, $mon, $day, $hour, $min, $sec );
         }
         else {
-            throw new Exception("Invalid default for date: ".$date->debug());
+            throw new Exception("Invalid date value: $date");
         }
     }
 }
