@@ -61,6 +61,6 @@ class Modyllic_Type_Year extends Modyllic_Type {
                 return "'19$plain'";
             }
         }
-        throw new Exception( "Expected a valid year, got: ".$year->debug() );
+        throw new Exception( "Expected a valid year, got: $year" );
     }
 }

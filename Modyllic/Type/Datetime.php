@@ -18,7 +18,7 @@ class Modyllic_Type_Datetime extends Modyllic_Type {
             return "'0000-00-00 00:00:00'";
         }
         if ( $is_object and ! $date instanceOf Modyllic_Token_String ) {
-            throw new Exception("Invalid date value: ".$date->debug());
+            throw new Exception("Invalid date value: $date");
         }
         if ( preg_match( '/^(\d{1,4})-(\d\d?)-(\d\d?)(?: (\d\d?)(?::(\d\d?)(?::(\d\d?))?)?)?$/', $unquoted, $matches ) ) {
             $year = $matches[1];
@@ -31,7 +31,7 @@ class Modyllic_Type_Datetime extends Modyllic_Type {
             return sprintf("'%04d-%02d-%02d %02d:%02d:%02d'", $year, $mon, $day, $hour, $min, $sec );
         }
         else {
-            throw new Exception("Invalid date value: ".$date->debug());
+            throw new Exception("Invalid date value: $date");
         }
     }
 }

@@ -67,7 +67,7 @@ abstract class Modyllic_Type_String extends Modyllic_Type {
             $value = $str;
         }
         else {
-            throw new Exception( "Expected a valid string, got: ".$str->debug() );
+            throw new Exception( "Expected a valid string, got: $str" );
         }
         if ( isset($this->length) ) {
             $value = substr( $value, 0, $this->length );
