@@ -37,7 +37,7 @@ class Modyllic_Type_Year extends Modyllic_Type {
         if ( $year instanceOf Modyllic_Token_Reserved or (!$is_object and Modyllic_SQL::is_reserved($value) ) ) {
             return $value;
         }
-        if ( $year instanceOf Modyllic_Token_Num or (!$is_object and is_num($year)) ) {
+        if ( $year instanceOf Modyllic_Token_Num or (!$is_object and is_numeric($year)) ) {
             $plain = $value + 0;
             if ( $plain == 0 ) {
                 return "'0000'";
