@@ -31,20 +31,14 @@ class Modyllic_Type_Year extends Modyllic_Type {
         $this->length = $old->length;
     }
     function normalize($year) {
-        if ( $year instanceOf Modyllic_Token_Reserved ) {
-            return $year->value();
+        $is_object = is_object($year);
+        $value = $is_object ? $year->value() : $year;
+        $unquoted = $is_object ? $year->unquote() : $year;
+        if ( $year instanceOf Modyllic_Token_Reserved or (!$is_object and Modyllic_SQL::is_reserved($value) ) ) {
+            return $value;
         }
-        if ( $year instanceOf Modyllic_Token_String ) {
-            $plain = $year->unquote() + 0;
-            if ( $plain >= 0 and $plain < 70 ) {
-                return "'20$plain'";
-            }
-            else if ( $plain >= 70 and $plain < 100 ) {
-                return "'19$plain'";
-            }
-        }
-        else if ( $year instanceOf Modyllic_Token_Num ) {
-            $plain = $year->value() + 0;
+        if ( $year instanceOf Modyllic_Token_Num or (!$is_object and is_numeric($year)) ) {
+            $plain = $value + 0;
             if ( $plain == 0 ) {
                 return "'0000'";
             }
@@ -58,6 +52,15 @@ class Modyllic_Type_Year extends Modyllic_Type {
                 return "'$plain'";
             }
         }
-        throw new Exception( "Expected a valid year, got: ".$year->debug() );
+        else if ( !$is_object or $year instanceOf Modyllic_Token_String ) {
+            $plain = $unquoted + 0;
+            if ( $plain >= 0 and $plain < 70 ) {
+                return "'20$plain'";
+            }
+            else if ( $plain >= 70 and $plain < 100 ) {
+                return "'19$plain'";
+            }
+        }
+        throw new Exception( "Expected a valid year, got: $year" );
     }
 }

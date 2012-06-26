@@ -37,7 +37,7 @@ abstract class Modyllic_Type_Numeric extends Modyllic_Type {
             $plain = $value->value() + 0;
         }
         else {
-            $plain = 0;
+            $plain = $value + 0;
         }
         return $plain;
     }
