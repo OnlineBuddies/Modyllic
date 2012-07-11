@@ -805,20 +805,27 @@ class Modyllic_Parser {
         $this->ctx->collate = $this->schema->collate;
         $this->ctx->docs = $this->cmddocs;
 
+        $last_was = $this->ctx;
         // Load tablespec
         while (! $this->next() instanceOf Modyllic_Token_EOC ) {
 
+            # Comments
+            while ( $this->cur() instanceOf Modyllic_Token_Comment ) {
+                $last_was->docs = trim( $last_was->docs . " " . $this->cur()->value() );
+                $this->next();
+            }
+
             # A key or column spec, followed by...
             if ( $this->cur() instanceOf Modyllic_Token_Reserved ) {
-                $this->load_key();
+                $last_was = $this->load_key();
             }
             else {
-                $this->load_column();
+                $last_was = $this->load_column();
             }
 
             # Comments
             while ( $this->cur() instanceOf Modyllic_Token_Comment ) {
-                $this->ctx->last_index->docs = trim( $this->ctx->last_index->docs . " " . $this->cur()->value() );
+                $last_was->docs = trim( $last_was->docs . " " . $this->cur()->value() );
                 $this->next();
             }
 
@@ -832,7 +839,7 @@ class Modyllic_Parser {
                 $this->assert_symbol();
                 # and some number of additional comments
                 while ( $this->peek_next() instanceOf Modyllic_Token_Comment ) {
-                    $this->ctx->last_index->docs = trim( $this->ctx->last_index->docs . " " . $this->next()->value() );
+                    $last_was->docs = trim( $last_was->docs . " " . $this->next()->value() );
                 }
             }
             else {
@@ -1025,6 +1032,7 @@ class Modyllic_Parser {
             $index->columns = array($column->name => false);
             $this->add_index( $index );
         }
+        return $column;
     }
 
     function load_key() {
@@ -1034,10 +1042,10 @@ class Modyllic_Parser {
         //   | [UNIQUE|FULLTEXT] KEY ident (ident,...) [USING {BTREE|HASH}]
         $token = $this->assert_reserved();
         if ( $token == 'CONSTRAINT' or $token == 'FOREIGN KEY' ) {
-            $this->load_foreign_key($token);
+            return $this->load_foreign_key($token);
         }
         else {
-            $this->load_regular_key($token);
+            return $this->load_regular_key($token);
         }
     }
 
@@ -1087,6 +1095,7 @@ class Modyllic_Parser {
         }
         $this->next();
         $this->add_index( $key );
+        return $key;
     }
 
     function load_foreign_key($token) {
@@ -1143,6 +1152,7 @@ class Modyllic_Parser {
             $this->gen_constraint_name($key);
         }
         $this->add_index( $key );
+        return $key;
     }
 
     function index_columns() {
