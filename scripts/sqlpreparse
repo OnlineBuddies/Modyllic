@@ -1,20 +1,3 @@
-#!/usr/bin/env php
-<?php
-/**
- * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
- *
- * @package Modyllic
- * @author bturner@online-buddies.com
- */
+#!/bin/sh
+exec "$(dirname $0)"/mo preparse "$@"
 
-require_once "Modyllic/AutoLoader.php";
-Modyllic_AutoLoader::install();
-
-$args = Modyllic_CommandLine::get_args(array(
-    'description' => 'Preparse the SQL and generate something that can be loaded instantly.',
-    'arguments' => array(
-        'spec' => array('multiple'=>true) )));
-
-$schema = Modyllic_CommandLine::schema($args->args['spec']);
-
-print serialize($schema);

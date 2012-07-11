@@ -1,0 +1,41 @@
+#!/bin/bash
+# Copyright © 2012 Online Buddies, Inc. - All Rights Reserved
+
+COMMAND=help
+
+next_plain_arg=
+
+while [ -n "$*" ]; do
+	next="$1" ; shift
+	if [ "$next" == "--exec-path" ]; then
+		next_plain_arg = "path"
+	elif [[ "$next" =~ ^--exec-path=(.*) ]]; then
+		MODYLLIC_EXEC_PATH="${BASH_REMATCH[1]}"
+	elif [[ "$next" =~ ^-- ]]; then
+		break;
+	elif [ -n "$next_plain_arg" ]; then
+		if [ "$next_plain_arg" == "path" ]; then
+			MODYLLIC_EXEC_PATH="$next"
+		fi
+		next_plain_arg=
+	else
+		if [ -n "$next" ]; then
+			COMMAND="$next"
+		fi
+		break;
+	fi
+done	
+
+if [ -n "$MODYLLIC_EXEC_PATH" ]; then
+	PATH="$MODYLLIC_EXEC_PATH:$PATH"
+fi
+
+TO_EXEC=$(which "modyllic-$COMMAND")
+
+if [ -z "$TO_EXEC" ]; then
+	myname=$(basename "$0")
+	echo "$myname: '$COMMAND' is not a modyllic command. See '$myname --help'."
+	exit 1
+fi
+
+exec "$TO_EXEC" "$@"

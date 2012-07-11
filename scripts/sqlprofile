@@ -1,31 +1,3 @@
-#!/usr/bin/env php
-<?php
-/**
- * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
- *
- * @package Modyllic
- * @author bturner@online-buddies.com
- */
+#!/bin/sh
+exec "$(dirname $0)"/mo profile "$@"
 
-require_once "Modyllic/AutoLoader.php";
-Modyllic_AutoLoader::install();
-
-require_once "xhprof_lib/utils/xhprof_lib.php";
-require_once "xhprof/xhprof_lib/utils/xhprof_runs.php";
-
-$args = Modyllic_CommandLine::get_args(array(
-    'description' => 'Loads a schema with xhprof enabled',
-    'arguments' => array(
-        'spec' => array('multiple'=>true) )));
-
-$ignore = array('call_user_func', 'call_user_func_array');
-
-xhprof_enable(XHPROF_FLAGS_CPU + XHPROF_FLAGS_MEMORY, $ignore);
-
-$schema = Modyllic_CommandLine::schema($args->args['spec']);
-
-$xhprof_data = xhprof_disable();
-$xhprof_runs = new XHProfRuns_Default();
-$run_id = $xhprof_runs->save_run($xhprof_data, "schemaload");
-$profiler_url = sprintf('http://localhost/path/to/xhprof/index.php?run=%s&source=%s', $run_id, "schemaload");
-echo "$profiler_url\n";
