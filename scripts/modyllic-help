@@ -16,12 +16,16 @@ $args = Modyllic_CommandLine::get_args(array(
         'command' => array('optional'=>true) )));
 
 if (isset($args->args['command'])) {
-    system(dirname(__FILE__)."/mo ".$args->args['command']." --help");
+    $modyllic = "modyllic";
+    if ( $args->options['modyllic'] ) {
+        $modyllic = $args->options['modyllic'] . "/" . $modyllic;
+    }
+    system("$modyllic ".$args->args['command']." --help");
     exit;
 }
 
 
-echo "usage: mo <command> [<arg>]\n";
+echo "usage: modyllic <command> [<arg>]\n";
 echo "\n";
 echo "Most commonly used commands are:\n";
 echo "   diff         Show the SQL to mutate one schema into another\n";
