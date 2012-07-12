@@ -13,7 +13,7 @@ Modyllic_AutoLoader::install();
 $args = Modyllic_CommandLine::get_args(array(
     'description' => 'Commandline help for Modyllic',
     'arguments' => array(
-        'command' => array('multiple'=>false) )));
+        'command' => array('optional'=>true) )));
 
 if (isset($args->args['command'])) {
     system(dirname(__FILE__)."/mo ".$args->args['command']." --help");
