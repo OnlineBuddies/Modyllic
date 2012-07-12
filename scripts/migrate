@@ -1,2 +1,2 @@
 #!/bin/sh
-exec "$(dirname $0)"/mo migrate "$@"
+exec "$(dirname $0)"/modyllic migrate "$@"

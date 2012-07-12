@@ -1,2 +1,2 @@
 #!/bin/sh
-exec "$(dirname $0)"/mo dump "$@"
+exec "$(dirname $0)"/modyllic dump "$@"
