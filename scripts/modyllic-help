@@ -1,0 +1,36 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
+ *
+ * @package Modyllic
+ * @author bturner@online-buddies.com
+ */
+
+require_once "Modyllic/AutoLoader.php";
+Modyllic_AutoLoader::install();
+
+$args = Modyllic_CommandLine::get_args(array(
+    'description' => 'Commandline help for Modyllic',
+    'arguments' => array(
+        'command' => array('optional'=>true) )));
+
+if (isset($args->args['command'])) {
+    $modyllic = "modyllic";
+    if ( $args->options['modyllic'] ) {
+        $modyllic = $args->options['modyllic'] . "/" . $modyllic;
+    }
+    system("$modyllic ".$args->args['command']." --help");
+    exit;
+}
+
+
+echo "usage: modyllic <command> [<arg>]\n";
+echo "\n";
+echo "Most commonly used commands are:\n";
+echo "   diff         Show the SQL to mutate one schema into another\n";
+echo "   dump         Print out a schema, from files or database\n";
+echo "   procstophp   Generate PHP helpers for stored procs and funcs\n";
+echo "   migrate      Mutate a database to match a schema\n";
+echo "   colorize     Filter to colorize SQL\n";
+echo "   drop         Generate SQL to drop all the objects in a schema\n";

@@ -19,6 +19,8 @@ class Modyllic_CommandLine {
         if ( !isset($parser) ) {
             $parser = new Console_CommandLine();
         }
+        global $argv;
+        $parser->name = basename($argv[0]);
         return $parser;
     }
 
@@ -58,6 +60,12 @@ class Modyllic_CommandLine {
             'description' => 'show the Modyllic version number',
             'action'      => 'StoreTrue',
             'default'     => false,
+            ));
+        $parser->addOption('modyllic', array(
+            'help_name'   => 'path',
+            'long_name'   => '--modyllic-path',
+            'action'      => 'StoreString',
+            'description' => 'The path containing the modyllic binary',
             ));
         if ( isset($arg_spec['description']) ) {
             $parser->description = $arg_spec['description'];
