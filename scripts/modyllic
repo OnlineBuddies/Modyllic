@@ -1,7 +1,8 @@
 #!/bin/bash
 # Copyright © 2012 Online Buddies, Inc. - All Rights Reserved
 
-COMMAND=help
+COMMAND="help"
+
 
 next_plain_arg=
 
@@ -26,6 +27,14 @@ while [ -n "$*" ]; do
 	fi
 done	
 
+MODYLLIC_PATH=""
+if [[ "$0" =~ / ]]; then
+        CMDLINE_PATH=$(dirname -- "$0")
+	PATH="$CMDLINE_PATH:$PATH"
+	COMMAND="$COMMAND"
+	MODYLLIC_PATH="--modyllic-path=$CMDLINE_PATH"
+fi
+
 if [ -n "$MODYLLIC_EXEC_PATH" ]; then
 	PATH="$MODYLLIC_EXEC_PATH:$PATH"
 fi
@@ -38,4 +47,4 @@ if [ -z "$TO_EXEC" ]; then
 	exit 1
 fi
 
-exec "$TO_EXEC" "$@"
+exec "$TO_EXEC" "--modyllic-path=$CMDLINE_PATH" "$@"
