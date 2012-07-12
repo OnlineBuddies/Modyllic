@@ -19,6 +19,8 @@ class Modyllic_CommandLine {
         if ( !isset($parser) ) {
             $parser = new Console_CommandLine();
         }
+        global $argv;
+        $parser->name = basename($argv[0]);
         return $parser;
     }
 
