@@ -1,0 +1,95 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
+ *
+ * @package Modyllic
+ * @author bturner@online-buddies.com
+ */
+
+require_once "Modyllic/AutoLoader.php";
+Modyllic_AutoLoader::install();
+
+$args = Modyllic_CommandLine::get_args(array(
+    'description' => 'Generate a PHP helper class for the stored procs in the schema',
+    'options' => array(
+        'fromschema' => array(
+            'short_name'  => '-f',
+            'long_name'   => '--from',
+            'action'      => 'StoreArray',
+            ),
+        'toschema' => array(
+            'short_name'  => '-t',
+            'long_name'   => '--to',
+            'action'      => 'StoreArray',
+            ),
+        'dialect' => array(
+            'short_name'  => '-d',
+            'long_name'   => '--dialect',
+            'description' => 'dialect to output in',
+            'action'      => 'Dialect',
+            'default'     => 'Modyllic',
+            ),
+        'only' => array(
+            'long_name'   => '--only',
+            'description' => 'comma separated list of kinds of schema objects to process: database, sqlmeta, tables, views, routines, events, triggers',
+            'action'      => 'StoreString',
+            ) ),
+    'arguments' => array(
+        'fromschema' => array('optional'=>true),
+        'toschema' => array('optional'=>true)
+        )));
+
+if ( (isset($args->options['fromschema']) or isset($args->options['toschema'])) and isset($args->args['fromschema']) ) {
+    Modyllic_CommandLine::display_error( "You can't specify a schema both positionally and via options" );
+}
+
+$class = Modyllic_Generator::dialect_to_class( $args->options['dialect'] );
+$gen = new $class();
+
+if ( isset($args->options['only']) ) {
+    try {
+        $only = preg_split('/\s*,\s*/',$args->options['only']);
+        $gen->validate_schema_types($only);
+    }
+    catch (Exception $e) {
+        Modyllic_CommandLine::display_error($e->getMessage());
+    }
+}
+else {
+    $only = $gen->schema_types();
+}
+
+$fromschema = array();
+if ( isset($args->args['fromschema']) ) {
+    $fromschema[] = $args->args['fromschema'];
+}
+if ( isset($args->options['fromschema']) ) {
+    $fromschema += $args->options['fromschema'];
+}
+if ( count($fromschema) == 0 ) {
+    Modyllic_CommandLine::display_error( 'You must specify a from schema to compare');
+}
+
+$toschema = array();
+if ( isset($args->args['toschema']) ) {
+    $toschema[] = $args->args['toschema'];
+}
+if ( isset($args->options['toschema']) ) {
+    $toschema += $args->options['toschema'];
+}
+if ( count($toschema) == 0 ) {
+    Modyllic_CommandLine::display_error( 'You must specify a to schema to compare');
+}
+
+$from = Modyllic_CommandLine::schema($fromschema);
+$to   = Modyllic_CommandLine::schema($toschema);
+
+$diff = new Modyllic_Diff( $from, $to );
+
+if ( ! $diff->changeset->has_changes() ) {
+    print "-- No changes detected.\n";
+    exit(0);
+}
+
+print $gen->alter_sql($diff, ';;', true, $only);

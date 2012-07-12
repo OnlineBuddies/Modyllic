@@ -1,0 +1,45 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Copyright © 2011 Online Buddies, Inc. - All Rights Reserved
+ *
+ * @package Modyllic
+ * @author bturner@online-buddies.com
+ */
+
+require_once "Modyllic/AutoLoader.php";
+Modyllic_AutoLoader::install();
+
+$args = Modyllic_CommandLine::get_args(array(
+    'description' => 'Load one or more schema and print them out',
+    'options' => array(
+        'dialect' => array(
+            'short_name'  => '-d',
+            'long_name'   => '--dialect',
+            'description' => 'dialect to output in',
+            'action'      => 'Dialect',
+            'default'     => 'Modyllic',
+            ),
+        'only' => array(
+            'long_name'   => '--only',
+            'description' => 'comma separated list of kinds of schema objects to process: database, sqlmeta, tables, views, routines, events, triggers',
+            'action'      => 'StoreString',
+            ) ),
+    'arguments' => array(
+        'spec' => array('multiple'=>true) )));
+
+$schema = Modyllic_CommandLine::schema($args->args['spec']);
+
+$class = Modyllic_Generator::dialect_to_class( $args->options['dialect'] );
+$gen = new $class();
+
+if ( isset($args->options['only']) ) {
+    try {
+        $only = preg_split('/\s*,\s*/',$args->options['only']);
+        $gen->set_what($only);
+    }
+    catch (Exception $e) {
+        Modyllic_CommandLine::display_error($e->getMessage());
+    }
+}
+print $gen->create_sql( $schema );
