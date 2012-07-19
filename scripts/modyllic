@@ -46,7 +46,7 @@ TO_EXEC=$(which "modyllic-$COMMAND")
 
 if [ -z "$TO_EXEC" ]; then
 	myname=$(basename "$0")
-	echo "$myname: '$COMMAND' is not a modyllic command. See '$myname --help'."
+	echo "$myname: '$COMMAND' is not a modyllic command. See '$myname --help'." 1>&2
 	exit 1
 fi
 
