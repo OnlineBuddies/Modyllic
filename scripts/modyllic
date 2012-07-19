@@ -10,6 +10,9 @@ while [ -n "$*" ]; do
 	next="$1" ; shift
 	if [ "$next" == "--exec-path" ]; then
 		next_plain_arg = "path"
+	elif [ "$next" == "--version" ]; then
+		echo "Modyllic Version: @VERSION@ @STATE@" 1>&2;
+		exit 1;
 	elif [[ "$next" =~ ^--exec-path=(.*) ]]; then
 		MODYLLIC_EXEC_PATH="${BASH_REMATCH[1]}"
 	elif [[ "$next" =~ ^-- ]]; then
