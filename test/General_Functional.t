@@ -7,9 +7,10 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "test_environment.php";
+require_once implode(DIRECTORY_SEPARATOR, array(
+    dirname(__FILE__), "test_environment.php" ));
 
-plan(28);
+plan(33);
 
 $parser = new Modyllic_Parser();
 
@@ -86,7 +87,25 @@ if ( is_dir(dirname(__FILE__)."/test_schema") ) {
     is( $loader, "Modyllic_Loader_DB", "DSN schema are loaded with DB" );
     list( $source, $loader ) = Modyllic_Loader::determine_loader( dirname(__FILE__)."/test_schema/invalid" );
     is( $loader, null, "Invalid schema result in no loader" );
+
+    $schema = Modyllic_Loader::load( array( dirname(__FILE__)."/test_schema/test1.sql" ) );
+    is( get_class($schema), "Modyllic_Schema", "File loaded a plain file" );
+    $schema = Modyllic_Loader::load( array( dirname(__FILE__)."/test_schema/test2.sql" ) );
+    is( get_class($schema), "Modyllic_Schema", "File loaded a symlink");
+    $schema = Modyllic_Loader::load( array( dirname(__FILE__)."/test_schema/test3/" ) );
+    is( get_class($schema), "Modyllic_Schema", "Dir loaded a directory");
+    $schema = Modyllic_Loader::load( array( dirname(__FILE__)."/test_schema/test4" ) );
+    is( get_class($schema), "Modyllic_Schema", "Dir loaded a symlink to a directory");
+    $msg = "Invalid schema throw an error";
+    try {
+        $schema = Modyllic_Loader::load( array( dirname(__FILE__)."/test_schema/invalid" ) );
+        fail($msg);
+    }
+    catch (Modyllic_Loader_Exception $e) {
+        pass($msg);
+    }
 }
 else {
     skip("Test schema not found, not doing loader tests",6);
 }
+

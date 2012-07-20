@@ -56,7 +56,4 @@ class Modyllic_Token_String extends Modyllic_Token {
         }
         return $unquoted;
     }
-   function debug() {
-       return get_class($this).":".$this->value();
-   }
 }

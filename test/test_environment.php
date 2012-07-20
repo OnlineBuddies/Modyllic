@@ -24,15 +24,33 @@ require_once implode(DIRECTORY_SEPARATOR,array(dirname(__FILE__),"..","testlib",
 
 // Install our auto loader
 require_once implode(DIRECTORY_SEPARATOR,array(dirname(__FILE__),"..","Modyllic", "AutoLoader.php"));
-Modyllic_AutoLoader::install();
 
-if (getenv("TEST_COVERAGE")) {
+if ( ! defined("AUTO_SETUP_ENV") or AUTO_SETUP_ENV ) {
+    __setup_env();
+}
+
+function __setup_env() {
+    Modyllic_AutoLoader::install();
+    __begin_coverage();
+}
+
+function __begin_coverage() {
+    global $__coverage;
+    if ( isset($__coverage) ) { return; }
+    if ( ! getenv("TEST_COVERAGE") ) { return; }
+    require_once "PHP/CodeCoverage.php";
+    require_once "PHP/CodeCoverage/Driver.php";
+    require_once "PHP/CodeCoverage/Driver/Xdebug.php";
+    require_once "PHP/CodeCoverage/Filter.php";
+    require_once "PHP/CodeCoverage/Util.php";
+    require_once "File/Iterator/Facade.php";
+    require_once "File/Iterator/Factory.php";
+    require_once "File/Iterator.php";
     $__coverage = new PHP_CodeCoverage;
     $__coverage->start('test');
     $__coverage->filter()->addDirectoryToWhitelist(realpath(dirname(__FILE__)."/../Modyllic"));
     register_shutdown_function('__end_coverage');
 }
-
 function __end_coverage() {
     global $__coverage;
     $__coverage->stop();
