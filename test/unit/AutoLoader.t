@@ -9,9 +9,7 @@
 
 
 define('AUTO_SETUP_ENV', false);
-
-require_once implode(DIRECTORY_SEPARATOR, array(
-    dirname(__FILE__), '..', 'test_environment.php' ));
+require_once dirname(__FILE__)."/../test_environment.php";
 
 // We have to be a little weird here in order to get coverage loaded earlier
 // without the autoloader installed.

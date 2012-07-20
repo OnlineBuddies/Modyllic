@@ -7,8 +7,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once implode(DIRECTORY_SEPARATOR, array(
-    dirname(__FILE__), '..', '..', 'test_environment.php' ));
+require_once dirname(__FILE__)."/../../test_environment.php";
 
 $normalization_tests = array(
      array(        "CURRENT_TIME", new Modyllic_Token_Reserved(0,"CURRENT_TIME"),        "CURRENT_TIME" ), 
