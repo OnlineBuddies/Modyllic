@@ -7,7 +7,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "test_environment.php";
+require_once dirname(__FILE__)."/../test_environment.php";
 
 $num_tests = array(
    "Positive Integer"  => array( "sql"=>    "50",          "value"=>    "50"          ),
