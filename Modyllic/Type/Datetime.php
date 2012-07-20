@@ -8,13 +8,19 @@
 
 class Modyllic_Type_Datetime extends Modyllic_Type {
     function normalize($date) {
+        assert( '! is_object($date) or $date instanceOf Modyllic_Token' );
         $is_object = is_object($date);
-        $value = $is_object ? $date->value() : $date;
-        $unquoted = $is_object ? $date->unquote() : $date;
+        if ($is_object) {
+            $value = $date->value();
+            $unquoted = $date->unquote();
+        }
+        else {
+            $value = $unquoted = $date;
+        }
         if ( $date instanceOf Modyllic_Token_Reserved or (!$is_object and Modyllic_SQL::is_reserved($value) ) ) {
             return $value;
         }
-        if ( $value == 0 ) {
+        if ( is_numeric($value) and $value == 0 ) {
             return "'0000-00-00 00:00:00'";
         }
         if ( $is_object and ! $date instanceOf Modyllic_Token_String ) {

@@ -12,16 +12,19 @@
 class Modyllic_Token {
     public $pos;
     protected $value;
+
     function __construct($pos,$value=null) {
         $this->pos = $pos;
         $this->value = $value;
     }
+
     /**
      * This is exactly the string that was matched by the tokenizer
      */
     function literal() {
         return $this->value;
     }
+
     /**
      * The value of the token.  This differs from literal for things like
      * comments, which don't include the comment markers and quoted
@@ -30,19 +33,29 @@ class Modyllic_Token {
     function value() {
         return $this->value;
     }
+
     /**
      * The "token" value, for any kind of identifier this is all caps.
      */
     function token() {
         return $this->value;
     }
+
+    /**
+     * If this is a string type, this would be the unquoted value.  For
+     * other types this is just the value.
+     */
+    function unquote() {
+        return $this->value;
+    }
+
     /**
      * The token value and class, used in debugging
      */
    function debug() {
        return get_class($this).":'".$this->value."'";
    }
-   
+
    /**
     * We stringify int our debug value
     */
