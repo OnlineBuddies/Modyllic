@@ -10,7 +10,7 @@
 require_once dirname(__FILE__)."/../../test_environment.php";
 
 $normalization_tests = array(
-     array(        "CURRENT_TIME", new Modyllic_Token_Reserved(0,"CURRENT_TIME"),        "CURRENT_TIME" ), 
+     array(        "CURRENT_TIME", new Modyllic_Token_Reserved(0,"CURRENT_TIME"),        "CURRENT_TIME" ),
      array(                     0, new Modyllic_Token_Num(0,0),                          "'0000-00-00 00:00:00'" ),
      array(                   "0", null,                                                 "'0000-00-00 00:00:00'" ),
      array(          "2012-01-01", new Modyllic_Token_String(0,"'2012-01-01'"),          "'2012-01-01 00:00:00'" ),
@@ -59,7 +59,6 @@ foreach ($normalization_tests as $test) {
     else {
         ok(true, "#");
     }
-    
 }
 
 foreach ($invalid_date_tests as $test) {
