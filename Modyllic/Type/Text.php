@@ -32,7 +32,7 @@ class Modyllic_Type_Text extends Modyllic_Type_String {
         $sql .= $this->charset_collation($other);
         return $sql;
     }
-    function binary() {
+    function make_binary() {
         $new = new Modyllic_Type_Blob("BLOB");
         $new->clone_from($this);
         return $new;
