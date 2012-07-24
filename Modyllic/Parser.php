@@ -773,7 +773,7 @@ class Modyllic_Parser {
         }
 
         if ( ( $type instanceOf Modyllic_Type_VarChar or $type instanceOf Modyllic_Type_Text ) and strtolower($type->charset()) == 'binary' ) {
-            $type = $type->binary();
+            $type = $type->make_binary();
         }
         else if ( $binary ) {
             $type->collate( $type->charset() . "_bin" );

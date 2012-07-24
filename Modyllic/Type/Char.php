@@ -20,7 +20,7 @@ class Modyllic_Type_Char extends Modyllic_Type_VarString {
         $sql .= $this->charset_collation($other);
         return $sql;
     }
-    function binary() {
+    function make_binary() {
         $new = new Modyllic_Type_Binary("BINARY");
         $new->clone_from($this);
         return $new;
