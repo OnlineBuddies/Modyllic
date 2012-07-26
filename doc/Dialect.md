@@ -234,17 +234,17 @@ func_arg:
 
 proc_return_type:
 
-     TABLE 
-   | ROW 
-   | COLUMN colname 
-   | LIST colname
-   | MAP (key, {value | ROW} 
-   | STH 
-   | NONE
+      TABLE
+    | ROW
+    | COLUMN colname
+    | LIST colname
+    | MAP (key, {value | ROW}
+    | STH
+    | NONE
 
 routine_args_type:
-     LIST
-   | MAP
+      LIST
+    | MAP
 
 routine_body:
 
