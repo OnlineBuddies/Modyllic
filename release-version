@@ -9,25 +9,58 @@ if [ "$1." == . ]; then
 	exit 1
 fi
 
-if [ `git remote | grep -c upstream-testlib` -ne 1 ]; then
+if [ $(git remote | grep -c '^upstream-testlib$') -ne 1 ]; then
 	echo "In order to use this script you must have an upstream-testlib remote setup.  You can do so by issuing the following command:"
 	echo "    git remote add upstream-testlib git://github.com/shiflett/testmore.git"
 	exit 1
 fi
 
-if [ `git remote | grep -c upstream-wiki` -ne 1 ]; then
+if [ $(git remote | grep -c '^upstream$') -ne 1 ]; then
+	echo "In order to use this script you must have an upstream-wiki remote setup.  You can do so by issuing the following command:"
+	echo "    git remote add upstream git://github.com/OnlineBuddies/Modyllic.git"
+	exit 1
+fi
+
+if [ $(git remote | grep -c '^upstream-wiki$') -ne 1 ]; then
 	echo "In order to use this script you must have an upstream-wiki remote setup.  You can do so by issuing the following command:"
 	echo "    git remote add upstream-wiki git://github.com/OnlineBuddies/Modyllic.wiki.git"
 	exit 1
 fi
 
-if [ `pear list-channels | grep -c onlinebuddies.github.com/pear` -ne 1 -o `pear list -c OnlineBuddies | grep -c PEAR_PackageFileManager_Gitrepoonly` -ne 1 ]; then
+if [ $(git branch | grep -c '^  upstream-wiki$') -ne 1 ]; then
+	echo "In order to use this script you must have the upstream-wiki checked out in a branch.  You can do so by issuing the following command:"
+	echo "    git fetch upstream-wiki"
+	echo "    git checkout -b upstream-wiki upstream-wiki/master"
+fi
+
+if [ $(git remote | grep -c '^upstream-pear$') -ne 1 ]; then
+	echo "In order to use this script you must have an upstream-wiki remote setup.  You can do so by issuing the following command:"
+	echo "    git remote add upstream-pear git@github.com:OnlineBuddies/pear.git"
+	exit 1
+fi
+
+if [ $(git branch | grep -c '^  upstream-pear$') -ne 1 ]; then
+	echo "In order to use this script you must have the upstream-wiki checked out in a branch.  You can do so by issuing the following command:"
+	echo "    git fetch upstream-pear"
+	echo "    git checkout -b upstream-pear upstream-pear/gh-pages"
+        exit 1;
+fi
+
+if [ $(pear list-channels | grep -c '^onlinebuddies.github.com/pear ') -ne 1 -o $(pear list -c OnlineBuddies | grep -c '^PEAR_PackageFileManager_Gitrepoonly ') -ne 1 ]; then
 	echo "You need to install the build prerequisites, run:"
 	echo "    make install-build-prereqs"
+        exit 1;
+fi
+
+if [ $(pear list-channels | grep -c '^pear.pirum-project.org ') -ne 1 -o $(pear list -c pirum | grep -c '^Pirum ') -ne 1 ]; then
+	echo "You need to install Pirum:"
+        echo "    pear channel-discover pear.pirum-project.org"
+        echo "    pear install pirum/Pirum-beta"
+        exit 1;
 fi
 
 # Fetch all the tags, sort them and extract the most recent released version
-CURRENT=`git tag | perl -ne 'next unless /^v(\d+)[.](\d+)[.](\d+)$/; printf "%03d.%03d.%03d,%s",$1,$2,$3,$_' | sort | tail -1 | cut -d, -f2`
+CURRENT=$(git tag | perl -ne 'next unless /^v(\d+)[.](\d+)[.](\d+)$/; printf "%03d.%03d.%03d,%s",$1,$2,$3,$_' | sort | tail -1 | cut -d, -f2)
 
 # Fetch all the commits since the most recent release and put them in the changelog
 echo "# Edit this list of commits down to something a user would want to read" > CHANGELOG.new
@@ -40,7 +73,7 @@ rm git.log
 
 # Have the user edit the changelog into something human readable, using
 # in order of preference, $VISUAL, $EDITOR, sensible-editor or vi.
-VISUAL=${VISUAL-${EDITOR-`which sensible-editor || which vi`}}
+VISUAL=${VISUAL-${EDITOR-$(which sensible-editor || which vi)}}
 $VISUAL CHANGELOG.new
 grep -v '^#' CHANGELOG.new > CHANGELOG
 rm CHANGELOG.new
@@ -48,9 +81,17 @@ rm CHANGELOG.new
 # Build a package.xml
 php build-package-xml base.xml package.xml $VERSION $STABILITY
 
+# Add the changelog to the wiki
+php build-changelog v$VERSION CHANGELOG > Changes.md-new
+git checkout upstream-wiki
+git pull upstream-wiki master
+mv Changes.md-new Changes.md
+git add Changes.md
+git commit -m"Release Modyllic-$VERSION"
+git checkout master
+
 # Merge the wiki
-git fetch upstream-wiki
-git merge -s subtree upstream-wiki/master || $SHELL
+git merge -s subtree upstream-wiki || $SHELL
 
 # Merge the test library
 git fetch upstream-testlib
@@ -64,5 +105,15 @@ git tag "v$VERSION"
 
 pear package package.xml
 
+git checkout upstream-pear
+
+git pull upstream-pear gh-pages
+
+./release "Modyllic-$VERSION.tgz"
+git add -A feed.xml index.html rest/*
+git commit -m"Release Modyllic-$VERSION"
+git checkout master
+
 echo "Release $VERSION built."
-echo "Don't forget to run 'git push upstream' and 'git push --tags upstream'"
+echo "Verify that it's correct in the master and upstream-pear branches.  If all looks ok, run:"
+echo "    ./publish-version"

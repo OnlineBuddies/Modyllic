@@ -75,6 +75,7 @@ $options['dir_roles']['tests'] = 'test';
 // Don't bundle our build files
 $options['ignore'][] = 'Makefile';
 $options['ignore'][] = 'release-version';
+$options['ignore'][] = 'publish-version';
 $options['ignore'][] = 'build-package-xml';
 
 // This includes symlinks, which PHP can't package
