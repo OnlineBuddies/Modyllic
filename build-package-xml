@@ -118,8 +118,10 @@ foreach ($prev_versions as $index=>$prev) {
 }
 
 // These propagate the verison info to the commandline utils
-$res->addReplacement( "Modyllic/CommandLine.php", "package-info", "@VERSION@", "version" );
-$res->addReplacement( "Modyllic/CommandLine.php", "package-info", "@STATE@", "state" );
+foreach (array("Modyllic/CommandLine.php", "scripts/modyllic") as $file) {
+    $res->addReplacement( $file, "package-info", "@VERSION@", "version" );
+    $res->addReplacement( $file, "package-info", "@STATE@", "state" );
+}
 
 // This actually produces the file list
 $res->generateContents();
