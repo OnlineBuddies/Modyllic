@@ -243,6 +243,7 @@ proc_return_type:
    | NONE
 
 routine_args_type:
+
      LIST
    | MAP
 
