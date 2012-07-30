@@ -1,12 +1,26 @@
 #!/usr/bin/env php
 <?php
 print "Revision history for PHP module Modyllic\n\n";
+
+// You can optionally pass in a version and changelog file to load and
+// prepend to the changelog.  This is used to generate the changelog wiki
+// prior to actually commiting anything.
+if ( $argc==3 ) {
+    list($prog,$tag,$changelog_file) = $argv;
+    $changes = trim(file_get_contents($changelog_file));
+    print_version( $tag, date("Y-m-d"), $changes );
+}
+
 foreach (explode("\n",trim(`git for-each-ref --sort='-refname' --format='%(refname:short) %(authordate:short)' refs/tags/v*.*.*`)) as $tag) {
     list($tag_name,$tag_date) = explode(" ",$tag);
-    print "$tag_name $tag_date\n\n";
     $changes = trim(`git show {$tag_name}:CHANGELOG 2> /dev/null`);
+    print_version( $tag_name, $tag_date, $changes );
+}
+
+function print_version($tag,$date,$changes) {
+    echo "$tag $date\n\n";
     if ( $changes == "" ) {
         $changes = "* No changelog for this version.";
     }
-    print "$changes\n\n";
+    echo "$changes\n\n";
 }
