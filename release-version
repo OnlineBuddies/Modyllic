@@ -35,13 +35,13 @@ if [ $(git branch | grep -c '^  upstream-wiki$') -ne 1 ]; then
 fi
 
 if [ $(git remote | grep -c '^upstream-pear$') -ne 1 ]; then
-	echo "In order to use this script you must have an upstream-wiki remote setup.  You can do so by issuing the following command:"
+	echo "In order to use this script you must have an upstream-pear remote setup.  You can do so by issuing the following command:"
 	echo "    git remote add upstream-pear git@github.com:OnlineBuddies/pear.git"
 	exit 1
 fi
 
 if [ $(git branch | grep -c '^  upstream-pear$') -ne 1 ]; then
-	echo "In order to use this script you must have the upstream-wiki checked out in a branch.  You can do so by issuing the following command:"
+	echo "In order to use this script you must have the upstream-pear checked out in a branch.  You can do so by issuing the following command:"
 	echo "    git fetch upstream-pear"
 	echo "    git branch upstream-pear upstream-pear/gh-pages"
         exit 1
