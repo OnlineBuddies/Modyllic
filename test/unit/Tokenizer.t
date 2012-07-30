@@ -42,7 +42,7 @@ $comment_tests = array(
     "SQL Commetns"     => array( "sql"=>"-- this is a test",    "value"=>"this is a test" ),
     );
 
-plan( count($num_tests)*2 + count($str_tests)*3 + count($ident_tests)*4 + count($comment_tests)*2 + 12 );
+plan( count($num_tests)*2 + count($str_tests)*3 + count($ident_tests)*4 + count($comment_tests)*2 + 13 );
 
 foreach ( $num_tests as $name=>$test ) {
     $tok = new Modyllic_Tokenizer($test['sql']);
@@ -116,12 +116,6 @@ $tok = new Modyllic_Tokenizer("ó");
 $token = $tok->next();
 ok( $token instanceOf Modyllic_Token_Error, "Unicode bareword character produces syntax error" );
 
-## todo, explicit tests for:
-## set_delimiter
-## rest
-## line
-## col
-## context
-## inject
-## next
-## peek_next
+$tok = new Modyllic_Tokenizer("DELIMITER |");
+$token = $tok->next();
+ok( $token instanceOf Modyllic_Token_NewDelim, "Changing delimiter resulted in delimiter change token" );
