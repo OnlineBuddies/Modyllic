@@ -7,7 +7,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once implode( DIRECTORY_SEPARATOR, array(dirname(__FILE__), "..", "test_environment.php") );
+require_once dirname(__FILE__)."/../test_environment.php";
 
 $parser = new Modyllic_Parser();
 $schema = new Modyllic_Schema();

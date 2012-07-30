@@ -86,7 +86,6 @@ class Modyllic_CommandLine {
         catch (Exception $e) {
             $parser->displayError($e->getMessage());
         }
-        
 
         Modyllic_Status::$verbose = $args->options['verbose'];
         Modyllic_Status::$progress = $args->options['progress'];

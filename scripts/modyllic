@@ -28,7 +28,7 @@ while [ -n "$*" ]; do
 		fi
 		break;
 	fi
-done	
+done
 
 MODYLLIC_PATH=""
 if [[ "$0" =~ / ]]; then

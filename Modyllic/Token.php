@@ -9,7 +9,7 @@
 /**
  * These are what are returned by the tokenizer
  */
-class Modyllic_Token {
+abstract class Modyllic_Token {
     public $pos;
     protected $value;
 
