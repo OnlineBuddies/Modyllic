@@ -1,5 +1,25 @@
 Revision history for PHP module Modyllic
 
+v0.2.3 2012-07-30
+
+* Fully automate the release process
+* Move the tokenizer unit test into the unit tests directory
+* Fix formatting of routine_args_type
+* Fix formatting of proc_return_type and routine_args_type docs
+* Give modyllic a single commandline interface
+* Comments in tables can now attach to columns and the table
+* Make tokens stringify to their debug representation and take advantage
+* Fix normalization for dates and years the way we did for nums
+* Fix #172 Non-token numification always set the value to 0
+* Fix bug where data updates would get lost if a tables static status did not change
+* Add coverage tools, a bunch of new unit tests, organize tests better.
+
+v0.2.2 2012-05-17
+
+* Add aliases for the old dialect names and warnings if you use them
+* Fix method signature mismatches and bogus defaults
+* Correct type hints from bulk type hint change
+
 v0.2.1 2012-05-08
 
 * Call CREATE TABLE correctly for SQLMETA
