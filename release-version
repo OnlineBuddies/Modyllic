@@ -30,7 +30,7 @@ fi
 if [ $(git branch | grep -c '^  upstream-wiki$') -ne 1 ]; then
 	echo "In order to use this script you must have the upstream-wiki checked out in a branch.  You can do so by issuing the following command:"
 	echo "    git fetch upstream-wiki"
-	echo "    git checkout -b upstream-wiki upstream-wiki/master"
+	echo "    git branch  upstream-wiki upstream-wiki/master"
 	exit 1
 fi
 
@@ -43,7 +43,7 @@ fi
 if [ $(git branch | grep -c '^  upstream-pear$') -ne 1 ]; then
 	echo "In order to use this script you must have the upstream-wiki checked out in a branch.  You can do so by issuing the following command:"
 	echo "    git fetch upstream-pear"
-	echo "    git checkout -b upstream-pear upstream-pear/gh-pages"
+	echo "    git branch upstream-pear upstream-pear/gh-pages"
         exit 1
 fi
 
