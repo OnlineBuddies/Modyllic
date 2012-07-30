@@ -7,7 +7,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "test_environment.php";
+require_once dirname(__FILE__)."/test_environment.php";
 
 $sql_types = array(
     "BIT"              => "Modyllic_Type_Bit",

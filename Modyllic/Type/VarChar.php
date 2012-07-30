@@ -7,7 +7,7 @@
  */
 
 class Modyllic_Type_VarChar extends Modyllic_Type_VarString {
-    function binary() {
+    function make_binary() {
         $new = new Modyllic_Type_VarBinary("VARBINARY");
         $new->clone_from($this);
         return $new;
