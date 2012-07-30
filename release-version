@@ -31,6 +31,7 @@ if [ $(git branch | grep -c '^  upstream-wiki$') -ne 1 ]; then
 	echo "In order to use this script you must have the upstream-wiki checked out in a branch.  You can do so by issuing the following command:"
 	echo "    git fetch upstream-wiki"
 	echo "    git checkout -b upstream-wiki upstream-wiki/master"
+	exit 1
 fi
 
 if [ $(git remote | grep -c '^upstream-pear$') -ne 1 ]; then
@@ -43,20 +44,20 @@ if [ $(git branch | grep -c '^  upstream-pear$') -ne 1 ]; then
 	echo "In order to use this script you must have the upstream-wiki checked out in a branch.  You can do so by issuing the following command:"
 	echo "    git fetch upstream-pear"
 	echo "    git checkout -b upstream-pear upstream-pear/gh-pages"
-        exit 1;
+        exit 1
 fi
 
 if [ $(pear list-channels | grep -c '^onlinebuddies.github.com/pear ') -ne 1 -o $(pear list -c OnlineBuddies | grep -c '^PEAR_PackageFileManager_Gitrepoonly ') -ne 1 ]; then
 	echo "You need to install the build prerequisites, run:"
 	echo "    make install-build-prereqs"
-        exit 1;
+        exit 1
 fi
 
 if [ $(pear list-channels | grep -c '^pear.pirum-project.org ') -ne 1 -o $(pear list -c pirum | grep -c '^Pirum ') -ne 1 ]; then
 	echo "You need to install Pirum:"
         echo "    pear channel-discover pear.pirum-project.org"
         echo "    pear install pirum/Pirum-beta"
-        exit 1;
+        exit 1
 fi
 
 # Fetch all the tags, sort them and extract the most recent released version
