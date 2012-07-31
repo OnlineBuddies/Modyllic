@@ -70,7 +70,7 @@ $options['packagefile'] = $output;
 $options['roles']['md'] = 'doc';
 $options['roles']['t'] = 'test';
 $options['dir_roles']['testlib'] = 'test';
-$options['dir_roles']['tests'] = 'test';
+$options['dir_roles']['test'] = 'test';
 
 // Don't bundle our build files
 $options['ignore'][] = 'Makefile';
