@@ -845,7 +845,7 @@ class Modyllic_Generator_PHP {
         return $this;
     }
     function arg_validate_numeric(Modyllic_Schema_Arg $arg) {
-        if ( $arg->type instanceOf Modyllic_Type_TinyInt and $arg->type->length == 1 ) {
+        if ( $arg->type instanceOf Modyllic_Type_Boolean ) {
             $this->validate_boolean($arg->name);
         }
         else {

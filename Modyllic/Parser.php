@@ -921,16 +921,12 @@ class Modyllic_Parser {
         $column = $this->ctx->add_column(new Modyllic_Schema_Column( $this->assert_ident() ));
         $column->type = $this->get_type();
 
-        $is_unique = false;
-
-        if ( $column->type->name == 'SERIAL' ) {
+        if ( $column->type instanceOf Modyllic_Type_Serial ) {
             // SERIAL is an alias for BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE.
-            $column->type = new Modyllic_Type_BigInt('BIGINT');
-            $column->type->unsigned = true;
             $column->null = false;
             $column->auto_increment = true;
             $column->default = null; # No default
-            $is_unique = true;
+            $column->unique = true;
         }
 
         if ( $column->type instanceOf Modyllic_Type_Timestamp ) {
@@ -941,7 +937,7 @@ class Modyllic_Parser {
         $is_primary = false;
         while ( ! in_array($this->next()->value(), $this->column_term) ) {
             if ( $this->cur() instanceOf Modyllic_Token_Comment ) {
-                $column->docs .= trim( $column->docs . ' ' . $this->cur()->value() );
+                $column->docs = trim( $column->docs . ' ' . $this->cur()->value() );
                 continue;
             }
             $this->assert_reserved();
@@ -973,7 +969,7 @@ class Modyllic_Parser {
                 if ( $this->maybe('KEY') ) {
                     $this->get_reserved();
                 }
-                $is_unique = true;
+                $column->unique = true;
             }
             else if ( $this->cur()->token() == 'AUTO_INCREMENT' ) {
                 $column->auto_increment = true;
@@ -1003,7 +999,7 @@ class Modyllic_Parser {
                         $key->reference['on_update'] = $this->get_reserved();
                     }
                     else if ( $this->peek_next() instanceOf Modyllic_Token_Comment ) {
-                        $column->docs .= trim( $column->docs . ' ' . $this->next()->value() );
+                        $column->docs = trim( $column->docs . ' ' . $this->next()->value() );
                     }
                     else {
                         break;
@@ -1014,7 +1010,7 @@ class Modyllic_Parser {
                 $this->add_index( $key );
             }
             else if ( $this->cur()->token() == 'COMMENT' ) {
-                $column->docs .= trim( $column->docs . ' ' . $this->get_string() );
+                $column->docs = trim( $column->docs . ' ' . $this->get_string() );
             }
             else {
                 throw $this->error("Unknown token in column declaration: ".$this->cur()->debug());
@@ -1026,10 +1022,11 @@ class Modyllic_Parser {
             $index->columns = array($column->name => false);
             $this->add_index( $index );
         }
-        else if ( $is_unique ) {
+        else if ( $column->unique ) {
             $index = new Modyllic_Schema_Index($column->name);
             $index->unique = true;
             $index->columns = array($column->name => false);
+            $index->column_defined = true;
             $this->add_index( $index );
         }
         return $column;
@@ -1140,7 +1137,7 @@ class Modyllic_Parser {
                 $key->reference['on_update'] = $this->get_reserved();
             }
             else if ( $this->cur() instanceOf Modyllic_Token_Comment ) {
-                $key->docs .= trim( $key->docs . ' ' . $this->cur()->value() );
+                $key->docs = trim( $key->docs . ' ' . $this->cur()->value() );
             }
             else {
                 throw $this->error( "Error in foreign key declaration in ".$this->ctx->name.", expecting one of ".
