@@ -187,7 +187,8 @@ class Modyllic_Diff {
             }
 
             # First let's build some column maps:
-            $tonames = array(); $fromnames = array();
+            $tonames = array();
+            $fromnames = array();
             foreach ( $totable->columns as $toname=>$tocolumn ) {
                 # If the totable name is in the fromtable...
                 if ( isset($fromtable->columns[$toname]) ) {
