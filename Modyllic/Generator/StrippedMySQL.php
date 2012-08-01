@@ -6,15 +6,16 @@
  * @author astewart@online-buddies.com
  */
 
+/*
+ * The stripped MySQL class is ModyllicSQL with the language extensions
+ * excised but no SQLMETA table, plus the MySQL stock headers.
+ */
 class Modyllic_Generator_StrippedMySQL extends Modyllic_Generator_MySQL {
-    // We include weak constraints as well as regular ones
-    function ignore_index( Modyllic_Schema_Index $index ) {
-        return false;
-    }
 
-    function create_sqlmeta() {}
-    function drop_sqlmeta() {}
-    function insert_meta($kind,$which,array $what) {}
-    function delete_meta($kind,$which) {}
-    function update_meta($kind,$which,array $what) {}
+    function table_meta($table) { return array(); }
+    function column_meta( Modyllic_Schema_Column $col) { return array(); }
+    function index_meta($index) { return array(); }
+    function routine_arg_meta( Modyllic_Schema_Arg $arg ) { return array(); }
+    function routine_meta($routine) { return array(); }
+
 }
