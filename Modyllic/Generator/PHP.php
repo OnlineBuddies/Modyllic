@@ -515,7 +515,12 @@ class Modyllic_Generator_PHP {
             $this->routine_sep();
         }
         $this->end_class( $class );
-        return $this->php;
+        return $this->get_and_flush_php();
+    }
+    function get_and_flush_php() {
+        $php = $this->php;
+        $this->php = "";
+        return $php;
     }
     function preamble( $class ) {
         $this->cmd('<?php');
@@ -743,6 +748,18 @@ class Modyllic_Generator_PHP {
              ->end_assert();
         return $this;
     }
+    function validate_boolean($name) {
+        $this->begin_assert()
+               ->func_var('is_null',$name)
+               ->op('or')
+               ->func_var( 'is_bool', $name )
+               ->op('or')
+               ->op_var( $name, "===", 1 )
+               ->op('or')
+               ->op_var( $name, "===", 0 )
+             ->end_assert();
+        return $this;
+    }
     function validate_nonnumeric($name) {
         $this->begin_assert()
                ->func_var('is_null',$name)
@@ -828,12 +845,17 @@ class Modyllic_Generator_PHP {
         return $this;
     }
     function arg_validate_numeric(Modyllic_Schema_Arg $arg) {
-        $this->validate_numeric($arg->name);
-        if ( $arg->type->unsigned ) {
-            $this->validate_unsigned($arg->name);
+        if ( $arg->type instanceOf Modyllic_Type_Boolean ) {
+            $this->validate_boolean($arg->name);
         }
-        if ( $arg->type instanceOf Modyllic_Type_Integer ) {
-            $this->validate_integer($arg->name);
+        else {
+            $this->validate_numeric($arg->name);
+            if ( $arg->type->unsigned ) {
+                $this->validate_unsigned($arg->name);
+            }
+            else if ( $arg->type instanceOf Modyllic_Type_Integer ) {
+                $this->validate_integer($arg->name);
+            }
         }
         return $this;
     }

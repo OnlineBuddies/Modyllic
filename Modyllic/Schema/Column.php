@@ -17,6 +17,7 @@ class Modyllic_Schema_Column extends Modyllic_Diffable {
     public $null = true;
     public $default = "NULL";
     public $auto_increment = false;
+    public $unique = false;
     public $on_update;
     public $docs = "";
     public $after;
@@ -40,6 +41,7 @@ class Modyllic_Schema_Column extends Modyllic_Diffable {
         if ( $this->null != $other->null ) { return false; }
         if ( $this->default != $other->default ) { return false; }
         if ( $this->auto_increment != $other->auto_increment ) { return false; }
+        if ( $this->unique != $other->unique ) { return false; }
         if ( $this->on_update != $other->on_update ) { return false; }
         if ( $this->aliases != $other->aliases ) { return false; }
         return true;

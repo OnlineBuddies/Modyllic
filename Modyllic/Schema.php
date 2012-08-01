@@ -153,13 +153,29 @@ class Modyllic_Schema extends Modyllic_Diffable {
                             $obj = $this->routines[$which];
                         }
                         break;
+                    case 'ARG':
+                        list($routine,$arg) = explode(".",$which);
+                        if ( isset($this->routines[$routine]) and isset($this->routines[$routine]->args[$arg]) ) {
+                            $obj = $this->routines[$routine]->args[$arg];
+                        }
                     default:
                         throw new Exception("Unknown kind of metadata $kind found in SQLMETA");
                         break;
                 }
                 if ( isset($obj) ) {
                     foreach ($meta as $metakey=>&$metavalue) {
-                        $obj->$metakey = $metavalue;
+                        # Types are always a type object, which we'll
+                        # recreate via cloning if a different type spec is
+                        # requested.  This allows us to round trip things
+                        # like BOOLEAN and SERIAL.
+                        if ( $metakey == "type" ) {
+                            $new_type = Modyllic_Type::create($metavalue);
+                            $new_type->clone_from( $obj->type );
+                            $obj->type = $new_type;
+                        }
+                        else {
+                            $obj->$metakey = $metavalue;
+                        }
                     }
                 }
             }
