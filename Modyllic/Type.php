@@ -29,9 +29,7 @@ abstract class Modyllic_Type {
             case "BIGINT":
                 return new Modyllic_Type_BigInt($type);
             case "SERIAL":
-                $new = new Modyllic_Type_BigInt($type);
-                $new->unsigned = true;
-                return $new;
+                return new Modyllic_Type_Serial($type);
             case "FLOAT":
                 return new Modyllic_Type_Float($type);
             case "REAL":

@@ -23,26 +23,43 @@ class Modyllic_Generator_MySQL {
 
     function sqlmeta_exists(Modyllic_Schema $schema) {
         foreach ($schema->tables as $table) {
-            if ( count($this->table_meta($table)) ) {
+            if ($this->table_sqlmeta_exists($table)) {
                 return true;
-            }
-            foreach ($table->columns as $column) {
-                if ( count($this->column_meta($column)) ) {
-                    return true;
-                }
-            }
-            foreach ($table->indexes as $index) {
-                if ( count($this->index_meta($index)) ) {
-                    return true;
-                }
             }
         }
         foreach ($schema->routines as $routine) {
-            if ( count($this->routine_meta($routine)) ) {
+            if ($this->routine_sqlmeta_exists($routine)) {
                 return true;
             }
         }
         return false;
+    }
+
+    function table_sqlmeta_exists(Modyllic_Schema_Table $table) {
+        if ( count($this->table_meta($table)) ) {
+            return true;
+        }
+        foreach ($table->columns as $column) {
+            if ( count($this->column_meta($column)) ) {
+                return true;
+            }
+        }
+        foreach ($table->indexes as $index) {
+            if ( count($this->index_meta($index)) ) {
+                return true;
+            }
+        }
+    }
+
+    function routine_sqlmeta_exists($routine) {
+        if ( count($this->routine_meta($routine)) ) {
+            return true;
+        }
+        foreach ($routine->args as $arg) {
+            if (count($this->routine_arg_meta($arg))) {
+                return true;
+            }
+        }
     }
 
     function set_what($what) {
@@ -406,7 +423,7 @@ class Modyllic_Generator_MySQL {
         $this->table_docs( $table );
         $this->extend( "CREATE TABLE %id (", $table->name );
         $this->indent();
-        $indexes = $table->indexes;
+        $indexes = array_filter( $table->indexes, array($this,"active_index_filter") );
         $entries = count($table->columns) + count($indexes);
         $completed = 0;
         foreach ( $table->columns as $column ) {
@@ -554,12 +571,20 @@ class Modyllic_Generator_MySQL {
     }
 
     function column_meta( Modyllic_Schema_Column $col) {
+        $meta = array();
         if ( count($col->aliases) ) {
-            return array( "aliases" => $col->aliases );
+            $meta["aliases"] = $col->aliases;
         }
-        else {
-            return array();
+        if ( $col->type instanceOf Modyllic_Type_Boolean ) {
+            $meta["type"] = "BOOLEAN";
         }
+        else if ( $col->type instanceOf Modyllic_Type_Serial ) {
+            $meta["type"] = "SERIAL";
+        }
+        if ( $col->unique ) {
+            $meta["unique"] = $col->unique;
+        }
+        return $meta;
     }
 
     function add_column( Modyllic_Schema_Column $column ) {
@@ -603,11 +628,13 @@ class Modyllic_Generator_MySQL {
         else {
             $this->extend("%id %lit", $column->name, $column->type->to_sql() );
         }
-        if ( ! $column->null ) {
-            $this->add( " NOT NULL" );
-        }
-        if ( $column->auto_increment ) {
-            $this->add( " auto_increment" );
+        if ( ! $column->type instanceOf Modyllic_Type_Serial ) {
+            if ( ! $column->null ) {
+                $this->add( " NOT NULL" );
+            }
+            if ( $column->auto_increment ) {
+                $this->add( " auto_increment" );
+            }
         }
         if ( ! is_null($column->default) ) {
             if ( !$column->null or $column->default!='NULL' ) {
@@ -620,21 +647,23 @@ class Modyllic_Generator_MySQL {
         if ( $with_key and $column->is_primary ) {
             $this->add( " PRIMARY KEY" );
         }
+        if ( $with_key and $column->unique and ! $column->type instanceOf Modyllic_Type_Serial ) {
+            $this->add( " UNIQUE" );
+        }
         return $this;
     }
 
     function index_meta($index) {
+        $meta = array();
         if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
             if ( $index->weak != Modyllic_Schema_Index_Foreign::WEAK_DEFAULT ) {
-                return array( "weak" => $index->weak );
-            }
-            else {
-                return array();
+                $meta["weak"] = $index->weak;
             }
         }
-        else {
-            return array();
+        if ( $index->column_defined ) {
+            $meta["column_defined"] = $index->column_defined;
         }
+        return $meta;
     }
 
     function add_index( $index ) {
@@ -659,8 +688,17 @@ class Modyllic_Generator_MySQL {
         return $this;
     }
 
+    function active_index_filter($index) {
+        return ! $this->ignore_index($index);
+    }
+
     function ignore_index(Modyllic_Schema_Index $index ) {
         if ( $index instanceOf Modyllic_Schema_Index_Foreign and $index->weak ) {
+            return true;
+        }
+        # Indexes associated with columns definitions will be created by
+        # that column definition.
+        else if ( $index->column_defined ) {
             return true;
         }
         else {
@@ -855,7 +893,7 @@ class Modyllic_Generator_MySQL {
         return $this;
     }
 
-    function routine_attrs( Modyllic_Schema_Routine $routine ) {
+    function routine_attrs( $routine ) {
         if ( $routine->access != Modyllic_Schema_Routine::ACCESS_DEFAULT ) {
             $this->extend( $routine->access );
         }
@@ -902,7 +940,18 @@ class Modyllic_Generator_MySQL {
         return $this;
     }
 
-    function routine_arg( $arg, $indent="" ) {
+    function routine_arg_meta( Modyllic_Schema_Arg $arg ) {
+        $meta = array();
+        if ( $arg->type instanceOf Modyllic_Type_Boolean ) {
+            $meta["type"] = "BOOLEAN";
+        }
+        else if ( $arg->type instanceOf Modyllic_Type_Serial ) {
+            $meta["type"] = "SERIAL";
+        }
+        return $meta;
+    }
+
+    function routine_arg( $routine, Modyllic_Schema_Arg $arg, $indent="" ) {
         if ( $arg->dir != "IN" ) {
             $dir = $arg->dir . " ";
         }
@@ -910,6 +959,7 @@ class Modyllic_Generator_MySQL {
             $dir = "";
         }
         $this->extend( "%lit%id %lit", $dir, $arg->name, $arg->type->to_sql() );
+        $this->insert_meta( "ARG", $routine->name . "." . $arg->name, $this->routine_arg_meta($arg) );
         return $this;
     }
 
@@ -924,10 +974,10 @@ class Modyllic_Generator_MySQL {
             $arg = $routine->args[$ii];
             if ( $routine->from and isset($routine->from->args[$ii]) and ! $arg->equal_to($routine->from->args[$ii]) ) {
                 $this->reindent("--  ");
-                $this->routine_arg( $routine->from->args[$ii] );
+                $this->routine_arg( $routine, $routine->from->args[$ii] );
                 $this->reindent();
             }
-            $this->routine_arg( $arg );
+            $this->routine_arg( $routine, $arg );
             if ( $ii < ($argc-1) ) {
                 $this->add(",");
             }
@@ -1105,7 +1155,10 @@ class Modyllic_Generator_MySQL {
 // SQL document wrapper
 
     function sql_document($delim=";", $sep=false) {
-        $sql = implode(";\n",$this->sql_header()) . ";\n";
+        $sql = "";
+        if ( $sql_header = $this->sql_header() ) {
+           $sql .= implode(";\n", $sql_header) . ";\n";
+        }
         if ( $delim != ";" ) {
             $sql .= "DELIMITER $delim\n";
         }
@@ -1115,7 +1168,9 @@ class Modyllic_Generator_MySQL {
         if ( $delim != ";" ) {
             $sql .= "DELIMITER ;\n";
         }
-        $sql .= implode(";\n",$this->sql_footer()) . ";\n";
+        if ( $sql_footer = $this->sql_footer() ) {
+           $sql .= implode(";\n", $sql_footer) . ";\n";
+        }
         return $sql;
     }
 

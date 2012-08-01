@@ -13,10 +13,17 @@ class Modyllic_Generator_ModyllicSQL extends Modyllic_Generator_MySQL {
 
     // We include weak constraints as well as regular ones
     function ignore_index(Modyllic_Schema_Index $index ) {
-        return false;
+        if ( $index->column_defined ) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     function create_sqlmeta() {}
+    function sql_header() { return array(); }
+    function sql_footer() { return array(); }
     function insert_meta($kind,$which,array $what) {}
     function delete_meta($kind,$which) {}
     function update_meta($kind,$which,array $meta) {}
@@ -54,7 +61,7 @@ class Modyllic_Generator_ModyllicSQL extends Modyllic_Generator_MySQL {
            $this->add( " ON UPDATE %lit", $index->references['on_update'] );
         }
     }
-    function routine_attrs( Modyllic_Schema_Routine $routine ) {
+    function routine_attrs( $routine ) {
         if ( $routine->args_type != Modyllic_Schema_Routine::ARGS_TYPE_DEFAULT ) {
             $this->extend("ARGS %lit",$routine->args_type);
         }

@@ -37,4 +37,10 @@ class Modyllic_Generator {
         }
         return self::$dialect_map[$dialect];
     }
+
+    static public function create($dialect, array $args) {
+        $class = self::dialect_to_class($dialect);
+        $reflectionObj = new ReflectionClass($class);
+        return $reflectionObj->newInstanceArgs($reflectionObj);
+    }
 }
