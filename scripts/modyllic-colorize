@@ -9,75 +9,83 @@
 
 require_once "Modyllic/CommandLine.php";
 
-$filename = "php://stdin";
-if ( count($argv)==2 ) {
-    $filename = $argv[1];
-}
-else if (count($argv)>2) {
-    error_log("Form: sqlcolorize filename.sql");
-    error_log("      cat filename.sql | sqlcolorize");
-    exit(1);
-}
-$sql = file_get_contents($filename);
-$sql = preg_replace('/\r/','',$sql);
-$tok = new Modyllic_Tokenizer($sql);
-$tok->set_delimiter( ';' );
-$color = CLEAR();
-print $color;
-while ( !$tok->next(true) instanceOf Modyllic_Token_EOF ) {
-    if ( $tok->cur instanceOf Modyllic_Token_Reserved ) {
-        $newcolor = BRIGHT_RED();
-    }
-    else if ( $tok->cur instanceOf Modyllic_Token_Num ) {
-        $newcolor = BRIGHT_CYAN();
-    }
-    else if ( $tok->cur instanceOf Modyllic_Token_String ) {
-        $newcolor = CYAN();
-    }
-    else if ( $tok->cur instanceOf Modyllic_Token_Symbol ) {
-        $newcolor = BRIGHT_RED();
-    }
-    else if ( $tok->cur instanceOf Modyllic_Token_Ident and ! $tok->cur instanceOf Modyllic_Token_Ident_Quoted and
-              Modyllic_SQL::is_reserved($tok->cur->value()) ) {
-        $newcolor = BRIGHT_RED();
-    }
-    else if ( $tok->cur instanceOf Modyllic_Token_Comment ) {
-        $newcolor = GREEN();
-    }
-    else if ( $tok->cur instanceOf Modyllic_Token_Delim ) {
-        $newcolor = BRIGHT_WHITE();
-    }
-    else if ( $tok->cur instanceOf Modyllic_Token_Error ) {
-        $newcolor = RED();
-    }
-    else {
-        $newcolor = CLEAR();
-    }
-    if ( $color != $newcolor ) {
-        if ( $color != CLEAR() and $newcolor != CLEAR() ) {
-            print CLEAR();
-        }
-        print $newcolor;
-        $color = $newcolor;
-    }
-    $lines = explode("\n",$tok->cur->literal());
-    print array_shift($lines);
-    if (count($lines)) {
-        foreach ($lines as $line) {
-            if ($color != CLEAR() ) {
-                print CLEAR()."\n".$color;
-            }
-            else {
-                print "\n";
-            }
-            print $line;
-        }
-    }
-}
-if ( $color != CLEAR() ) {
-    print CLEAR();
+$args = Modyllic_CommandLine::get_args(array(
+    'description' => 'Colorize SQL from a file or standard input',
+    'arguments' => array(
+        'filename' => array('optional'=>true) )));
+
+$filename = $args->args['filename'];
+
+if ( $filename == "" ) {
+    $filename = "php://stdin";
 }
 
+try {
+    $sql = file_get_contents($filename);
+
+    $sql = preg_replace('/\r/','',$sql);
+    $tok = new Modyllic_Tokenizer($sql);
+    $tok->set_delimiter( ';' );
+    $color = CLEAR();
+    print $color;
+    while ( !$tok->next(true) instanceOf Modyllic_Token_EOF ) {
+        if ( $tok->cur instanceOf Modyllic_Token_Reserved ) {
+            $newcolor = BRIGHT_RED();
+        }
+        else if ( $tok->cur instanceOf Modyllic_Token_Num ) {
+            $newcolor = BRIGHT_CYAN();
+        }
+        else if ( $tok->cur instanceOf Modyllic_Token_String ) {
+            $newcolor = CYAN();
+        }
+        else if ( $tok->cur instanceOf Modyllic_Token_Symbol ) {
+            $newcolor = BRIGHT_RED();
+        }
+        else if ( $tok->cur instanceOf Modyllic_Token_Ident and ! $tok->cur instanceOf Modyllic_Token_Ident_Quoted and
+                  Modyllic_SQL::is_reserved($tok->cur->value()) ) {
+            $newcolor = BRIGHT_RED();
+        }
+        else if ( $tok->cur instanceOf Modyllic_Token_Comment ) {
+            $newcolor = GREEN();
+        }
+        else if ( $tok->cur instanceOf Modyllic_Token_Delim ) {
+            $newcolor = BRIGHT_WHITE();
+        }
+        else if ( $tok->cur instanceOf Modyllic_Token_Error ) {
+            $newcolor = RED();
+        }
+        else {
+            $newcolor = CLEAR();
+        }
+        if ( $color != $newcolor ) {
+            if ( $color != CLEAR() and $newcolor != CLEAR() ) {
+                print CLEAR();
+            }
+            print $newcolor;
+            $color = $newcolor;
+        }
+        $lines = explode("\n",$tok->cur->literal());
+        print array_shift($lines);
+        if (count($lines)) {
+            foreach ($lines as $line) {
+                if ($color != CLEAR() ) {
+                    print CLEAR()."\n".$color;
+                }
+                else {
+                    print "\n";
+                }
+                print $line;
+            }
+        }
+    }
+    if ( $color != CLEAR() ) {
+        print CLEAR();
+    }
+
+}
+catch (Exception $e) {
+    Modyllic_CommandLine::display_error($e->getMessage());
+}
 
 function CLEAR() { return chr(27).'[0m'; }
 function BLACK() { return chr(27).'[0;30m'; }
