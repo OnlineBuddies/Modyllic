@@ -7,8 +7,7 @@
  * @author bturner@online-buddies.com
  */
 
-require_once "Modyllic/AutoLoader.php";
-Modyllic_AutoLoader::install();
+require_once "Modyllic/CommandLine.php";
 
 require_once "xhprof_lib/utils/xhprof_lib.php";
 require_once "xhprof/xhprof_lib/utils/xhprof_runs.php";
