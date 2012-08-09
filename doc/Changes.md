@@ -1,5 +1,15 @@
 Revision history for PHP module Modyllic
 
+v0.2.4 2012-08-09
+
+* Only wrap general errors for procs that we fetch the results on
+* Fix colorize to make it handle commandline arguments in a standard way--
+  the move to a unified modyllic commandline had broken it.
+* Add an exception->error handler and made using the CommandLine class load
+  it and the autoloader
+* Fix case undefined indexes involving aliases (#186)
+* Make boolean (and serial) persistent metadata in MySQL
+
 v0.2.3 2012-07-30
 
 * Fully automate the release process
