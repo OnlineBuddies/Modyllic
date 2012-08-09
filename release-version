@@ -111,7 +111,7 @@ git checkout upstream-pear
 git pull upstream-pear gh-pages
 
 ./release "Modyllic-$VERSION.tgz"
-git add -A feed.xml index.html rest/*
+git add -A feed.xml index.html rest/* get/*
 git commit -m"Release Modyllic-$VERSION"
 git checkout master
 
