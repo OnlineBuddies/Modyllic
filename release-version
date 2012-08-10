@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e -o pipefail
 VERSION=$1
 DEFAULT_STABILITY=beta
 STABILITY=${2-$DEFAULT_STABILITY}
@@ -64,26 +65,26 @@ fi
 CURRENT=$(git tag | perl -ne 'next unless /^v(\d+)[.](\d+)[.](\d+)$/; printf "%03d.%03d.%03d,%s",$1,$2,$3,$_' | sort | tail -1 | cut -d, -f2)
 
 # Fetch all the commits since the most recent release and put them in the changelog
-echo "# Edit this list of commits down to something a user would want to read" > CHANGELOG.new
+echo "# Edit this list of commits down to something a user would want to read" > CHANGELOG.raw
 git log --format="* %s (%aN)" ${CURRENT}.. --ancestry-path  --no-merges > git.log
 if [ ! -s git.log ]; then
 	git log --format="* %s (%aN)" ${CURRENT}.. --topo-order  --no-merges > git.log
 fi
-cat git.log >> CHANGELOG.new
+cat git.log >> CHANGELOG.raw
 rm git.log
 
 # Have the user edit the changelog into something human readable, using
 # in order of preference, $VISUAL, $EDITOR, sensible-editor or vi.
 VISUAL=${VISUAL-${EDITOR-$(which sensible-editor || which vi)}}
-$VISUAL CHANGELOG.new
-grep -v '^#' CHANGELOG.new > CHANGELOG
-rm CHANGELOG.new
+$VISUAL CHANGELOG.raw
+grep -v '^#' CHANGELOG.raw > CHANGELOG.new
+rm CHANGELOG.raw
 
 # Build a package.xml
 php build-package-xml base.xml package.xml $VERSION $STABILITY
 
 # Add the changelog to the wiki
-php build-changelog v$VERSION CHANGELOG > Changes.md-new
+php build-changelog v$VERSION CHANGELOG.new > Changes.md-new
 git checkout upstream-wiki
 git pull upstream-wiki master
 mv Changes.md-new Changes.md
@@ -99,6 +100,7 @@ git fetch upstream-testlib
 git merge -s subtree upstream-testlib/master || $SHELL
 
 # Commit the changelog
+mv CHANGELOG.new CHANGELOG
 git add CHANGELOG
 git commit -m"Release Modyllic-$VERSION"
 
