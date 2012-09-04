@@ -814,7 +814,7 @@ class Modyllic_Generator_PHP {
         $this->begin_assert()
                ->func_var('is_null',$name)
                ->op('or')
-               ->op_var('var','==',0)
+               ->op_var($name,'==',0)
                ->op('or')
                ->preg_match('/^\d{14}$/' , $name)
              ->end_assert();
@@ -824,7 +824,7 @@ class Modyllic_Generator_PHP {
         $this->begin_assert()
                ->func_var('is_null',$name)
                ->op('or')
-               ->op_var('var','==',0)
+               ->op_var($name,'===',0)
                ->op('or')
                ->preg_match('/^\d\d(?:\d\d)?$/' , $name)
              ->end_assert();
