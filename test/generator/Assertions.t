@@ -13,6 +13,7 @@ $delim = "DELIMITER ;;\n";
 $datatypes = array();
 $datatypes[] = "BOOLEAN";
 $assert_results[] = array(
+    array( null, true ),
     array( 0, true ),
     array( 1, true ),
     array( false, true ),
@@ -22,6 +23,48 @@ $assert_results[] = array(
     array( "", false ),
     array( array(), false ),
 );
+$datatypes[] = "YEAR";
+$assert_results[] = array(
+    array(   null, true ),
+    array(      0, true ),
+    array(   "99", true ),
+    array( "1999", true ),
+    array(  "abc", false ),
+    array(      5, false ),
+    array(  12345, false ),
+);
+$datatypes[] = "FLOAT";
+$assert_results[] = array(
+    array(   null, true ),
+    array(    123, true ),
+    array(  "456", true ),
+    array(  "45a", false ),
+    array(  "1.3", true ),
+    array(  "5e7", true ),
+    array(   12.2, true ),
+);
+$datatypes[] = "INTEGER";
+$assert_results[] = array(
+    array(   null, true ),
+    array(    123, true ),
+    array(  "456", true ),
+    array(  "45a", false ),
+    array(  "1.3", false ),
+    array(  "5e7", true ),
+    array(    1.5, false ),
+    array(     -3, true ),
+);
+$datatypes[] = "INTEGER UNSIGNED";
+$assert_results[] = array(
+    array(   null, true ),
+    array(    123, true ),
+    array(  "456", true ),
+    array(  "45a", false ),
+    array(  "1.3", false ),
+    array(  "5e7", true ),
+    array(    1.5, false ),
+    array(     -3, false ),
+);
 
 plan('no_plan');
 
@@ -29,7 +72,7 @@ $parser = new Modyllic_Parser();
 
 $sql = $delim;
 foreach ($datatypes as $num => $datatype) {
-    $sql .= "CREATE PROCEDURE test$num( testvar $datatype ) BEGIN END";
+    $sql .= "CREATE PROCEDURE test$num( testvar $datatype ) BEGIN END $delim\n";
 }
 
 $schema = $parser->parse($sql);
@@ -61,6 +104,9 @@ foreach ( $schema->routines as $name=>$routine ) {
     $gen->args_validate($routine);
 
     $php = $gen->get_and_flush_php();
+    foreach (explode("\n",trim($php)) as $line) {
+        diag($line);
+    }
 
     foreach ( $assert_results[$num] as $assertion ) {
         list( $testvar, $expectedValue ) = $assertion;

@@ -426,10 +426,12 @@ class Modyllic_Generator_PHP {
         $this->end_cmd('',';');
         return $this;
     }
-    function add_return($var) {
-        $this->begin_return()
-               ->add_var($var)
-             ->end_return();
+    function add_return($var=null) {
+        $this->begin_return();
+        if ( isset($var) ) {
+            $this->add_var($var);
+        }
+        $this->end_return();
         return $this;
     }
     function add_false() {
@@ -730,14 +732,6 @@ class Modyllic_Generator_PHP {
              ->end_assert();
         return $this;
     }
-    function validate_unsigned($name) {
-        $this->begin_assert()
-               ->func_var('is_null',$name)
-               ->op('or')
-               ->op_var($name,">=",0)
-             ->end_assert();
-        return $this;
-    }
     function validate_integer($name) {
         $this->begin_assert()
                ->func_var('is_null',$name)
@@ -747,6 +741,18 @@ class Modyllic_Generator_PHP {
                ->end_op_var()
              ->end_assert();
         return $this;
+    }
+    function validate_integer_range($name,$type) {
+        list($min,$max) = $type->get_range();
+        $this->begin_assert()
+               ->func_var('is_null',$name)
+               ->op('or')
+               ->begin_group()
+                 ->op_var( $name, '>=', $min )
+                 ->op('and')
+                 ->op_var( $name, '<=', $max )
+               ->end_group()
+             ->end_assert();
     }
     function validate_boolean($name) {
         $this->begin_assert()
@@ -850,11 +856,9 @@ class Modyllic_Generator_PHP {
         }
         else {
             $this->validate_numeric($arg->name);
-            if ( $arg->type->unsigned ) {
-                $this->validate_unsigned($arg->name);
-            }
-            else if ( $arg->type instanceOf Modyllic_Type_Integer ) {
+            if ( $arg->type instanceOf Modyllic_Type_Integer ) {
                 $this->validate_integer($arg->name);
+                $this->validate_integer_range($arg->name,$arg->type);
             }
         }
         return $this;
@@ -1243,7 +1247,7 @@ class Modyllic_Generator_PHP {
                ->add_var('row')
              ->end_cmd(') ) {')
              ->begin_block()
-               ->cmd('return',';')
+               ->add_return()
              ->end_block('}');
         $this->begin_assert()
                ->begin_cmd( 'isset(' )
