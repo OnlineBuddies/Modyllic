@@ -26,7 +26,7 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
     function foreign_key_weakly_references(Modyllic_Schema_Index $index) {
         $this->foreign_key_regular_references($index);
     }
-    
+
     function routine_attr_args($routine) {}
     function routine_attr_proc_returns($routine) {}
     function routine_attr_transactions($routine) {}

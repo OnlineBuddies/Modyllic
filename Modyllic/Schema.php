@@ -158,8 +158,9 @@ class Modyllic_Schema extends Modyllic_Diffable {
                         if ( isset($this->routines[$routine]) and isset($this->routines[$routine]->args[$arg]) ) {
                             $obj = $this->routines[$routine]->args[$arg];
                         }
+                        break;
                     default:
-                        throw new Exception("Unknown kind of metadata $kind found in SQLMETA");
+                        throw new Exception("Unknown kind of metadata '$kind' found in SQLMETA");
                         break;
                 }
                 if ( isset($obj) ) {
