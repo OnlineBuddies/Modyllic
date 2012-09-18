@@ -7,6 +7,7 @@
  */
 
 class Modyllic_Type_BigInt extends Modyllic_Type_Integer {
+    public $bytes_of_storage = 8;
     public $default_length = 20;
 }
 

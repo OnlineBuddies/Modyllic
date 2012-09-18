@@ -7,6 +7,7 @@
  */
 
 class Modyllic_Type_MediumInt extends Modyllic_Type_Integer {
+    public $bytes_of_storage = 3;
     public $default_length = 9;
 }
 
