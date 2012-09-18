@@ -842,6 +842,7 @@ class Modyllic_Generator_ModyllicSQL {
         }
         if ( $dometa ) {
             $this->insert_meta("ROUTINE",$routine->name, $this->routine_meta($routine) );
+            $this->routine_args_meta($routine);
         }
         return $this;
     }
@@ -853,6 +854,7 @@ class Modyllic_Generator_ModyllicSQL {
         $tometa = $this->routine_meta($routine);
         if ( $frommeta != $tometa ) {
             $this->update_meta("ROUTINE",$routine->name,$tometa);
+            $this->routine_args_meta($routine);
         }
         return $this;
     }
@@ -869,6 +871,7 @@ class Modyllic_Generator_ModyllicSQL {
         }
         if ( $dometa ) {
             $this->delete_meta("ROUTINE",$routine->name );
+            $this->drop_routine_args_meta($routine);
         }
         return $this;
     }
@@ -971,7 +974,7 @@ class Modyllic_Generator_ModyllicSQL {
         return array();
     }
 
-    function routine_arg( $routine, Modyllic_Schema_Arg $arg, $indent="" ) {
+    function routine_arg( Modyllic_Schema_Arg $arg, $indent="" ) {
         if ( $arg->dir != "IN" ) {
             $dir = $arg->dir . " ";
         }
@@ -979,8 +982,18 @@ class Modyllic_Generator_ModyllicSQL {
             $dir = "";
         }
         $this->extend( "%lit%id %lit", $dir, $arg->name, $arg->type->to_sql() );
-        $this->insert_meta( "ARG", $routine->name . "." . $arg->name, $this->routine_arg_meta($arg) );
         return $this;
+    }
+
+    function routine_args_meta( $routine ) {
+        foreach ($routine->args as $arg) {
+            $this->update_meta( "ARG", $routine->name . "." . $arg->name, $this->routine_arg_meta($arg) );
+        }
+    }
+    function drop_routine_args_meta( $routine ) {
+        foreach ($routine->args as $arg) {
+            $this->drop_meta( "ARG", $routine->name . "." . $arg->name );
+        }
     }
 
     function routine_args( $routine ) {
@@ -994,10 +1007,10 @@ class Modyllic_Generator_ModyllicSQL {
             $arg = $routine->args[$ii];
             if ( $routine->from and isset($routine->from->args[$ii]) and ! $arg->equal_to($routine->from->args[$ii]) ) {
                 $this->reindent("--  ");
-                $this->routine_arg( $routine, $routine->from->args[$ii] );
+                $this->routine_arg( $routine->from->args[$ii] );
                 $this->reindent();
             }
-            $this->routine_arg( $routine, $arg );
+            $this->routine_arg( $arg );
             if ( $ii < ($argc-1) ) {
                 $this->add(",");
             }
