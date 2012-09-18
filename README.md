@@ -40,8 +40,8 @@ following:
 Available tools:
 
 `modyllic migrate DSN SCHEMA` - Make the live database at DSN look like the one
-described by SCHEMA.  You could think of it as running "sqldiff DSN
-SCHEMA" and applying the diff to the live database.
+described by SCHEMA.  You could think of it as running `modyllic diff -d MySQL DSN
+SCHEMA` and applying the diff to the live database.
 
 `modyllic diff SCHEMA1 SCHEMA2` - Produce the ALTER statements etc. that would
 make SCHEMA1 look like SCHEMA2.  This is smarter than running "diff"
