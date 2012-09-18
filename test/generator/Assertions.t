@@ -66,6 +66,25 @@ $assert_results[] = array(
     array(     -3, false ),
 );
 
+$datatypes[] = "DATETIME";
+$assert_results[] = array(
+    array(                  null, true ),
+    array(                     0, true ),
+    array(                   "0", true ),
+    array(          "2012-01-01", true ),
+    array(            "2012-1-1", true ),
+    array(               "5-1-1", true ),
+    array(        "2012-01-01 7", true ),
+    array(      "2012-01-01 7:1", true ),
+    array(    "2012-01-01 7:1:8", true ),
+    array(  "2012-09-18 0:00:00", true ),
+    array( "2012-01-01 07:01:08", true ),
+    array(              "wibble", false ),
+    array(                    "", false ),
+    array(                 "2012", false ),
+    array(               "2012-1", false ),
+);
+
 plan('no_plan');
 
 $parser = new Modyllic_Parser();
@@ -107,40 +126,43 @@ foreach ( $schema->routines as $name=>$routine ) {
     foreach (explode("\n",trim($php)) as $line) {
         diag($line);
     }
-
+    
     foreach ( $assert_results[$num] as $assertion ) {
         list( $testvar, $expectedValue ) = $assertion;
 
         $assert_result = true;
-        eval( $php ); // if an assert fails in here, it will set
-                      // assert_result to false
+        eval( $php );  // The assert handler will set assert_result to false
+                       // if an assertion fails
 
         $should = "should" . ($expectedValue ? "" : " not");
-        $testedValue = gettype($testvar);
+        $testedValue = debug_var($testvar);
 
-        if ( is_bool($testvar) ) {
-            $testedValue .= ": ".($testvar ? "TRUE" : "FALSE");
-        }
-        else if ( is_string($testvar) ) {
-            $str = $testvar;
-            $str = preg_replace('/\\\/', '\\\\', $str);
-            $str = preg_replace('/\'/', '\\\'', $str);
-            $testedValue .= ": '$str'";
-        }
-        else if ( is_scalar($testvar) ) {
-            $testedValue .= ": ".$testvar;
-        }
-        else if ( is_null($testvar) or is_array($testvar) ) {
-        }
-        else {
-            $testedValue .= ": ".print_r( $testvar, true );
-        }
-
-        if ( ! ok($assert_result == $expectedValue, "{$datatypes[$num]}: $should accept $testedValue" ) ) {
-            diag( "        ". preg_replace('/\n/',"\n#         ", trim($php)) );
+        if ( ! ok($assert_result === $expectedValue, "{$datatypes[$num]}: $should accept $testedValue" ) ) {
+            diag( "        Assertion result was: ". debug_var($assert_result) );
         }
 
     }
-
 }
 
+function debug_var($var) {
+    $output = gettype($var);
+
+    if ( is_bool($var) ) {
+        $output .= ": ".($var ? "TRUE" : "FALSE");
+    }
+    else if ( is_string($var) ) {
+        $str = $var;
+        $str = preg_replace('/\\\/', '\\\\', $str);
+        $str = preg_replace('/\'/', '\\\'', $str);
+        $output .= ": '$str'";
+    }
+    else if ( is_scalar($var) ) {
+        $output .= ": ".$var;
+    }
+    else if ( is_null($var) or is_array($var) ) {
+    }
+    else {
+        $output .= ": ".print_r( $var, true );
+    }
+    return $output;
+}
