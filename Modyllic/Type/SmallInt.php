@@ -7,6 +7,7 @@
  */
 
 class Modyllic_Type_SmallInt extends Modyllic_Type_Integer {
+    public $bytes_of_storage = 2;
     public $default_length = 6;
 }
 
