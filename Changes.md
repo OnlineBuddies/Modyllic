@@ -6,14 +6,7 @@ v0.2.5 2012-09-19
 * Fix metadata generation for routine attributes
 * Fix assertion on constant variable name
 * Improve integer assertions
-* Publication related fixes
-
-v0.2.5 2012-09-19
-
-* Add DateTime assertion tests and correct DateTime assertions
-* Fix metadata generation for routine attributes
-* Fix assertion on constant variable name
-* Improve integer assertions
+* A variety of release related fixes
 
 v0.2.4 2012-08-09
 
