@@ -3,7 +3,7 @@ to allow the tool to handle more complicated schema changes, for instance,
 moving a column from one table to another without losing data.
 
 These are conceptually similar to DDL triggers, but these are of course,
-only run by sqldiff or migrate and not on general changes to the
+only run by [modyllic diff] or [modyllic migrate] and not on general changes to the
 database.  They also insist on greater filtering then, for instance,
 Oracle's DDL triggers.
 

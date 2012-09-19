@@ -1,44 +1,15 @@
-Setting up
+Publishing
 ==========
 
-First, you need to have Pirum installed:
+The release-version command will try to install its prerequisites by calling
+`make isntall-dist-prereqs`.  If you run into problems with this (for
+instance, due to the pear install commands), see the Manual Setup section.
 
-1. `pear channel-discover pear.pirum-project.org`
-2. `pear install pirum/Pirum-beta`
-
-You'll need to have the OLB pear repository, in order to publish the PEAR update:
-
-1. `git clone git://github.com/OnlineBuddies/pear.git`
-
-You'll of course, also need the Modyllic repository:
-
-1. `git clone git://github.com/OnlineBuddies/Modyllic.git`
-
-From inside your Modyllic repository, run:
-
-1. `make install-build-prereqs`
-
-You'll also need to setup some remote upstreams:
-
-1. `git remote add upstream-wiki git://github.com/OnlineBuddies/Modyllic.wiki.git`
-2. `git remote add upstream-testlib git://github.com/shiflett/testmore.git`
-
-
-Actually Publishing
-===================
 From your Modyllic checkout:
 
 1. `./release-version #.#.# beta`
-2. This will give you a Modyllic-#.#.#.tgz it will also commit the CHANGELOG for this release and create a tag.
-3. `git push`
-4. `git push --tags`
-
-Now in go to your previously checked out copy of the OLB pear repository:
-
-1. `./release /path/to/Modyllic-#.#.#.tgz`
-2. `git add -A` (or add the changed/created files by hand)
-3. `git commit -m'Release Modyllic-#.#.#'`
-4. `git push`
+2. This will give you a Modyllic-#.#.#.tgz it will also commit the CHANGELOG for this release and create a tag.  If everything looks ok:
+3. `./publish-version`
 
 And you're done.  It may take a minute or so for your changes to appear at:
 http://onlinebuddies.github.com/pear/
@@ -46,3 +17,18 @@ http://onlinebuddies.github.com/pear/
 Once they do, you can upgrade a Modyllic installation with:
 
 `pear upgrade OnlineBuddies/Modyllic-beta`
+
+
+Manual Setup
+============
+
+1. `pear channel-discover pear.pirum-project.org`
+2. `pear install pirum/Pirum-beta`
+3. `pear channel-discover onlinebuddies.github.com/pear`
+4. `pear install OnlineBuddies/PEAR_PackageFileManager_Gitrepoonly`
+5. `git remote add upstream-testlib git://github.com/shiflett/testmore.git`
+6. `git remote add upstream git://github.com/OnlineBuddies/Modyllic.git`
+7. `git remote add upstream-wiki git://github.com/OnlineBuddies/Modyllic.wiki.git`
+8. `git fetch upstream-wiki ; git branch upstream-wiki upstream-wiki/master`
+9. `git remote add upstream-pear git@github.com:OnlineBuddies/pear.git`
+10. `git fetch upstream-pear ; git branch upstream-pear upstream-pear/gh-pages`
