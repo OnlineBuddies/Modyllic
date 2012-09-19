@@ -23,8 +23,8 @@ install-build-prereqs: discover-olb-channel
 
 install-dist-prereqs: install-build-prereqs
 	if [ $$(git remote | grep -c '^upstream-testlib$$') -ne 1 ]; then git remote add upstream-testlib git://github.com/shiflett/testmore.git; fi
-	if [ $$(git remote | grep -c '^upstream$$') -ne 1 ]; then git remote add upstream git://github.com/OnlineBuddies/Modyllic.git; fi
-	if [ $$(git remote | grep -c '^upstream-wiki$$') -ne 1 ]; then git remote add upstream-wiki git://github.com/OnlineBuddies/Modyllic.wiki.git; fi
+	if [ $$(git remote | grep -c '^upstream$$') -ne 1 ]; then git remote add upstream git@github.com:OnlineBuddies/Modyllic.git; fi
+	if [ $$(git remote | grep -c '^upstream-wiki$$') -ne 1 ]; then git remote add upstream-wiki git@github.com:OnlineBuddies/Modyllic.wiki.git; fi
 	if [ $$(git branch | grep -c '^  upstream-wiki$$') -ne 1 ]; then ( git fetch upstream-wiki ; git branch upstream-wiki upstream-wiki/master ); fi
 	if [ $$(git remote | grep -c '^upstream-pear$$') -ne 1 ]; then git remote add upstream-pear git@github.com:OnlineBuddies/pear.git; fi
 	if [ $$(git branch | grep -c '^  upstream-pear$$') -ne 1 ]; then ( git fetch upstream-pear ; git branch upstream-pear upstream-pear/gh-pages ); fi
