@@ -10,56 +10,9 @@ if [ "$1." == . ]; then
 	exit 1
 fi
 
-if [ $(git remote | grep -c '^upstream-testlib$') -ne 1 ]; then
-	echo "In order to use this script you must have an upstream-testlib remote setup.  You can do so by issuing the following command:"
-	echo "    git remote add upstream-testlib git://github.com/shiflett/testmore.git"
-	exit 1
-fi
+make install-dist-prereqs test
 
-if [ $(git remote | grep -c '^upstream$') -ne 1 ]; then
-	echo "In order to use this script you must have an upstream-wiki remote setup.  You can do so by issuing the following command:"
-	echo "    git remote add upstream git://github.com/OnlineBuddies/Modyllic.git"
-	exit 1
-fi
-
-if [ $(git remote | grep -c '^upstream-wiki$') -ne 1 ]; then
-	echo "In order to use this script you must have an upstream-wiki remote setup.  You can do so by issuing the following command:"
-	echo "    git remote add upstream-wiki git://github.com/OnlineBuddies/Modyllic.wiki.git"
-	exit 1
-fi
-
-if [ $(git branch | grep -c '^  upstream-wiki$') -ne 1 ]; then
-	echo "In order to use this script you must have the upstream-wiki checked out in a branch.  You can do so by issuing the following command:"
-	echo "    git fetch upstream-wiki"
-	echo "    git branch  upstream-wiki upstream-wiki/master"
-	exit 1
-fi
-
-if [ $(git remote | grep -c '^upstream-pear$') -ne 1 ]; then
-	echo "In order to use this script you must have an upstream-pear remote setup.  You can do so by issuing the following command:"
-	echo "    git remote add upstream-pear git@github.com:OnlineBuddies/pear.git"
-	exit 1
-fi
-
-if [ $(git branch | grep -c '^  upstream-pear$') -ne 1 ]; then
-	echo "In order to use this script you must have the upstream-pear checked out in a branch.  You can do so by issuing the following command:"
-	echo "    git fetch upstream-pear"
-	echo "    git branch upstream-pear upstream-pear/gh-pages"
-        exit 1
-fi
-
-if [ $(pear list-channels | grep -c '^onlinebuddies.github.com/pear ') -ne 1 -o $(pear list -c OnlineBuddies | grep -c '^PEAR_PackageFileManager_Gitrepoonly ') -ne 1 ]; then
-	echo "You need to install the build prerequisites, run:"
-	echo "    make install-build-prereqs"
-        exit 1
-fi
-
-if [ $(pear list-channels | grep -c '^pear.pirum-project.org ') -ne 1 -o $(pear list -c pirum | grep -c '^Pirum ') -ne 1 ]; then
-	echo "You need to install Pirum:"
-        echo "    pear channel-discover pear.pirum-project.org"
-        echo "    pear install pirum/Pirum-beta"
-        exit 1
-fi
+make test
 
 # Fetch all the tags, sort them and extract the most recent released version
 CURRENT=$(git tag | perl -ne 'next unless /^v(\d+)[.](\d+)[.](\d+)$/; printf "%03d.%03d.%03d,%s",$1,$2,$3,$_' | sort | tail -1 | cut -d, -f2)

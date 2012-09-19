@@ -15,13 +15,23 @@ clean:
 build-package-xml:
 	php build-package-xml $(PACKAGEXML) $(BUILDXML)
 
-discover-channel:
-	pear channel-discover onlinebuddies.github.com/pear || true
+discover-olb-channel:
+	pear channel-info OnlineBuddies >/dev/null || pear channel-discover onlinebuddies.github.com/pear
 
-install-build-prereqs: discover-channel
-	pear install OnlineBuddies/PEAR_PackageFileManager_Gitrepoonly
+install-build-prereqs: discover-olb-channel
+	pear list -c OnlineBuddies | grep -q '^PEAR_PackageFileManager_Gitrepoonly ' || pear install OnlineBuddies/PEAR_PackageFileManager_Gitrepoonly
 
-install: build-package-xml discover-channel uninstall
+install-dist-prereqs: install-build-prereqs
+	if [ $$(git remote | grep -c '^upstream-testlib$$') -ne 1 ]; then git remote add upstream-testlib git://github.com/shiflett/testmore.git; fi
+	if [ $$(git remote | grep -c '^upstream$$') -ne 1 ]; then git remote add upstream git://github.com/OnlineBuddies/Modyllic.git; fi
+	if [ $$(git remote | grep -c '^upstream-wiki$$') -ne 1 ]; then git remote add upstream-wiki git://github.com/OnlineBuddies/Modyllic.wiki.git; fi
+	if [ $$(git branch | grep -c '^  upstream-wiki$$') -ne 1 ]; then ( git fetch upstream-wiki ; git branch upstream-wiki upstream-wiki/master ); fi
+	if [ $$(git remote | grep -c '^upstream-pear$$') -ne 1 ]; then git remote add upstream-pear git@github.com:OnlineBuddies/pear.git; fi
+	if [ $$(git branch | grep -c '^  upstream-pear$$') -ne 1 ]; then ( git fetch upstream-pear ; git branch upstream-pear upstream-pear/gh-pages ); fi
+	pear channel-info pirum >/dev/null || pear channel-discover pear.pirum-project.org
+	pear list -c pirum | grep -q '^Pirum ' || pear install pirum/Pirum-beta
+
+install: build-package-xml discover-olb-channel uninstall
 	pear install $(BUILDXML)
 
 uninstall:
