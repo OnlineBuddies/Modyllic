@@ -33,9 +33,6 @@ $VISUAL CHANGELOG.raw
 grep -v '^#' CHANGELOG.raw > CHANGELOG.new
 rm CHANGELOG.raw
 
-# Build a package.xml
-php build-package-xml base.xml package.xml $VERSION $STABILITY
-
 # Add the changelog to the wiki
 php build-changelog v$VERSION CHANGELOG.new > Changes.md-new
 git checkout upstream-wiki
@@ -56,6 +53,9 @@ git merge -s subtree upstream-testlib/master || $SHELL
 mv CHANGELOG.new CHANGELOG
 git add CHANGELOG
 git commit -m"Release Modyllic-$VERSION"
+
+# Build a package.xml
+php build-package-xml base.xml package.xml $VERSION $STABILITY
 
 git tag "v$VERSION"
 
