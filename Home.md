@@ -18,18 +18,18 @@ features that are supported by [[extensions to SQL | Extensions]].
 
 Three primary use cases are:
 
-* Detecting and examining differences between databases. See [[sqldiff]] for
+* Detecting and examining differences between databases. See [[modyllic diff]] for
   details.
 
 * Replacing conventional linear up/down scripts with more flexible
-  change management. See [[sqldump]], [[sqldrop]], [[sqldiff]] and
-  [[migrate]] for details.
+  change management. See [[modyllic dump]], [[modyllic drop]], [[modyllic diff]] and
+  [[modyllic migrate]] for details.
 
 * Providing a consistant, safe and transparent access to stored routines.
-  See [[sqltophp]] for details.
+  See [[modyllic procstophp]] for details.
 
 And finally, incidentally, we provide a fast syntax highlighter based on
-Modyllic's tokenizer in the form of [[sqlcolorize]].
+Modyllic's tokenizer in the form of [[modyllic colorize]].
 
 Modyllic operates on [[schemas]], which can represent database, table, and
 column definitions, routines, events, triggers, as well as data.  They are
