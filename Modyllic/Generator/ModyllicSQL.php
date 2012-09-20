@@ -992,7 +992,7 @@ class Modyllic_Generator_ModyllicSQL {
     }
     function drop_routine_args_meta( $routine ) {
         foreach ($routine->args as $arg) {
-            $this->drop_meta( "ARG", $routine->name . "." . $arg->name );
+            $this->delete_meta( "ARG", $routine->name . "." . $arg->name );
         }
     }
 
