@@ -1,5 +1,1 @@
-* Add DateTime assertion tests and correct DateTime assertions
-* Fix metadata generation for routine attributes
-* Fix assertion on constant variable name
-* Improve integer assertions
-* A variety of release related fixes
+* Fix bug: We remove metadata with delete_meta not drop_meta
