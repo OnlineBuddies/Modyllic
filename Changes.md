@@ -1,5 +1,10 @@
 Revision history for PHP module Modyllic
 
+v0.2.8 2012-09-27
+
+* Add support for extending your PHP include path for Modyllic's commandline
+  tools with the MODYLLIC_LIB_PATH environment variable.
+
 v0.2.7 2012-09-27
 
 * Add deprecation warnings for `migrate`, `sqlcolorize`, `sqldiff`, `sqldrop`,
