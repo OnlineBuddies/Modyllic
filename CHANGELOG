@@ -1,5 +1,2 @@
-* Add deprecation warnings for `migrate`, `sqlcolorize`, `sqldiff`, `sqldrop`,
-  `sqldump`, `sqlpreparse`, `sqlprofile`, `sqltophp`.  Use the `modyllic` command
-  from now on.
-* Removed previously deprecated dialect names
-* Fix handling of multibyte strings
+* Add support for extending your PHP include path for Modyllic's commandline
+  tools with the MODYLLIC_LIB_PATH environment variable.
