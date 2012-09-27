@@ -1,5 +1,13 @@
 Revision history for PHP module Modyllic
 
+v0.2.7 2012-09-27
+
+* Add deprecation warnings for `migrate`, `sqlcolorize`, `sqldiff`, `sqldrop`,
+  `sqldump`, `sqlpreparse`, `sqlprofile`, `sqltophp`.  Use the `modyllic` command
+  from now on.
+* Removed previously deprecated dialect names
+* Fix handling of multibyte strings
+
 v0.2.6 2012-09-20
 
 * Fix bug: We remove metadata with delete_meta not drop_meta
