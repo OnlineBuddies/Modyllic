@@ -7,6 +7,8 @@
  * @author bturner@online-buddies.com
  */
 
+if ($lib_path = getenv("MODYLLIC_LIB_PATH")) set_include_path($lib_path.":".get_include_path());
+
 require_once "Modyllic/CommandLine.php";
 
 $args = Modyllic_CommandLine::get_args(array(
