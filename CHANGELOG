@@ -1,1 +1,5 @@
-* Fix bug: We remove metadata with delete_meta not drop_meta
+* Add deprecation warnings for `migrate`, `sqlcolorize`, `sqldiff`, `sqldrop`,
+  `sqldump`, `sqlpreparse`, `sqlprofile`, `sqltophp`.  Use the `modyllic` command
+  from now on.
+* Removed previously deprecated dialect names
+* Fix handling of multibyte strings
