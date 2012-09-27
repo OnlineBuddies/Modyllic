@@ -778,7 +778,7 @@ class Modyllic_Generator_PHP {
         $this->begin_assert()
                ->func_var('is_null',$name)
                ->op('or')
-               ->func_var('strlen',$name)
+               ->func_var('mb_strlen',$name)
                ->op('<=')
                ->add( $length )
              ->end_assert();
