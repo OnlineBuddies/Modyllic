@@ -1,2 +1,3 @@
 #!/bin/sh
+echo "WARNING: 'migrate' is deprecated, please use 'modyllic migrate' insteaed" 1>&2
 exec "$(dirname $0)"/modyllic migrate "$@"
