@@ -66,34 +66,39 @@ $sth = $dbh->prepare('SELECT COUNT(*) FROM information_schema.SCHEMATA WHERE SCH
 $sth->execute(array($dbname));
 list($count) = $sth->fetch(PDO::FETCH_NUM);
 if ( $count == 0 ) {
-    if ( $args->options['create'] ) {
-        $dbh->exec("CREATE DATABASE ".Modyllic_SQL::quote_ident($dbname));
-    }
-    else {
+    if ( ! $args->options['create'] ) {
         Modyllic_CommandLine::display_error( "database $dbname does not exist" );
     }
+    $to   = Modyllic_CommandLine::schema($args->options['toschema']);
+    $gen = new $gen_class();
+    $to->set_name( $dbname );
+    $gen->create( $to );
 }
-// End MySQL specific stuff
+else {
+    $from = Modyllic_CommandLine::schema( array($args->options['fromschema']) );
+    $to   = Modyllic_CommandLine::schema($args->options['toschema']);
 
-$from = Modyllic_CommandLine::schema( array($args->options['fromschema']) );
+    Modyllic_Status::verbose_status("Comparing...");
+    $diff = new Modyllic_Diff( $from, $to );
+    if ( ! $diff->changeset->has_changes() ) {
+        Modyllic_Status::clear_progress();
+        Modyllic_Status::verbose("No changes detected.\n");
+        exit(0);
+    }
 
-$to   = Modyllic_CommandLine::schema($args->options['toschema']);
+    $gen = new $gen_class();
+    $gen->alter($diff);
 
-Modyllic_Status::verbose("Comparing...\n");
-$diff = new Modyllic_Diff( $from, $to );
-
-if ( ! $diff->changeset->has_changes() ) {
-    Modyllic_Status::verbose("No changes detected.\n");
-    exit(0);
+    /// @todo mysql specific again
+    $dbh->exec("USE ".Modyllic_SQL::quote_ident($dbname));
 }
 
-$dbh->exec("USE ".Modyllic_SQL::quote_ident($dbname));
+Modyllic_Status::verbose_status("Updating...");
 
-$gen = new $gen_class();
 foreach ( $gen->sql_header() as $sql ) {
     $dbh->exec( $sql );
 }
-$gen->alter($diff);
+
 $cmds = count($gen->sql_commands());
 try {
     $ii = 0;
@@ -113,4 +118,4 @@ catch (PDOException $e) {
     exit(1);
 }
 Modyllic_Status::clear_progress();
-Modyllic_Status::verbose("Database updated");
+Modyllic_Status::verbose("Database updated\n");
