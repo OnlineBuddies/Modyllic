@@ -1156,6 +1156,12 @@ class Modyllic_Generator_PHP {
         $this->add_return('result');
         return $this;
     }
+
+    function proc_fetch_row_type(Modyllic_Schema_Routine $routine) {
+        $this->add_const('PDO::FETCH_ASSOC');
+        return $this;
+    }
+
     function proc_returns(Modyllic_Schema_Routine $routine) {
         $does_fetch = ! in_array( $routine->returns['type'], array( 'NONE', 'STH' ) );
         if ( $does_fetch ) {
@@ -1172,7 +1178,7 @@ class Modyllic_Generator_PHP {
             $this->begin_method('sth','setFetchMode')
                    ->add_const('PDO::FETCH_BOUND')
                    ->op('|')
-                   ->add_const('PDO::FETCH_BOTH')
+                   ->proc_fetch_row_type($routine)
                  ->end_method();
         }
         switch ($routine->returns['type']) {
@@ -1230,7 +1236,7 @@ class Modyllic_Generator_PHP {
     function proc_returns_row(Modyllic_Schema_Routine $routine) {
         $this->begin_assign('result')
                ->begin_method('sth','fetch')
-                 ->add_const('PDO::FETCH_ASSOC')
+                 ->proc_fetch_row_type($routine)
                ->end_method()
              ->end_assign();
         $this->method('sth','closeCursor');
@@ -1241,7 +1247,7 @@ class Modyllic_Generator_PHP {
     function proc_returns_column(Modyllic_Schema_Routine $routine) {
         $this->begin_assign('row')
                ->begin_method('sth','fetch')
-                 ->add_const('PDO::FETCH_ASSOC')
+                 ->proc_fetch_row_type($routine)
                ->end_method()
              ->end_assign();
         $this->method('sth','closeCursor');
@@ -1270,7 +1276,7 @@ class Modyllic_Generator_PHP {
                ->begin_group()
                  ->begin_assign( 'row' )
                    ->begin_method('sth','fetch')
-                     ->add_const('PDO::FETCH_ASSOC')
+                     ->proc_fetch_row_type($routine)
                    ->end_method()
                  ->end_assign()
                ->end_group()
@@ -1294,7 +1300,7 @@ class Modyllic_Generator_PHP {
     function proc_returns_table(Modyllic_Schema_Routine $routine) {
         $this->begin_assign('table')
                ->begin_method('sth','fetchAll')
-                 ->add_const('PDO::FETCH_ASSOC')
+                 ->proc_fetch_row_type($routine)
                 ->end_method()
              ->end_assign();
         $this->method('sth','closeCursor');
@@ -1310,7 +1316,7 @@ class Modyllic_Generator_PHP {
                ->begin_group()
                  ->begin_assign('row')
                    ->begin_method('sth','fetch')
-                     ->add_const('PDO::FETCH_ASSOC')
+                     ->proc_fetch_row_type($routine)
                    ->end_method()
                  ->end_assign()
                ->end_group()
