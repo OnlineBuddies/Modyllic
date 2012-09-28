@@ -127,19 +127,39 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
     }
 
     function create_sqlmeta() {
-        $this->begin_cmd();
-        $this->extend( "-- This is used to store metadata used by the schema management tool" );
-        $this->extend("CREATE TABLE IF NOT EXISTS SQLMETA (");
-        $this->indent();
-        $this->begin_list();
-        $this->extend("kind CHAR(9) NOT NULL");
-        $this->extend("which CHAR(90) NOT NULL");
-        $this->extend("value TEXT NOT NULL");
-        $this->extend("PRIMARY KEY (kind,which)");
-        $this->end_list();
-        $this->undent();
-        $this->extend(") ENGINE=MyISAM");
-        $this->end_cmd();
+        $table = new Modyllic_Schema_Table( "SQLMETA" );
+        $table->docs = "This is used to store metadata used by the schema management tool";
+
+        $kind = $table->add_column( new Modyllic_Schema_Column("kind") );
+        $kind->type = Modyllic_Type::create("CHAR");
+        $kind->type->length = 9;
+        $kind->null = false;
+        $kind->default = null;
+
+        $which = $table->add_column( new Modyllic_Schema_Column("which") );
+        $which->type = Modyllic_Type::create("CHAR");
+        $which->type->length = 90;
+        $which->null = false;
+        $which->default = null;
+
+        $value = $table->add_column( new Modyllic_Schema_Column("value") );
+        $value->type = Modyllic_Type::create("VARCHAR");
+        $value->type->length = 60000;
+        $value->null = false;
+        $value->default = null;
+
+        $pk = $table->add_index( new Modyllic_Schema_Index("!PRIMARY KEY") );
+        $pk->primary = true;
+        $pk->columns = array( "kind" => false, "which" => false );
+
+        if ( $this->source instanceOf Modyllic_Changeset ) {
+            $schema = $this->source->schema;
+        }
+        else {
+            $schema = $this->source;
+        }
+
+        $this->create_table( $table, $schema );
     }
 
     function insert_meta($kind,$which,array $meta) {
