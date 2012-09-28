@@ -1020,6 +1020,7 @@ class Modyllic_Parser {
             $index = new Modyllic_Schema_Index('!PRIMARY KEY');
             $index->primary = true;
             $index->columns = array($column->name => false);
+            $index->column_defined = true;
             $this->add_index( $index );
         }
         else if ( $column->unique ) {
