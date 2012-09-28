@@ -609,35 +609,90 @@ class Modyllic_Generator_ModyllicSQL {
         return $this;
     }
 
-    function create_column( Modyllic_Schema_Column $column, $with_key=true ) {
-        if ( isset($column->from) ) {
-            $this->extend("%id %lit", $column->name, $column->type->to_sql($column->from->type) );
+    function emit_type( $type, $from_type = null ) {
+        $this->add( $type->to_sql( $from_type ) );
+        return $this;
+    }
+
+    function column_not_null( Modyllic_Schema_Column $column ) {
+        return ! $column->type instanceOf Modyllic_Type_Serial and ! $column->null;
+    }
+
+    function emit_column_null( Modyllic_Schema_Column $column ) {
+        if ( $this->column_not_null($column) ) {
+            $this->add( " NOT NULL" );
         }
-        else {
-            $this->extend("%id %lit", $column->name, $column->type->to_sql() );
+        return $this;
+    }
+
+    function column_auto_increment( Modyllic_Schema_Column $column ) {
+        return ! $column->type instanceOf Modyllic_Type_Serial and $column->auto_increment;
+    }
+
+    function emit_column_auto_increment( Modyllic_Schema_Column $column ) {
+        if ( $this->column_auto_increment($column) ) {
+            $this->add( " auto_increment" );
         }
-        if ( ! $column->type instanceOf Modyllic_Type_Serial ) {
-            if ( ! $column->null ) {
-                $this->add( " NOT NULL" );
-            }
-            if ( $column->auto_increment ) {
-                $this->add( " auto_increment" );
-            }
+        return $this;
+    }
+
+    function column_show_default( Modyllic_Schema_Column $column ) {
+        return ! is_null($column->default) and (!$column->null or $column->default!='NULL');
+    }
+    function emit_column_default( Modyllic_Schema_Column $column ) {
+        if ( $this->column_show_default($column) ) {
+            $this->add( " DEFAULT %lit", $column->default );
         }
-        if ( ! is_null($column->default) ) {
-            if ( !$column->null or $column->default!='NULL' ) {
-                $this->add( " DEFAULT %lit", $column->default );
-            }
-        }
-        if ( $column->on_update ) {
+        return $this;
+    }
+
+    function column_on_update( Modyllic_Schema_Column $column ) {
+        return $column->on_update;
+    }
+    function emit_column_on_update( Modyllic_Schema_Column $column ) {
+        if ( $this->column_on_update($column) ) {
             $this->add( " ON UPDATE %lit", $column->on_update );
         }
-        if ( $with_key and $column->is_primary ) {
+        return $this;
+    }
+
+    function column_is_primary( Modyllic_Schema_Column $column ) {
+        return $column->is_primary;
+    }
+    function emit_column_is_primary( Modyllic_Schema_Column $column ) {
+        if ( $this->column_is_primary($column) ) {
             $this->add( " PRIMARY KEY" );
         }
-        if ( $with_key and $column->unique and ! $column->type instanceOf Modyllic_Type_Serial ) {
+        return $this;
+    }
+
+    function column_unique( Modyllic_Schema_Column $column ) {
+        return $column->unique and ! $column->is_primary;
+    }
+    function emit_column_unique( Modyllic_Schema_Column $column ) {
+        if ( $this->column_unique($column) ) {
             $this->add( " UNIQUE" );
         }
+        return $this;
+    }
+
+    function create_column( Modyllic_Schema_Column $column, $with_key=true ) {
+        $this->extend("%id ", $column->name );
+        if ( isset($column->from) ) {
+            $this->emit_type( $column->type, $column->from->type );
+        }
+        else {
+            $this->emit_type( $column->type );
+        }
+        $this->emit_column_null( $column );
+        $this->emit_column_auto_increment( $column );
+        $this->emit_column_default( $column );
+        $this->emit_column_on_update( $column );
+        if ( $with_key ) {
+            $this->emit_column_is_primary( $column );
+            $this->emit_column_unique( $column );
+        }
+
         $this->column_aliases($column);
         return $this;
     }

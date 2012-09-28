@@ -23,6 +23,25 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
 
     function column_aliases( Modyllic_Schema_Column $column ) {}
 
+    function emit_type( $type, $from_type = null ) {
+        if ( $type instanceOf Modyllic_Type_Serial ) {
+            $bigint = Modyllic_Type::create("BIGINT");
+            $bigint->unsigned = true;
+            $this->add( $bigint->to_sql() );
+        }
+        else {
+            parent::emit_type( $type, $from_type );
+        }
+    }
+
+    function column_auto_increment( Modyllic_Schema_Column $column ) {
+        return $column->auto_increment;
+    }
+
+    function column_not_null( Modyllic_Schema_Column $column ) {
+        return ! $column->null;
+    }
+
     function foreign_key_weakly_references(Modyllic_Schema_Index $index) {
         $this->foreign_key_regular_references($index);
     }
