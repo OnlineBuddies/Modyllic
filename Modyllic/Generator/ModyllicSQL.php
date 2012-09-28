@@ -423,10 +423,6 @@ class Modyllic_Generator_ModyllicSQL {
         $completed = 0;
         foreach ( $table->columns as $column ) {
             $this->create_column( $column );
-            if ( $column->is_primary ) {
-                unset($indexes['!PRIMARY KEY']);
-                $entries --;
-            }
             if ( ++$completed < $entries ) {
                 $this->add(",");
             }
