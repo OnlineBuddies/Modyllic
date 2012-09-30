@@ -52,7 +52,7 @@ class Modyllic_Loader {
             Modyllic_Status::status( 1, 1 );
 
         }
-        $schema->load_sqlmeta();
+        $schema->load_meta();
         return $schema;
     }
 }

@@ -8,7 +8,7 @@
 
 /*
  * The stripped MySQL class is ModyllicSQL with the language extensions
- * excised but no SQLMETA table, plus the MySQL stock headers.
+ * excised but no metadata table, plus the MySQL stock headers.
  */
 class Modyllic_Generator_StrippedMySQL extends Modyllic_Generator_MySQL {
 

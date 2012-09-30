@@ -115,7 +115,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
      * @throws Exception when data is not yet initialized.
      */
     function add_row( array $row ) {
-        if ( ! $this->static and $this->name != "SQLMETA" ) {
+        if ( ! $this->static and $this->name != "MODYLLIC" ) {
             throw new Exception("Cannot add data to ".$this->name.
                 ", not initialized for schema supplied data-- call TRUNCATE first.");
         }

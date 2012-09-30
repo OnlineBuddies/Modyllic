@@ -8,7 +8,7 @@
 
 /**
  * Full MySQL support for Modyllic.  Concepts that MySQL can't store or
- * metadata that's lossy in MySQL is kept in the SQLMETA table
+ * metadata that's lossy in MySQL is kept in the metadata table
  */
 class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
 
@@ -126,8 +126,8 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
         return $meta;
     }
 
-    function create_sqlmeta() {
-        $table = new Modyllic_Schema_Table( "SQLMETA" );
+    function create_meta() {
+        $table = new Modyllic_Schema_Table( "MODYLLIC" );
         $table->docs = "This is used to store metadata used by the schema management tool";
 
         $kind = $table->add_column( new Modyllic_Schema_Column("kind") );
@@ -164,22 +164,22 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
 
     function insert_meta($kind,$which,array $meta) {
         if ( ! $meta ) { return; }
-        if ( ! isset($this->what['sqlmeta']) ) { return; }
-        $this->cmd( "INSERT INTO SQLMETA (kind,which,value) VALUES (%str, %str, %str)",
+        if ( ! isset($this->what['meta']) ) { return; }
+        $this->cmd( "INSERT INTO MODYLLIC (kind,which,value) VALUES (%str, %str, %str)",
             $kind, $which, json_encode($meta) );
     }
     function delete_meta($kind,$which) {
-        if ( ! isset($this->what['sqlmeta']) ) { return; }
-        if ( ! $this->to_sqlmeta_exists ) { return; }
-        $this->cmd( "DELETE FROM SQLMETA WHERE kind=%str AND which=%str",
+        if ( ! isset($this->what['meta']) ) { return; }
+        if ( ! $this->to_meta_exists ) { return; }
+        $this->cmd( "DELETE FROM MODYLLIC WHERE kind=%str AND which=%str",
             $kind, $which );
     }
     function update_meta($kind,$which,array $meta) {
-        if ( ! isset($this->what['sqlmeta']) ) { return; }
-        if ( ! $meta and ! $this->to_sqlmeta_exists ) { return; }
+        if ( ! isset($this->what['meta']) ) { return; }
+        if ( ! $meta and ! $this->to_meta_exists ) { return; }
         if ( $meta ) {
             $meta_str = json_encode($meta);
-            $this->cmd( "INSERT INTO SQLMETA SET kind=%str, which=%str, value=%str ON DUPLICATE KEY UPDATE value=%str",
+            $this->cmd( "INSERT INTO MODYLLIC SET kind=%str, which=%str, value=%str ON DUPLICATE KEY UPDATE value=%str",
                  $kind, $which, $meta_str, $meta_str );
         }
         else {

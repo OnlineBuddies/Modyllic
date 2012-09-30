@@ -12,8 +12,8 @@ class Modyllic_Generator_ModyllicSQL {
     protected $sep;
     protected $what;
     protected $source;
-    protected $from_sqlmeta_exists;
-    protected $to_sqlmeta_exists;
+    protected $from_meta_exists;
+    protected $to_meta_exists;
 
     function __construct( $delim=';;', $sep=true ) {
         $this->set_what( $this->schema_types() );
@@ -21,21 +21,21 @@ class Modyllic_Generator_ModyllicSQL {
         $this->sep = $sep;
     }
 
-    function sqlmeta_exists(Modyllic_Schema $schema) {
+    function meta_exists(Modyllic_Schema $schema) {
         foreach ($schema->tables as $table) {
-            if ($this->table_sqlmeta_exists($table)) {
+            if ($this->table_meta_exists($table)) {
                 return true;
             }
         }
         foreach ($schema->routines as $routine) {
-            if ($this->routine_sqlmeta_exists($routine)) {
+            if ($this->routine_meta_exists($routine)) {
                 return true;
             }
         }
         return false;
     }
 
-    function table_sqlmeta_exists(Modyllic_Schema_Table $table) {
+    function table_meta_exists(Modyllic_Schema_Table $table) {
         if ( count($this->table_meta($table)) ) {
             return true;
         }
@@ -51,7 +51,7 @@ class Modyllic_Generator_ModyllicSQL {
         }
     }
 
-    function routine_sqlmeta_exists($routine) {
+    function routine_meta_exists($routine) {
         if ( count($this->routine_meta($routine)) ) {
             return true;
         }
@@ -71,7 +71,7 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function schema_types() {
-        return array('database','sqlmeta','tables','views','routines','events','triggers');
+        return array('database','meta','tables','views','routines','events','triggers');
     }
 
     function validate_schema_types(array $what) {
@@ -89,8 +89,8 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function alter( Modyllic_Diff $diff ) {
-        $this->from_sqlmeta_exists = $this->sqlmeta_exists($diff->from);
-        $this->to_sqlmeta_exists = $this->sqlmeta_exists($diff->to);
+        $this->from_meta_exists = $this->meta_exists($diff->from);
+        $this->to_meta_exists = $this->meta_exists($diff->to);
 
         $this->source = $diff->changeset;
         if ( ! $diff->changeset->has_changes() ) {
@@ -100,9 +100,9 @@ class Modyllic_Generator_ModyllicSQL {
         if ( isset($this->what['database']) ) {
             $this->alter_database( $diff->changeset->schema );
         }
-        if ( isset($this->what['sqlmeta']) ) {
-            if ( $this->to_sqlmeta_exists and ! $this->from_sqlmeta_exists ) {
-                $this->create_sqlmeta();
+        if ( isset($this->what['meta']) ) {
+            if ( $this->to_meta_exists and ! $this->from_meta_exists ) {
+                $this->create_meta();
             }
         }
 
@@ -153,9 +153,9 @@ class Modyllic_Generator_ModyllicSQL {
         if ( isset($this->what['triggers']) ) {
             $this->alter_triggers( $diff->changeset->update['triggers'] );
         }
-        if ( isset($this->what['sqlmeta']) ) {
-            if ( $this->from_sqlmeta_exists and ! $this->to_sqlmeta_exists ) {
-                $this->drop_sqlmeta();
+        if ( isset($this->what['meta']) ) {
+            if ( $this->from_meta_exists and ! $this->to_meta_exists ) {
+                $this->drop_meta();
             }
         }
         $this->source = null;
@@ -171,12 +171,12 @@ class Modyllic_Generator_ModyllicSQL {
 
     function create( Modyllic_Schema $schema) {
         $this->source = $schema;
-        $this->to_sqlmeta_exists = $this->sqlmeta_exists($schema);
+        $this->to_meta_exists = $this->meta_exists($schema);
         if ( isset($this->what['database']) ) {
             $this->create_database( $schema );
         }
-        if ( isset($this->what['sqlmeta']) and $this->to_sqlmeta_exists ) {
-            $this->create_sqlmeta();
+        if ( isset($this->what['meta']) and $this->to_meta_exists ) {
+            $this->create_meta();
         }
         if ( isset($this->what['tables']) ) {
             $this->create_tables( $schema->tables, $schema );
@@ -197,12 +197,12 @@ class Modyllic_Generator_ModyllicSQL {
         return $this;
     }
 
-    function create_sqlmeta() {
-        throw new Exception("Don't know how to create SQLMETA for ".get_class($this));
+    function create_meta() {
+        throw new Exception("Don't know how to create MODYLLIC metadata table for ".get_class($this));
         // The below is what the table should look like in standard SQL.
         $this->begin_cmd();
         $this->extend( "-- This is used to store metadata used by the schema management tool" );
-        $this->extend("CREATE TABLE SQLMETA (");
+        $this->extend("CREATE TABLE MODYLLIC (");
         $this->indent();
         $this->begin_list();
         $this->extend("kind CHAR(9) NOT NULL");
@@ -225,7 +225,7 @@ class Modyllic_Generator_ModyllicSQL {
 
     function drop( Modyllic_Schema $schema ) {
         $this->source = $schema;
-        $this->to_sqlmeta_exists = $this->sqlmeta_exists($schema);
+        $this->to_meta_exists = $this->meta_exists($schema);
         if ( isset($this->what['triggers']) ) {
             $this->drop_triggers( $schema->triggers );
         }
@@ -241,8 +241,8 @@ class Modyllic_Generator_ModyllicSQL {
         if ( isset($this->what['tables']) ) {
             $this->drop_tables( $schema->tables );
         }
-        if ( isset($this->what['sqlmeta']) and $this->to_sqlmeta_exists ) {
-            $this->drop_sqlmeta();
+        if ( isset($this->what['meta']) and $this->to_meta_exists ) {
+            $this->drop_meta();
         }
         if ( isset($this->what['database']) ) {
             $this->drop_database( $schema );
@@ -251,8 +251,8 @@ class Modyllic_Generator_ModyllicSQL {
         return $this;
     }
 
-    function drop_sqlmeta() {
-        $this->cmd('DROP TABLE IF EXISTS SQLMETA');
+    function drop_meta() {
+        $this->cmd('DROP TABLE IF EXISTS MODYLLIC');
     }
 
 // DATABASE
@@ -1208,20 +1208,20 @@ class Modyllic_Generator_ModyllicSQL {
 
     function insert_meta($kind,$which,array $what) {
         if ( ! $what ) { return; }
-        if ( ! isset($this->what['sqlmeta']) ) { return; }
-        throw new Exception("Don't know how to create SQLMETA for ".get_class($this)." ".print_r($what,true));
+        if ( ! isset($this->what['meta']) ) { return; }
+        throw new Exception("Don't know how to create metadata for ".get_class($this)." ".print_r($what,true));
     }
 
     function delete_meta($kind,$which) {
-        if ( ! isset($this->what['sqlmeta']) ) { return; }
-        if ( ! $this->to_sqlmeta_exists ) { return; }
-        throw new Exception("Don't know how to create SQLMETA for ".get_class($this));
+        if ( ! isset($this->what['meta']) ) { return; }
+        if ( ! $this->to_meta_exists ) { return; }
+        throw new Exception("Don't know how to create metadata for ".get_class($this));
     }
 
     function update_meta($kind,$which,array $meta) {
-        if ( ! isset($this->what['sqlmeta']) ) { return; }
-        if ( ! $meta and ! $this->to_sqlmeta_exists ) { return; }
-        throw new Exception("Don't know how to create SQLMETA for ".get_class($this));
+        if ( ! isset($this->what['meta']) ) { return; }
+        if ( ! $meta and ! $this->to_meta_exists ) { return; }
+        throw new Exception("Don't know how to create metadata for ".get_class($this));
     }
 
 
