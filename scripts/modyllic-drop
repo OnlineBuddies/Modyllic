@@ -33,6 +33,7 @@ $schema = Modyllic_CommandLine::schema($args->args['spec']);
 
 $class = Modyllic_Generator::dialect_to_class( $args->options['dialect'] );
 $gen = new $class();
+$gen->generate_metatable( $schema );
 
 if ( isset($args->options['only']) ) {
     try {

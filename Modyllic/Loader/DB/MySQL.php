@@ -96,6 +96,16 @@ class Modyllic_Loader_DB_MySQL {
                 $table->add_row( $meta );
             }
         }
+        /// @todo Remove this-- Only keep this around till 0.2.10 or 0.2.11 or so
+        else if (isset($schema->tables['SQLMETA'])) {
+            $table = $schema->tables['MODYLLIC'] = $schema->tables['SQLMETA'];
+            $table->name = 'MODYLLIC';
+            unset($schema->tables['SQLMETA']);
+            $meta_sth = self::query( $dbh, "SELECT kind,which,value FROM ".Modyllic_SQL::quote_ident($dbname).".SQLMETA");
+            while ( $meta = $meta_sth->fetch(PDO::FETCH_ASSOC) ) {
+                $table->add_row( $meta );
+            }
+        }
 
         $schema->load_meta();
 
