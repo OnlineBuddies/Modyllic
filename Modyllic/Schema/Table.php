@@ -25,10 +25,11 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
     /**
      * @param string $name
      */
-    function __construct($name) {
-        $this->name = $name;
+    function __construct($name=null) {
+        if (isset($name)) {
+            $this->name = $name;
+        }
     }
-
 
     /**
      * @param Modyllic_Schema_Column $column
@@ -41,6 +42,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
         $this->columns[$column->name] = $column;
         return $column;
     }
+
     /**
      * @param Modyllic_Schema_Index $index
      */
@@ -115,13 +117,13 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
      * @throws Exception when data is not yet initialized.
      */
     function add_row( array $row ) {
-        if ( ! $this->static and $this->name != "SQLMETA" ) {
+        if ( ! $this->static and $this->name != "MODYLLIC" ) {
             throw new Exception("Cannot add data to ".$this->name.
                 ", not initialized for schema supplied data-- call TRUNCATE first.");
         }
         foreach ($row as $col_name=>&$value) {
             if ( ! isset($this->columns[$col_name]) ) {
-                throw "INSERT references $col_name in ".$this->name." but $col_name doesn't exist";
+                throw new Exception("INSERT references $col_name in ".$this->name." but $col_name doesn't exist");
             }
             $col = $this->columns[$col_name];
             $norm_value = $col->type->normalize($value);
