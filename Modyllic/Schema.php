@@ -120,12 +120,12 @@ class Modyllic_Schema extends Modyllic_Diffable {
     /**
      * Generates a meta table entry that wasn't in the schema
      */
-    function load_sqlmeta() {
-        # If we already have an SQLMETA table then this is a load directly
+    function load_meta() {
+        # If we already have an metadata table then this is a load directly
         # from a database (or a dump from a database).  We'll want to
         # convert that back into our usual metadata.
-        if ( isset($this->tables['SQLMETA']) and isset($this->tables['SQLMETA']->data) ) {
-            foreach ($this->tables['SQLMETA']->data as &$row) {
+        if ( isset($this->tables['MODYLLIC']) and isset($this->tables['MODYLLIC']->data) ) {
+            foreach ($this->tables['MODYLLIC']->data as &$row) {
                 $kind = $this->unquote_sql_str($row['kind']);
                 $which = $this->unquote_sql_str($row['which']);
                 $meta = json_decode($this->unquote_sql_str($row['value']), true);
@@ -160,7 +160,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
                         }
                         break;
                     default:
-                        throw new Exception("Unknown kind of metadata '$kind' found in SQLMETA");
+                        throw new Exception("Unknown kind of metadata '$kind' found in the metadata table");
                         break;
                 }
                 if ( isset($obj) ) {
@@ -180,7 +180,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
                     }
                 }
             }
-            unset($this->tables['SQLMETA']);
+            unset($this->tables['MODYLLIC']);
         }
     }
 

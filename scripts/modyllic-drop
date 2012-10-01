@@ -23,7 +23,7 @@ $args = Modyllic_CommandLine::get_args(array(
             ),
         'only' => array(
             'long_name'   => '--only',
-            'description' => 'comma separated list of kinds of schema objects to process: database, sqlmeta, tables, views, routines, events, triggers',
+            'description' => 'comma separated list of kinds of schema objects to process: database, meta, tables, views, routines, events, triggers',
             'action'      => 'StoreString',
             ) ),
     'arguments' => array(
@@ -33,6 +33,7 @@ $schema = Modyllic_CommandLine::schema($args->args['spec']);
 
 $class = Modyllic_Generator::dialect_to_class( $args->options['dialect'] );
 $gen = new $class();
+$gen->generate_metatable( $schema );
 
 if ( isset($args->options['only']) ) {
     try {

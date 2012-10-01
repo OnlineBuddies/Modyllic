@@ -89,15 +89,25 @@ class Modyllic_Loader_DB_MySQL {
         }
         ksort($schema->routines);
 
-        if (isset($schema->tables['SQLMETA'])) {
-            $table = $schema->tables['SQLMETA'];
+        if (isset($schema->tables['MODYLLIC'])) {
+            $table = $schema->tables['MODYLLIC'];
+            $meta_sth = self::query( $dbh, "SELECT kind,which,value FROM ".Modyllic_SQL::quote_ident($dbname).".MODYLLIC");
+            while ( $meta = $meta_sth->fetch(PDO::FETCH_ASSOC) ) {
+                $table->add_row( $meta );
+            }
+        }
+        /// @todo Remove this-- Only keep this around till 0.2.10 or 0.2.11 or so
+        else if (isset($schema->tables['SQLMETA'])) {
+            $table = $schema->tables['MODYLLIC'] = $schema->tables['SQLMETA'];
+            $table->name = 'MODYLLIC';
+            unset($schema->tables['SQLMETA']);
             $meta_sth = self::query( $dbh, "SELECT kind,which,value FROM ".Modyllic_SQL::quote_ident($dbname).".SQLMETA");
             while ( $meta = $meta_sth->fetch(PDO::FETCH_ASSOC) ) {
                 $table->add_row( $meta );
             }
         }
 
-        $schema->load_sqlmeta();
+        $schema->load_meta();
 
         // Look for data to load...
         foreach ($schema->tables as $name=>$table) {
