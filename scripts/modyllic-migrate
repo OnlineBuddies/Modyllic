@@ -70,13 +70,14 @@ if ( $count == 0 ) {
         Modyllic_CommandLine::display_error( "database $dbname does not exist" );
     }
     $to   = Modyllic_CommandLine::schema($args->options['toschema']);
-    $gen = new $gen_class();
     $to->set_name( $dbname );
+    $gen = new $gen_class();
     $gen->generate_metatable( $to );
     $gen->create( $to );
 }
 else {
     $from = Modyllic_CommandLine::schema( array($args->options['fromschema']) );
+    $gen = new $gen_class();
     $gen->generate_metatable( $from );
     $to   = Modyllic_CommandLine::schema($args->options['toschema']);
     $gen->generate_metatable( $to );
@@ -89,7 +90,6 @@ else {
         exit(0);
     }
 
-    $gen = new $gen_class();
     $gen->alter($diff);
 
     /// @todo mysql specific again
