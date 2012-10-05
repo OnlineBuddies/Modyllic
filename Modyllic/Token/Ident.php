@@ -9,7 +9,7 @@
 /**
  * Identifiers, eg, column names, table names, etc.
  */
-class Modyllic_Token_Ident extends Modyllic_Token {
+class Modyllic_Token_Ident extends Modyllic_Token implements Modyllic_Token_Bareword {
     private $upper;
     function token() {
         if ( isset($this->upper) ) {

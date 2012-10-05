@@ -552,7 +552,6 @@ class Modyllic_Tokenizer {
             "FOREIGN KEY",
             "GEOMETRY",
             "GEOMETRYCOLLECTION",
-            "HASH",
             "HEAP",
             "HOUR",
             "HOUR_MINUTE",
