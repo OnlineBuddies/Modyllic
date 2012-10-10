@@ -19,6 +19,13 @@ discover-olb-channel:
 	pear channel-info OnlineBuddies >/dev/null || pear channel-discover onlinebuddies.github.com/pear
 
 install-build-prereqs: discover-olb-channel
+# XML_Serializer is actually only needed by PEAR_PackageFileManager2, but
+# PEAR's dependency tracking is extremely broken-- only beta versions of
+# XML_Serializer are actually available so PEAR just breaks rather then
+# doing the reasonable thing and installing the *most stable* version
+# available.
+	pear list -c PEAR | grep -q '^XML_Serializer ' || pear install --alldeps PEAR/XML_Serializer || pear install --alldeps PEAR/XML_Serializer-beta
+	pear list -c PEAR | grep -q '^PEAR_PackageFileManager2 ' || pear install --alldeps PEAR/PEAR_PackageFileManager2
 	pear list -c OnlineBuddies | grep -q '^PEAR_PackageFileManager_Gitrepoonly ' || pear install OnlineBuddies/PEAR_PackageFileManager_Gitrepoonly
 
 install-dist-prereqs: install-build-prereqs
