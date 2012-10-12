@@ -1,2 +1,16 @@
-* Add support for extending your PHP include path for Modyllic's commandline
-  tools with the MODYLLIC_LIB_PATH environment variable.
+Changes:
+
+* Make the release fail if pirum or openssl can't actually be run 
+* Add geometric types 
+* Add more build requirements 
+* Refactor metadata into a normal static table 
+* Rename SQLMETA to MODYLLIC 
+* Switch to creating the SQLMETA table via a schema object rather then by hand 
+* Fix database creation during migration 
+* Set indexes associated with primary key columns as column defined, which saves us from having to have a special case is_primary check later on. 
+* Make it easy to override the fetch type 
+
+Fixes:
+
+* Fix #207: metatable generation during migrates 
+* Fix #191 -- Emit BIGINTs for SERIAL columns 
