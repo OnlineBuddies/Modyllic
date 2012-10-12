@@ -3,6 +3,8 @@ Revision history for PHP module Modyllic
 v0.2.9 2012-10-12
 
 Changes:
+
+* Make the build fail if pirum can't actually be run 
 * Add geometric types 
 * Add more build requirements 
 * Refactor metadata into a normal static table 
@@ -13,8 +15,9 @@ Changes:
 * Make it easy to override the fetch type 
 
 Fixes:
-* Fix #207: metatable generation during migrates 
-* Fix #191 -- Emit BIGINTs for SERIAL columns
+
+* Fix #191 -- Emit BIGINTs for SERIAL columns 
+* Fix #207: metatable generation during migrates
 
 v0.2.8 2012-09-27
 
