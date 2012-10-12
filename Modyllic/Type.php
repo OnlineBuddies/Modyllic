@@ -81,6 +81,20 @@ abstract class Modyllic_Type {
                 return new Modyllic_Type_Year($type);
             case "GEOMETRY":
                 return new Modyllic_Type_Geometry($type);
+            case "GEOMETRYCOLLECTION":
+                return new Modyllic_Type_GeometryCollection($type);
+            case "LINESTRING":
+                return new Modyllic_Type_LineString($type);
+            case "MULTILINESTRING":
+                return new Modyllic_Type_MultiLineString($type);
+            case "MULTIPOINT":
+                return new Modyllic_Type_MultiPoint($type);
+            case "MULTIPOLYGON":
+                return new Modyllic_Type_Polygon($type);
+            case "POINT":
+                return new Modyllic_Type_Point($type);
+            case "POLYGON":
+                return new Modyllic_Type_Polygon($type);
             default:
                 throw new Exception("Unknown SQL type: $type" );
         }
