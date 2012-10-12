@@ -4,7 +4,7 @@ v0.2.9 2012-10-12
 
 Changes:
 
-* Make the build fail if pirum can't actually be run 
+* Make the release fail if pirum or openssl can't actually be run 
 * Add geometric types 
 * Add more build requirements 
 * Refactor metadata into a normal static table 
@@ -16,8 +16,8 @@ Changes:
 
 Fixes:
 
-* Fix #191 -- Emit BIGINTs for SERIAL columns 
-* Fix #207: metatable generation during migrates
+* Fix #207: metatable generation during migrates 
+* Fix #191 -- Emit BIGINTs for SERIAL columns
 
 v0.2.8 2012-09-27
 
