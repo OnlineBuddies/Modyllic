@@ -12,6 +12,9 @@ fi
 
 make install-dist-prereqs test
 
+which pirum >/dev/null || echo "pirum cannot be executed" 1>&2
+which openssl >/dev/null || echo "openssl cannot be executed" 1>&2
+
 make test
 
 # Fetch all the tags, sort them and extract the most recent released version
