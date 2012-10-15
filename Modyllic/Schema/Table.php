@@ -58,15 +58,6 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
                 throw new Exception("In table ".$this->name.", index $name, can't index unknown column $cname");
             }
         }
-        // If this is a primary key and has only one column then we'll flag that column as a primary key
-        if ($index->primary and count($index->columns) == 1) {
-            $name = current( array_keys($index->columns) );
-            $len = current( array_values($index->columns) );
-            // And if there's no length limiter on the column...
-            if ( $len === false ) {
-                $this->columns[$name]->is_primary = true;
-            }
-        }
         return $index;
     }
 
