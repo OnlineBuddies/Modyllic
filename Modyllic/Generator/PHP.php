@@ -1251,9 +1251,9 @@ class Modyllic_Generator_PHP {
                ->end_method()
              ->end_assign();
         $this->method('sth','closeCursor');
-        $this->begin_cmd( 'if (! isset(' )
+        $this->begin_cmd( 'if ( ' )
                ->add_var('row')
-             ->end_cmd(') ) {')
+             ->end_cmd(' === false ) {')
              ->begin_block()
                ->add_return()
              ->end_block('}');
