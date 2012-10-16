@@ -12,6 +12,7 @@ class Modyllic_Status {
     static $progress = false;
     static $debug = false;
     static $in_file = "";
+    static $in_progress = false;
 
     static function init() {
         if ( getenv('TERM') and ($cols = exec('tput cols')) !== false ) {
@@ -25,7 +26,7 @@ class Modyllic_Status {
 
     static function debug( $msg ) {
         if ( self::$debug ) {
-            if ( self::$progress ) { $msg = "\n$msg"; }
+            if ( self::$in_progress ) { $msg = "\n$msg"; }
             self::warn($msg);
         }
     }
@@ -37,14 +38,16 @@ class Modyllic_Status {
     }
 
     static function verbose_status( $msg ) {
-        self::$progress = true;
-        self::verbose( "\r" . $msg . chr(27)."[K" );
+        if ( self::$progress ) {
+            self::$in_progress = true;
+            self::warn( "\r" . $msg . chr(27)."[K" );
+        }
     }
 
     static function clear_progress() {
-        if ( self::$progress ) {
+        if ( self::$progress and self::$in_progress ) {
             self::warn( "\r" .chr(27)."[K" );
-            self::$progress = false;
+            self::$in_progress = false;
         }
     }
 
