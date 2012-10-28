@@ -12,6 +12,10 @@
  */
 class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
 
+    function schema_types() {
+        return array('database','meta','tables','views','routines','events','triggers');
+    }
+
     function ignore_index(Modyllic_Schema_Index $index ) {
         if ( $index instanceOf Modyllic_Schema_Index_Foreign and $index->weak ) {
             return true;

@@ -20,7 +20,11 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function generate_metatable(Modyllic_Schema $schema) {
-        $meta = new Modyllic_Schema_MetaTable();
+        $meta = Modyllic_Schema_MetaTable::create_default();
+        $metatable_exists = isset( $schema->tables[$meta->name] );
+        if ( ! $metatable_exists ) {
+            $schema->add_table( $meta );
+        }
         foreach ($schema->tables as $table) {
             $meta->add_metadata( "TABLE", $table->name, $this->table_meta($table) );
             foreach ( $table->columns as $column ) {
@@ -45,11 +49,8 @@ class Modyllic_Generator_ModyllicSQL {
         foreach ($schema->triggers as $trigger) {
             $meta->add_metadata( "TRIGGER",$trigger->name, $this->trigger_meta($trigger) );
         }
-        if ( count($meta->data) ) {
-            $schema->add_table( $meta );
-        }
-        else {
-            unset($schema->tables[$meta->name]);
+        if ( ! $metatable_exists and ! count($meta->data) ) {
+            unset( $schema->tables[$meta->name] );
         }
     }
 
@@ -62,7 +63,7 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function schema_types() {
-        return array('database','meta','tables','views','routines','events','triggers');
+        return array('database','tables','views','routines','events','triggers');
     }
 
     function validate_schema_types(array $what) {
@@ -362,6 +363,7 @@ class Modyllic_Generator_ModyllicSQL {
     function table_meta($table) { return array(); }
 
     function create_table( Modyllic_Schema_Table $table, $schema ) {
+        if ( ! isset($this->what['meta']) and $table instanceOf Modyllic_Schema_MetaTable ) { return; }
         $this->begin_cmd();
         $this->table_docs( $table );
         $this->extend( "CREATE TABLE %id (", $table->name );
@@ -397,6 +399,7 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function alter_table( $table ) {
+        if ( ! isset($this->what['meta']) and $table instanceOf Modyllic_Schema_MetaTable ) { return; }
         if ( $table->has_schema_changes() ) {
             if ( $table->options->has_changes() or
                  count($table->add['columns'])+count($table->remove['columns'])+count($table->update['columns'])+
@@ -465,6 +468,7 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function drop_table( Modyllic_Schema_Table $table ) {
+        if ( ! isset($this->what['meta']) and $table instanceOf Modyllic_Schema_MetaTable ) { return; }
         $this->cmd( "DROP TABLE IF EXISTS %id", $table->name );
         return $this;
     }

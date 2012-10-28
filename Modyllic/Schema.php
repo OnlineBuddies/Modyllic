@@ -180,7 +180,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
                     }
                 }
             }
-            unset($this->tables['MODYLLIC']);
         }
     }
 
