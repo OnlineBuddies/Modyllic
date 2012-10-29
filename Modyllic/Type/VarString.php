@@ -12,8 +12,8 @@ abstract class Modyllic_Type_VarString extends Modyllic_Type_String {
         if ( $this->length != $other->length ) { return false; }
         return true;
     }
-    function clone_from(Modyllic_Type $old) {
-        parent::clone_from($old);
+    function copy_from(Modyllic_Type $old) {
+        parent::copy_from($old);
         $this->length = $old->length;
     }
     function to_sql(Modyllic_Type $other=null) {

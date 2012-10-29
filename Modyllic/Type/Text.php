@@ -11,8 +11,8 @@ class Modyllic_Type_Text extends Modyllic_Type_String {
         parent::__construct($type);
         $this->length = $length;
     }
-    function clone_from(Modyllic_Type $old) {
-        parent::clone_from($old);
+    function copy_from(Modyllic_Type $old) {
+        parent::copy_from($old);
         $this->length = $old->length;
     }
     function type_name($size) { return $size . "TEXT"; }
@@ -34,7 +34,7 @@ class Modyllic_Type_Text extends Modyllic_Type_String {
     }
     function make_binary() {
         $new = new Modyllic_Type_Blob("BLOB");
-        $new->clone_from($this);
+        $new->copy_from($this);
         return $new;
     }
 }
