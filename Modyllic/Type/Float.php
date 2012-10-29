@@ -31,8 +31,8 @@ class Modyllic_Type_Float extends Modyllic_Type_Numeric {
         }
         return true;
     }
-    function clone_from(Modyllic_Type $old) {
-        parent::clone_from($old);
+    function copy_from(Modyllic_Type $old) {
+        parent::copy_from($old);
         $this->decimals = $old->decimals;
     }
     function normalize($float) {

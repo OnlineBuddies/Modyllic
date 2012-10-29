@@ -171,7 +171,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
                         # like BOOLEAN and SERIAL.
                         if ( $metakey == "type" ) {
                             $new_type = Modyllic_Type::create($metavalue);
-                            $new_type->clone_from( $obj->type );
+                            $new_type->copy_from( $obj->type );
                             $obj->type = $new_type;
                         }
                         else {

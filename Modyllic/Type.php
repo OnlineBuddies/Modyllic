@@ -114,7 +114,7 @@ abstract class Modyllic_Type {
     function isa_equivalent(Modyllic_Type $other) {
         return get_class($this) == get_class($other);
     }
-    function clone_from(Modyllic_Type $new) {}
+    function copy_from(Modyllic_Type $new) {}
     function normalize($value) {
         if ( $value instanceOf Modyllic_Token ) {
             return $value->value();

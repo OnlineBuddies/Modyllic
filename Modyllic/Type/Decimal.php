@@ -33,8 +33,8 @@ class Modyllic_Type_Decimal extends Modyllic_Type_Numeric {
         if ( $this->scale != $other->scale) { return false; }
         return true;
     }
-    function clone_from(Modyllic_Type $old) {
-        parent::clone_from($old);
+    function copy_from(Modyllic_Type $old) {
+        parent::copy_from($old);
         $this->scale = $old->scale;
     }
     function normalize($num) {
