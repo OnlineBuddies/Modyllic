@@ -36,7 +36,7 @@ try {
     fail($msg);
 }
 catch (Modyllic_Exception $e) {
-    like($e->getMessage(),"/Expected reserved word, got/", $msg);
+    like($e->getMessage(),"/Unsupported SQL command/", $msg);
 }
 
 $error3_sql = <<< EOSQL

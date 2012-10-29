@@ -1364,7 +1364,7 @@ class Modyllic_Parser {
      * @returns the token form of the reserved word (all caps)
      */
     function assert_reserved( $t1=null ) {
-        if ( ! $this->cur() instanceOf Modyllic_Token_Reserved ) {
+        if ( ! $this->cur() instanceOf Modyllic_Token_Bareword ) {
             throw $this->error( "Expected reserved word, got ".$this->cur()->debug() );
         }
         if ( is_null($t1) ) { return $this->cur()->token(); }
