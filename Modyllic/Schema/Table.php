@@ -32,18 +32,17 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
     }
 
     static function clone_from($table) {
-        $new = new static($table->name);
-        $new->columns = unserialize(serialize($table->columns));
-        $new->indexes = unserialize(serialize($table->indexes));
-        $new->static = $table->static;
-        $new->data = unserialize(serialize($table->data));
-        $new->last_column = unserialize(serialize($table->last_column));
-        $new->last_index = unserialize(serialize($table->last_index));
-        $new->engine = $table->engine;
-        $new->charset = $table->charset;
-        $new->collate = $table->collate;
-        $new->docs = $table->docs;
-        return $new;
+        $this->name = $table->name;
+        $this->columns = unserialize(serialize($table->columns));
+        $this->indexes = unserialize(serialize($table->indexes));
+        $this->static = $table->static;
+        $this->data = unserialize(serialize($table->data));
+        $this->last_column = unserialize(serialize($table->last_column));
+        $this->last_index = unserialize(serialize($table->last_index));
+        $this->engine = $table->engine;
+        $this->charset = $table->charset;
+        $this->collate = $table->collate;
+        $this->docs = $table->docs;
     }
 
     /**
