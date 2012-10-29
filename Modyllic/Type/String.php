@@ -46,8 +46,8 @@ abstract class Modyllic_Type_String extends Modyllic_Type {
         if ( $this->collate() != $other->collate() ) { return false; }
         return true;
     }
-    function clone_from(Modyllic_Type $old) {
-        parent::clone_from($old);
+    function copy_from(Modyllic_Type $old) {
+        parent::copy_from($old);
         $this->charset( $old->charset() );
         $this->collate( $old->collate() );
     }
