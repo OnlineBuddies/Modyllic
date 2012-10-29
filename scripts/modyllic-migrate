@@ -84,7 +84,7 @@ else {
 
     Modyllic_Status::verbose_status("Comparing...");
     $diff = new Modyllic_Diff( $from, $to );
-    if ( ! $diff->changeset->has_changes() ) {
+    if ( ! $diff->changeset->has_changes() or ! $gen->sql_commands()) {
         Modyllic_Status::clear_progress();
         Modyllic_Status::verbose("No changes detected.\n");
         exit(0);
@@ -94,6 +94,11 @@ else {
 
     /// @todo mysql specific again
     $dbh->exec("USE ".Modyllic_SQL::quote_ident($dbname));
+}
+
+if ( ! $diff->changeset->has_changes() or ! $cmds ) {
+    print "-- No changes detected.\n";
+    exit(0);
 }
 
 Modyllic_Status::verbose_status("Updating...");

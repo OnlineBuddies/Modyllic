@@ -31,6 +31,21 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
         }
     }
 
+    static function clone_from($table) {
+        $new = new static($table->name);
+        $new->columns = unserialize(serialize($table->columns));
+        $new->indexes = unserialize(serialize($table->indexes));
+        $new->static = $table->static;
+        $new->data = unserialize(serialize($table->data));
+        $new->last_column = unserialize(serialize($table->last_column));
+        $new->last_index = unserialize(serialize($table->last_index));
+        $new->engine = $table->engine;
+        $new->charset = $table->charset;
+        $new->collate = $table->collate;
+        $new->docs = $table->docs;
+        return $new;
+    }
+
     /**
      * @param Modyllic_Schema_Column $column
      */
@@ -103,12 +118,15 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
         $this->static = true;
     }
 
+    function upgrade_row( array $row ) {
+    }
+
     /**
      * Add a row of data to this table
      * @throws Exception when data is not yet initialized.
      */
     function add_row( array $row ) {
-        if ( ! $this->static and $this->name != "MODYLLIC" ) {
+        if ( ! $this->static and ! $this instanceOf Modyllic_Schema_MetaTable ) {
             throw new Exception("Cannot add data to ".$this->name.
                 ", not initialized for schema supplied data-- call TRUNCATE first.");
         }
@@ -120,7 +138,27 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
             $norm_value = $col->type->normalize($value);
             $row[$col_name] = $norm_value;
         }
-        $this->data[] = $row;
+        $element = null;
+        $pk = $this->primary_key();
+        foreach ($this->data as $index=>$cur) {
+            $match = true;
+            foreach ( $pk as $col=>$col_obj ) {
+                if ( $cur[$col]!=$row[$col] ) {
+                    $match = false;
+                    break;
+                }
+            }
+            if ( $match ) {
+                $element = $index;
+                break;
+            }
+        }
+        if ( isset($element) ) {
+            $this->data[$element] = $row;
+        }
+        else {
+            $this->data[] = $row;
+        }
     }
 
     /**
