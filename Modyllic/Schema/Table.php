@@ -31,7 +31,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
         }
     }
 
-    static function copy_from($table) {
+    function copy_from($table) {
         $this->name = $table->name;
         $this->columns = unserialize(serialize($table->columns));
         $this->indexes = unserialize(serialize($table->indexes));
