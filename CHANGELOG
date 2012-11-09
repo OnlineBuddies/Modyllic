@@ -1,16 +1,15 @@
 Changes:
 
-* Make the release fail if pirum or openssl can't actually be run 
-* Add geometric types 
-* Add more build requirements 
-* Refactor metadata into a normal static table 
-* Rename SQLMETA to MODYLLIC 
-* Switch to creating the SQLMETA table via a schema object rather then by hand 
-* Fix database creation during migration 
-* Set indexes associated with primary key columns as column defined, which saves us from having to have a special case is_primary check later on. 
-* Make it easy to override the fetch type 
+* Warn rather then crash if a database doesn't exist
+* Clear progress bars in verbose mode only
+* Stop magicing separate primary key delcarations into column-wise ones
+* Suppress warnings on 5.4 due to PEAR maintained modules
 
-Fixes:
+Bug fixes:
 
-* Fix #207: metatable generation during migrates 
-* Fix #191 -- Emit BIGINTs for SERIAL columns 
+* Fix bug in determining differences
+* Fix migration from SQLMETA to MODYLLIC
+* Fix 5.2 compatibility issues
+* Fix 'HASH' type reserved word
+* Fix #218- Cleans up metadata table handling.
+* Fix column returns on empty sets, for real (#56)
