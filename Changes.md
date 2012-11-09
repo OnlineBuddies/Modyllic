@@ -1,22 +1,8 @@
 Revision history for PHP module Modyllic
 
-v0.2.10 2012-11-09
+v0.2.11 2012-11-09
 
-Changes:
-
-* Warn rather then crash if a database doesn't exist
-* Clear progress bars in verbose mode only
-* Stop magicing separate primary key delcarations into column-wise ones
-* Suppress warnings on 5.4 due to PEAR maintained modules
-
-Bug fixes:
-
-* Fix bug in determining differences
-* Fix migration from SQLMETA to MODYLLIC
-* Fix 5.2 compatibility issues
-* Fix 'HASH' type reserved word
-* Fix #218- Cleans up metadata table handling.
-* Fix column returns on empty sets, for real (#56)
+* Fix warning in some 5.3/5.4 configurations
 
 v0.2.9 2012-10-12
 
@@ -91,6 +77,24 @@ v0.2.2 2012-05-17
 * Add aliases for the old dialect names and warnings if you use them
 * Fix method signature mismatches and bogus defaults
 * Correct type hints from bulk type hint change
+
+v0.2.10 2012-11-09
+
+Changes:
+
+* Warn rather then crash if a database doesn't exist
+* Clear progress bars in verbose mode only
+* Stop magicing separate primary key delcarations into column-wise ones
+* Suppress warnings on 5.4 due to PEAR maintained modules
+
+Bug fixes:
+
+* Fix bug in determining differences
+* Fix migration from SQLMETA to MODYLLIC
+* Fix 5.2 compatibility issues
+* Fix 'HASH' type reserved word
+* Fix #218- Cleans up metadata table handling.
+* Fix column returns on empty sets, for real (#56)
 
 v0.2.1 2012-05-08
 
