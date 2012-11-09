@@ -121,6 +121,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
      * Generates a meta table entry that wasn't in the schema
      */
     function load_meta() {
+        $metadata = null;
         # If we already have an metadata table then this is a load directly
         # from a database (or a dump from a database).  We'll want to
         # convert that back into our usual metadata.
