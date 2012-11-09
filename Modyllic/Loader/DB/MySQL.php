@@ -39,7 +39,8 @@ class Modyllic_Loader_DB_MySQL {
         $dbh->exec("USE information_schema");
         $dbschema = self::selectrow( $dbh, "SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM SCHEMATA WHERE SCHEMA_NAME=?", array($dbname) );
         if ( ! $dbschema ) {
-            throw new Exception("Database $dbname does not exist");
+            Modyllic_Status::warn("Database $dbname does not exist\n");
+            return;
         }
 
         $parser = new Modyllic_Parser();
