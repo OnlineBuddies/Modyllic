@@ -89,8 +89,11 @@ $to   = Modyllic_CommandLine::schema($toschema);
 $gen->generate_metatable( $to );
 
 $diff = new Modyllic_Diff( $from, $to );
+$gen->alter($diff);
+
 if ( ! $diff->changeset->has_changes() or ! $gen->sql_commands($diff)) {
     print "-- No changes detected.\n";
     exit(0);
 }
-print $gen->alter_sql($diff, ';;', true, $only);
+
+print $gen->sql_document();

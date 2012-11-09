@@ -1099,7 +1099,9 @@ class Modyllic_Generator_ModyllicSQL {
 
 // SQL document wrapper
 
-    function sql_document($delim=";", $sep=false) {
+    function sql_document($delim=null, $sep=null) {
+        if (! isset($delim)) { $delim = $this->delim; }
+        if (! isset($sep)) { $sep = $this->sep; }
         $sql = "";
         if ( $sql_header = $this->sql_header() ) {
            $sql .= implode(";\n", $sql_header) . ";\n";
