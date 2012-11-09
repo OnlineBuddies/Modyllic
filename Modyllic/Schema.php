@@ -125,7 +125,14 @@ class Modyllic_Schema extends Modyllic_Diffable {
         # from a database (or a dump from a database).  We'll want to
         # convert that back into our usual metadata.
         if ( isset($this->tables['MODYLLIC']) and isset($this->tables['MODYLLIC']->data) ) {
-            foreach ($this->tables['MODYLLIC']->data as &$row) {
+            $metadata = $this->tables['MODYLLIC']->data;
+        }
+        # @todo to be removed in 0.2.11+
+        else if ( isset($this->tables['SQLMETA']) and isset($this->tables['SQLMETA']->data) ) {
+            $metadata = $this->tables['SQLMETA']->data;
+        }
+        if ( $metadata ) {
+            foreach ($metadata as &$row) {
                 $kind = $this->unquote_sql_str($row['kind']);
                 $which = $this->unquote_sql_str($row['which']);
                 $meta = json_decode($this->unquote_sql_str($row['value']), true);

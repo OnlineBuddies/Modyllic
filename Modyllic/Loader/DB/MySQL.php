@@ -103,13 +103,11 @@ class Modyllic_Loader_DB_MySQL {
         else if (isset($schema->tables['SQLMETA'])) {
             $table = new Modyllic_Schema_MetaTable();
             $table->copy_from($schema->tables['SQLMETA']);
-            $table->name = 'MODYLLIC';
-            unset($schema->tables['SQLMETA']);
             $meta_sth = self::query( $dbh, "SELECT kind,which,value FROM ".Modyllic_SQL::quote_ident($dbname).".SQLMETA");
             while ( $meta = $meta_sth->fetch(PDO::FETCH_ASSOC) ) {
                 $table->add_row( $meta );
             }
-            $schema->tables['MODYLLIC'] = $table;
+            $schema->tables['SQLMETA'] = $table;
         }
 
         $schema->load_meta();
