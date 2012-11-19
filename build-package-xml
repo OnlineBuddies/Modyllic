@@ -9,7 +9,7 @@ if ( $argc < 3 or $argc > 5 ) {
 
 // Load a list of all of our tagged releases thus far
 $prev_versions = array();
-foreach (explode("\n",trim(`git for-each-ref --sort='-refname' --format='%(refname:short) %(authordate:short)' refs/tags/v*.*.*`)) as $tag) {
+foreach (explode("\n",trim(`git for-each-ref --sort='-refname' --sort='-authordate' --format='%(refname:short) %(authordate:short)' refs/tags/v*.*.*`)) as $tag) {
     list($tag_name,$tag_date) = explode(" ",$tag);
     $tag_version = substr($tag_name,1);
     list($tag_major, $tag_minor, $tag_rel) = explode(".",$tag_version);
