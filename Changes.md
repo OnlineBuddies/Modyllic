@@ -96,24 +96,6 @@ v0.2.2 2012-05-17
 * Fix method signature mismatches and bogus defaults
 * Correct type hints from bulk type hint change
 
-v0.2.10 2012-11-09
-
-Changes:
-
-* Warn rather then crash if a database doesn't exist
-* Clear progress bars in verbose mode only
-* Stop magicing separate primary key delcarations into column-wise ones
-* Suppress warnings on 5.4 due to PEAR maintained modules
-
-Bug fixes:
-
-* Fix bug in determining differences
-* Fix migration from SQLMETA to MODYLLIC
-* Fix 5.2 compatibility issues
-* Fix 'HASH' type reserved word
-* Fix #218- Cleans up metadata table handling.
-* Fix column returns on empty sets, for real (#56)
-
 v0.2.1 2012-05-08
 
 * Call CREATE TABLE correctly for SQLMETA
