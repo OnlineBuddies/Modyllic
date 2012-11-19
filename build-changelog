@@ -11,7 +11,7 @@ if ( $argc==3 ) {
     print_version( $tag, date("Y-m-d"), $changes );
 }
 
-foreach (explode("\n",trim(`git for-each-ref --sort='-refname' --format='%(refname:short) %(authordate:short)' refs/tags/v*.*.*`)) as $tag) {
+foreach (explode("\n",trim(`git for-each-ref --sort='-refname' --sort='-authordate' --format='%(refname:short) %(authordate:short)' refs/tags/v*.*.*`)) as $tag) {
     list($tag_name,$tag_date) = explode(" ",$tag);
     $changes = trim(`git show {$tag_name}:CHANGELOG 2> /dev/null`);
     print_version( $tag_name, $tag_date, $changes );
