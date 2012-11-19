@@ -84,21 +84,15 @@ else {
 
     Modyllic_Status::verbose_status("Comparing...");
     $diff = new Modyllic_Diff( $from, $to );
-    if ( ! $diff->changeset->has_changes() or ! $gen->sql_commands()) {
+    $gen->alter($diff);
+
+    if (! $gen->sql_commands()) {
         Modyllic_Status::clear_progress();
         Modyllic_Status::verbose("No changes detected.\n");
         exit(0);
     }
-
-    $gen->alter($diff);
-
     /// @todo mysql specific again
     $dbh->exec("USE ".Modyllic_SQL::quote_ident($dbname));
-}
-
-if ( ! $diff->changeset->has_changes() or ! $cmds ) {
-    print "-- No changes detected.\n";
-    exit(0);
 }
 
 Modyllic_Status::verbose_status("Updating...");
@@ -108,6 +102,7 @@ foreach ( $gen->sql_header() as $sql ) {
 }
 
 $cmds = count($gen->sql_commands());
+
 try {
     $ii = 0;
     Modyllic_Status::$source_name = "changes into database";
