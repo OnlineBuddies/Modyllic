@@ -1,1 +1,5 @@
-* Fix warning in some 5.3/5.4 configurations
+Bug fixes:
+
+* Fix version order in changelogs
+* Fix bug around sorting versions now that we're > *.10.0
+* Fix difference detection bug
