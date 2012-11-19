@@ -83,7 +83,6 @@ class Modyllic_Generator_ModyllicSQL {
     function alter( Modyllic_Diff $diff ) {
         $this->source = $diff->changeset;
         if ( ! $diff->changeset->has_changes() ) {
-            $this->cmd("-- No changes detected.");
             return $this;
         }
         if ( isset($this->what['database']) ) {
