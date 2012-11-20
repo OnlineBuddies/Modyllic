@@ -78,6 +78,12 @@ $options['ignore'][] = 'Makefile';
 $options['ignore'][] = 'release-version';
 $options['ignore'][] = 'publish-version';
 $options['ignore'][] = 'build-package-xml';
+$options['ignore'][] = 'build-changelog';
+$options['ignore'][] = 'base.xml';
+
+// Don't bundle docs that are in the doc subdir
+$options['ignore'][] = 'CHANGELOG';
+$options['ignore'][] = 'README.md';
 
 // This includes symlinks, which PHP can't package
 $options['ignore'][] = 'test/test_schema/*';
