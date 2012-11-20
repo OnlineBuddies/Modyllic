@@ -4,7 +4,7 @@
 COMMAND="help"
 
 if echo '@MODYLLIC_LIB_PATH@' | egrep -q '^[^@]'; then
-	MODYLLIC_LIB_PATH="$(eval @MODYLLIC_LIB_PATH@)"
+	export MODYLLIC_LIB_PATH="$(eval @MODYLLIC_LIB_PATH@)"
 fi
 next_plain_arg=
 
