@@ -3,7 +3,9 @@
 
 COMMAND="help"
 
-
+if echo '@MODYLLIC_LIB_PATH@' | egrep -q '^[^@]'; then
+	MODYLLIC_LIB_PATH="@MODYLLIC_LIB_PATH@"
+fi
 next_plain_arg=
 
 while [ -n "$*" ]; do
