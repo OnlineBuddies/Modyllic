@@ -408,7 +408,7 @@ class Modyllic_Generator_ModyllicSQL {
                 if ($table->options->has_changes()) {
                     $this->table_options( $table->options );
                 }
-                foreach ($table->add['columns'] as $column) {
+                foreach (array_reverse($table->add['columns']) as $column) {
                     $this->add_column( $column );
                 }
                 foreach ($table->remove['columns'] as $column) {
@@ -492,7 +492,13 @@ class Modyllic_Generator_ModyllicSQL {
             $this->add( " FIRST" );
         }
         else {
-            $this->add( " AFTER %id", $column->after );
+            $after = $column->after;
+            while ( ! isset($after->from) and isset($after->after) ) {
+                $after = $after->after;
+            }
+            if ( isset($after->from) ) {
+                $this->add( " AFTER %id", $after->name );
+            }
         }
         $this->column_aliases($column);
         return $this;

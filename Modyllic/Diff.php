@@ -228,9 +228,9 @@ class Modyllic_Diff {
                     continue;
                 }
                 $fromcolumn = $fromtable->columns[$fromname];
+                $tocolumn->from = $fromcolumn;
                 if ( ! $tocolumn->equal_to($fromcolumn) ) {
                     $tocolumn->previously = $fromname;
-                    $tocolumn->from = $fromcolumn;
                     $tablediff->update_column($tocolumn);
                 }
 

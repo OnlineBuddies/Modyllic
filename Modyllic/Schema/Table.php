@@ -50,7 +50,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
      */
     function add_column(Modyllic_Schema_Column $column) {
         if ( isset($this->last_column) ) {
-            $column->after = $this->last_column->name;
+            $column->after = $this->last_column;
         }
         $this->last_column = $column;
         $this->columns[$column->name] = $column;
