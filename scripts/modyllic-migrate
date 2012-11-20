@@ -72,15 +72,20 @@ if ( $count == 0 ) {
     $to   = Modyllic_CommandLine::schema($args->options['toschema']);
     $to->set_name( $dbname );
     $gen = new $gen_class();
-    $gen->generate_metatable( $to );
+    if ( $to->source != "db" ) {
+        $gen->generate_metatable( $to );
+    }
     $gen->create( $to );
 }
 else {
     $from = Modyllic_CommandLine::schema( array($args->options['fromschema']) );
     $gen = new $gen_class();
-    $gen->generate_metatable( $from );
+    // We don't generate a metatable for the database side, it should
+    // already have one if its gonna.
     $to   = Modyllic_CommandLine::schema($args->options['toschema']);
-    $gen->generate_metatable( $to );
+    if ( $to->source != "db" ) {
+        $gen->generate_metatable( $to );
+    }
 
     Modyllic_Status::verbose_status("Comparing...");
     $diff = new Modyllic_Diff( $from, $to );

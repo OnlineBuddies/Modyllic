@@ -23,6 +23,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     const DEFAULT_COLLATE = "utf8_general_ci";
     public $collate = self::DEFAULT_COLLATE;
     public $docs = "";
+    public $source = "generated";
 
     function reset() {
         $this->triggers       = array();
@@ -35,6 +36,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $this->charset        = self::DEFAULT_CHARSET;
         $this->collate        = self::DEFAULT_COLLATE;
         $this->docs           = "";
+        $this->source         = "generated";
     }
 
     function set_name( $name ) {
