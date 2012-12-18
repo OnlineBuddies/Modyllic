@@ -1290,6 +1290,9 @@ class Modyllic_Generator_ModyllicSQL {
         $this->commands[] = $this->buffer;
         $this->buffer = "";
         $this->level = 0;
+        $this->cmd_level = 0;
+        $this->indent = "";
+        $this->partial = false;
         if ( $this->in_list ) {
             $this->end_list();
         }
