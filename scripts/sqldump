@@ -1,3 +1,0 @@
-#!/bin/sh
-echo "WARNING: 'sqldump' is deprecated, please use 'modyllic dump' insteaed" 1>&2
-exec "$(dirname $0)"/modyllic dump "$@"

@@ -1,3 +1,0 @@
-#!/bin/sh
-echo "WARNING: 'sqltophp' is deprecated, please use 'modyllic procstophp' insteaed" 1>&2
-exec "$(dirname $0)"/modyllic procstophp "$@"
