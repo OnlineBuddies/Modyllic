@@ -1,0 +1,93 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Copyright © 2012 Online Buddies, Inc. - All Rights Reserved
+ *
+ * @package Modyllic
+ * @author bturner@online-buddies.com
+ */
+
+if ($lib_path = getenv("MODYLLIC_LIB_PATH")) set_include_path($lib_path.":".get_include_path());
+
+require_once "Modyllic/CommandLine.php";
+
+$args = Modyllic_CommandLine::get_args(array(
+    'description' => 'Apply a previously generated diff to a database',
+    'options' => array(
+        'db' => array(
+            'short_name'  => '-d',
+            'long_name'   => '--dsn',
+            'action'      => 'StoreString',
+            'description' => 'The DSN of the database to update',
+        ),
+        'patch' => array(
+            'short_name'  => '-p',
+            'long_name'   => '--patch',
+            'action'      => 'StoreString',
+            'description' => 'The SQL to apply to the database',
+        ),
+        'skip' => array(
+            'short_name'  => '-s',
+            'long_name'   => '--skip',
+            'action'      => 'StoreString',
+            'default'     => 0,
+            'description' => 'The # of the SQL command to begin appling after',
+        ),
+    ),
+));
+
+if ( ! isset($args->options['db']) or ! isset($args->options['patch']) ) {
+    Modyllic_CommandLine::display_error( "You must specify both a database to connect to and a patch to apply" );
+}
+
+list( $driver, $dsn, $dbname, $username, $password ) = Modyllic_Loader_DB::parse_dsn($args->options['db']);
+$dbh = new PDO( $dsn, $username, $password, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION, PDO::ATTR_EMULATE_PREPARES=>true ) );
+$dbh->exec("USE $dbname");
+
+try {
+    $sql = file_get_contents($args->options['patch']);
+    $tok = new Modyllic_Tokenizer($sql);
+    $tok->set_delimiter( ';' );
+    $cmd = "";
+    $in_header = true;
+    while ( !$tok->next(true) instanceOf Modyllic_Token_EOF ) {
+        if ( $tok->cur instanceOf Modyllic_Token_NewDelim ) {
+            $in_header = false;
+        }
+        if ( $tok->cur instanceOf Modyllic_Token_Delim ) {
+            apply_cmd($dbh, $cmd,$in_header);
+            $cmd = "";
+        }
+        else {
+            $cmd .= $tok->cur->literal();
+        }
+    }
+}
+catch (Exception $e) {
+    echo "Error while parsing $filename: ".$e->getMessage()."\n";
+    exit(1);
+}
+
+apply_cmd( $dbh, $cmd, $in_header );
+
+function apply_cmd($dbh,$cmd,$in_header) {
+    global $args;
+    static $stmt = 0;
+    $cmd=trim($cmd);
+    if ( $cmd != "" and ($in_header or ++$stmt > $args->options['skip']) ) {
+        try {
+            echo sprintf("%4s ----------------------------------------------\n", "#$stmt");
+            echo "$cmd\n";
+            $sth = $dbh->prepare($cmd);
+            $sth->execute();
+        }
+        catch (PDOException $e) {
+            echo "== ERROR ==========================================\n";
+            echo $e->getMessage()."\n";
+            echo "To continue from after this statement, run:\n";
+            echo "modyllic patch --db ".$args->options['db']. " --patch ".$args->options['patch']." --skip $stmt\n";
+            exit(1);
+        }
+    }
+}
+
