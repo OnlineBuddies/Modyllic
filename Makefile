@@ -2,18 +2,21 @@ CWD := $(shell pwd)
 PHP_INCLUDE_PATH := $(shell echo '<?php echo get_include_path();'|php)
 PHP := 'php -d include_path="$(CWD)/lib:$(PHP_INCLUDE_PATH)"'
 PROVE := prove -r --exec $(PHP)
-PACKAGEXML := base.xml
-BUILDXML := package.xml
+BUILDXML := base.xml
+PACKAGEXML := package.xml
 
 default:
 
 .PHONY: test test-verbose install uninstall clean build-package-xml discover-channel
 
 clean:
-	rm -rf $(BUILDXML) tmp coverage
+	rm -rf $(PACKAGEXML) tmp coverage
+
+package.xml: $(BUILDXML)
+	make build-package-xml
 
 build-package-xml:
-	php build-package-xml $(PACKAGEXML) $(BUILDXML)
+	php build-package-xml $(BUILDXML) $(PACKAGEXML)
 
 discover-olb-channel:
 	pear channel-info OnlineBuddies >/dev/null || pear channel-discover onlinebuddies.github.com/pear
@@ -39,13 +42,13 @@ install-dist-prereqs: install-build-prereqs
 	pear list -c pirum | grep -q '^Pirum ' || pear install pirum/Pirum-beta
 
 install: build-package-xml discover-olb-channel uninstall
-	pear install $(BUILDXML)
+	pear install $(PACKAGEXML)
 
 uninstall:
 	pear uninstall OnlineBuddies/Modyllic
 
 package: build-package-xml
-	pear package $(BUILDXML)
+	pear package $(PACKAGEXML)
 
 test:
 	$(PROVE) test
