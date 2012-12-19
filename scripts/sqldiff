@@ -1,3 +1,0 @@
-#!/bin/sh
-echo "WARNING: 'sqldiff' is deprecated, please use 'modyllic diff' insteaed" 1>&2
-exec "$(dirname $0)"/modyllic diff "$@"

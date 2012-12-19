@@ -1,3 +1,0 @@
-#!/bin/sh
-echo "WARNING: 'sqlpreparse' is deprecated, please use 'modyllic preparse' insteaed" 1>&2
-exec "$(dirname $0)"/modyllic preparse "$@"
