@@ -14,12 +14,10 @@
 class Modyllic_Token_Error extends Modyllic_Token_Except {
     protected $row;
     protected $col;
-    function __construct($pos, $row,$col) {
+    function __construct($pos, $row, $col, $value=null) {
         $this->pos = $pos;
         $this->row = $row;
         $this->col = $col;
-    }
-    function value() {
-        return "Syntax error";
+        $this->value = $value;
     }
 }
