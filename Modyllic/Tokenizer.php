@@ -160,7 +160,7 @@ class Modyllic_Tokenizer {
         return isset($this->delimiter) and preg_match( "/\G\Q$this->delimiter\E/", $this->cmdstr, $matches, 0, $this->pos );
     }
     function is_new_delimiter(array &$matches) {
-        return $this->prev instanceOf Modyllic_Token_SOC and preg_match( "/\G(DELIMITER\s+(\S+)([^\n]*?)(?=\n|\z))/i", $this->cmdstr, $matches, 0, $this->pos);
+        return $this->prev instanceOf Modyllic_Token_SOC and preg_match( "/\G((DELIMITER(?:\h+(\S+))?)([^\n]*?)(?=\n|\z))/i", $this->cmdstr, $matches, 0, $this->pos);
     }
     function is_string() {
         return isset( $this->quote_chars[$this->cmdstr[$this->pos]] );
@@ -323,15 +323,18 @@ class Modyllic_Tokenizer {
                 $this->cur = new Modyllic_Token_Whitespace( $this->pos, $matches[1] );
             }
             else if ( $this->is_new_delimiter($matches) ) {
-                $this->delimiter = $matches[2];
+                if ( $matches[3] != '' ) {
+                    $this->delimiter = $matches[3];
+                }
                 $this->pos += strlen($matches[1]);
-                if ( preg_match("/\S/",$matches[3], $offset, PREG_OFFSET_CAPTURE) ) {
-                    $this->pos -= strlen($matches[3]);
-                    $this->pos += $offset[0][1];
-                    $this->cur = new Modyllic_Token_Error_Delimiter($this->pos, $this->line(), $this->col() );
+                if ( $matches[3] == '' ) {
+                    $this->inject( new Modyllic_Token_Error_Delimiter($this->pos, $this->line(), $this->col(), $matches[1]) );
                 }
                 else {
-                    $this->cur = new Modyllic_Token_NewDelim( $this->pos, $matches[1]);
+                    if ( preg_match("/\S/",$matches[4])) {
+                        $this->inject( new Modyllic_Token_Error_Delimiter($this->pos, $this->line(), $this->col(), $matches[4]) );
+                    }
+                    $this->cur = new Modyllic_Token_NewDelim( $this->pos, $matches[2]);
                 }
             }
             else if ( $this->is_reserved($matches) ) {
