@@ -1002,7 +1002,13 @@ class Modyllic_Parser {
                 $column->null = true;
             }
             else if ( $this->cur()->token() == 'DEFAULT' ) {
-                $column->default = $column->type->normalize( $this->next() );
+                $next = $this->next();
+                if ( $next instanceOf Modyllic_Token_Bareword ) {
+                    $column->default = $next->literal();
+                }
+                else {
+                    $column->default = $column->type->normalize( $next );
+                }
                 if ( $this->peek_next()->token() == 'ON UPDATE' ) {
                     $this->get_reserved();
                     $column->on_update = $this->get_reserved();
