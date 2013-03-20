@@ -145,25 +145,30 @@ class Modyllic_Parser {
 
         // Create commands can take a bunch of options before getting around to telling us what they're creating.
         // Right now we ignore the values of all of these, so we just note them and ignore them.
+        $opts = array();
         while (1) {
             $name = $this->get_reserved();
             if ( $name == "DEFINER" ) {
                 $this->get_symbol( "=" );
                 if ( $this->next()->token() == "CURRENT_USER" ) {
-                    $this->assert_reserved();
+                    $opts['DEFINER'] = $this->assert_reserved();
                 }
                 else {
-                    $this->assert_ident();
+                    $opts['DEFINER'] = array();
+                    $opts['DEFINER']['USER'] = $this->assert_ident();
                     $this->get_symbol('@');
-                    $this->get_ident();
+                    $opts['DEFINER']['HOST'] = $this->get_ident();
                 }
             }
             else if ( $name == "ALGORITHM" ) {
                 $this->get_symbol( "=" );
-                $this->get_reserved(array("UNDEFINED","MERGE","TEMPTABLE"));
+                $opts['ALGORITHM'] = $this->get_reserved(array("UNDEFINED","MERGE","TEMPTABLE"));
             }
             else if ( $name == "SQL SECURITY" ) {
-                $this->get_reserved(array("DEFINER","INVOKER"));
+                $opts['SQL SECURITY'] = $this->get_reserved(array("DEFINER","INVOKER"));
+            }
+            else if ( in_array($name,array('UNIQUE','FULLTEXT','SPATIAL')) ) {
+                $opts['INDEX'] = $name;
             }
             else {
                 break;
@@ -173,7 +178,7 @@ class Modyllic_Parser {
         // The rest here works pretty much the way parse_command works, finding and calling a method
         $method = str_replace(" ","_", "cmd_CREATE_$name");
         if ( is_callable( array($this,$method) ) ) {
-            $this->$method();
+            $this->$method( $opts );
         }
         else {
             throw $this->error( "Unsupported SQL command CREATE ".$this->cur()->debug());
@@ -791,7 +796,38 @@ class Modyllic_Parser {
         return $type;
     }
 
-    function cmd_CREATE_TABLE() {
+    function cmd_CREATE_INDEX($opts) {
+        $key = new Modyllic_Schema_Index();
+        if (isset($opts['INDEX'])) {
+            $key->unique   = $opts['INDEX'] == 'UNIQUE';
+            $key->fulltext = $opts['INDEX'] == 'FULLTEXT';
+            $key->spatial  = $opts['INDEX'] == 'SPATIAL';
+        }
+        $key->name = $this->get_ident();
+        if ( $this->peek_next()->token() == 'USING' ) {
+            $this->get_reserved();
+            $key->using = $this->get_reserved(array('BTREE','HASH'));
+        }
+
+        $this->get_reserved('ON');
+        $table_name = $this->get_ident();
+        if ( ! isset($this->schema->tables[$table_name]) ) {
+            throw $this->error("Tried to create INDEX on underknown table '$table_name'");
+        }
+        $this->ctx = $this->schema->tables[$table_name];
+        $this->get_symbol('(');
+        $key->columns = $this->index_columns();
+
+        if ( $this->peek_next()->token() == 'USING' ) {
+            $this->get_reserved();
+            $key->using = $this->get_reserved(array('BTREE','HASH'));
+        }
+        $this->add_index( $key );
+        return $key;
+
+    }
+
+   function cmd_CREATE_TABLE() {
         // CREATE TABLE ident ( create_definition,... ) table_option...
         // table_option:
         //     [ENGINE=<IDENT>]
