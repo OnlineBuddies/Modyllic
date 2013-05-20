@@ -179,6 +179,9 @@ class Modyllic_Diff {
             if ( $totable->engine != $fromtable->engine ) {
                 $tablediff->update_option( 'engine', $totable->engine );
             }
+            if ( $totable->row_format != $fromtable->row_format ) {
+                $tablediff->update_option( 'row_format', $totable->row_format );
+            }
             if ( $totable->charset != $fromtable->charset ) {
                 $tablediff->update_option( 'charset', $totable->charset );
             }

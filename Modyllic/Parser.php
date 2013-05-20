@@ -790,6 +790,7 @@ class Modyllic_Parser {
         // CREATE TABLE ident ( create_definition,... ) table_option...
         // table_option:
         //     [ENGINE=<IDENT>]
+        //   | [ROW_FORMAT={DEFAULT|DYNAMIC|FIXED|COMPRESSED|REDUNDANT|COMPACT}]
         //   | [[DEFAULT] {CHARACTER SET|CHARSET}=ident]
         //   | [[DEFAULT] COLLATE=ident]
         //   | [AUTO_INCREMENT=number]
@@ -852,7 +853,7 @@ class Modyllic_Parser {
             $this->next();
             if ( $this->maybe_table_option() ) { }
             else {
-                throw $this->error("Unknown table flag ".$this->cur()->debug().", expected ENGINE, CHARSET or COLLATE");
+                throw $this->error("Unknown table flag ".$this->cur()->debug().", expected ENGINE, ROW_FORMAT, CHARSET or COLLATE");
             }
         }
         foreach ($this->ctx->columns as &$col) {
@@ -877,6 +878,11 @@ class Modyllic_Parser {
             $this->maybe( '=' );
             $this->get_reserved();
             $this->ctx->engine = $this->cur()->value(); # We want the user's capitalization
+        }
+        else if ( $this->cur()->token() == 'ROW_FORMAT' ) {
+            $this->maybe( '=' );
+            $this->get_reserved(array( 'DEFAULT', 'DYNAMIC', 'FIXED', 'COMPRESSED', 'REDUNDANT', 'COMPACT' ));
+            $this->ctx->row_format = $this->cur()->value();
         }
         else if ( $this->cur()->token() == 'CHARSET' or $this->cur()->token() == 'CHARACTER SET' ) {
             $this->maybe( '=' );
