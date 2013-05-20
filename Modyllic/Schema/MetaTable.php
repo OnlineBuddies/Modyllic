@@ -11,7 +11,7 @@
  */
 class Modyllic_Schema_MetaTable extends Modyllic_Schema_Table {
     static function create_default($name='MODYLLIC') {
-        $meta = new static($name);
+        $meta = new self($name);
         $meta->docs = 'This is used to store metadata used by the schema management tool';
         $meta->static = true;
 
