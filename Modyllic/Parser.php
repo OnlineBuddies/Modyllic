@@ -554,6 +554,12 @@ class Modyllic_Parser {
 
     function cmd_CREATE_VIEW() {
         $name = $this->get_ident();
+        // If there's a period here then that means the name we fetched was
+        // our schema name.  MySQL emits a prefixed schema name on views and
+        // nothing else.
+        if ( $this->maybe('.') ) {
+            $name = $this->get_ident();
+        }
         if ( isset($this->schema->tables[$name]) ) {
             throw $this->error("Can't create VIEW $name when a table of that name already exists");
         }
