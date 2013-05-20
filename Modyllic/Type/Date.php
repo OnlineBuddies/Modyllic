@@ -8,7 +8,7 @@
 
 class Modyllic_Type_Date extends Modyllic_Type {
     function normalize($date) {
-        if ( $date instanceOf Modyllic_Token_Reserved ) {
+        if ( $date instanceOf Modyllic_Token_Bareword and Modyllic_SQL::is_reserved($date->token()) ) {
             return $date->value();
         }
         if ( $date instanceOf Modyllic_Token_Num ) {

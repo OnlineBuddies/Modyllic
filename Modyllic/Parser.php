@@ -686,8 +686,7 @@ class Modyllic_Parser {
                 $this->next();
             }
             $arg->dir = 'IN';
-            if ( $this->cur() instanceOf Modyllic_Token_Reserved and
-                 in_array($this->cur()->token(), array('IN','INOUT','OUT')) ) {
+            if ( $this->is_reserved(array('IN','INOUT','OUT')) ) {
                 $arg->dir = $this->cur()->token();
                 $this->next();
             }
@@ -744,7 +743,7 @@ class Modyllic_Parser {
             }
         }
         $binary = false;
-        while ( $this->peek_next() instanceOf Modyllic_Token_Reserved ) {
+        while ( $this->peek_next() instanceOf Modyllic_Token_Bareword ) {
             if ( in_array( $this->peek_next()->token(), array( 'SIGNED', 'UNSIGNED', 'ZEROFILL', 'ASCII', 'UNICODE', 'BINARY' ) ) ) {
                 switch ( $this->get_reserved() ) {
                     case 'SIGNED':   $type->unsigned = false; break;
@@ -817,7 +816,7 @@ class Modyllic_Parser {
             }
 
             # A key or column spec, followed by...
-            if ( $this->cur() instanceOf Modyllic_Token_Reserved ) {
+            if ( $this->is_reserved(array( "CONSTRAINT", "FOREIGN KEY", "PRIMARY KEY", "UNIQUE", "FULLTEXT", "KEY"  )) ) {
                 $last_was = $this->load_key();
             }
             else {
@@ -1370,17 +1369,36 @@ class Modyllic_Parser {
      * @returns the token form of the reserved word (all caps)
      */
     function assert_reserved( $t1=null ) {
+        if ( $this->is_reserved($t1) ) {
+            return $this->cur()->token();
+        }
+        else {
+            if ( ! $this->cur() instanceOf Modyllic_Token_Bareword ) {
+                throw $this->error( "Expected reserved word, got ".$this->cur()->debug() );
+            }
+            else {
+                throw $this->error( "Expected '".implode("', '",$t1)."', got ". $this->cur()->debug() );
+            }
+        }
+        return $this->cur()->token();
+    }
+
+    /*
+     * Determine if the current token is a reserved word
+     * @returns boolean
+     */
+    function is_reserved( $t1=null ) {
         if ( ! $this->cur() instanceOf Modyllic_Token_Bareword ) {
-            throw $this->error( "Expected reserved word, got ".$this->cur()->debug() );
+            return false;
         }
         if ( is_null($t1) ) { return $this->cur()->token(); }
 
         if ( ! is_array($t1) ) { $t1 = array($t1); }
 
         if ( ! in_array($this->cur()->token(),$t1) ) {
-            throw $this->error( "Expected '".implode("', '",$t1)."', got ". $this->cur()->debug() );
+            return false;
         }
-        return $this->cur()->token();
+        return true;
     }
 
     /**

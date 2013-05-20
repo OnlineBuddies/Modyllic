@@ -38,7 +38,7 @@ class Modyllic_Type_Decimal extends Modyllic_Type_Numeric {
         $this->scale = $old->scale;
     }
     function normalize($num) {
-        if ( $num instanceOf Modyllic_Token_Reserved ) {
+        if ( $num instanceOf Modyllic_Token_Bareword and Modyllic_SQL::is_reserved($num->token()) ) {
             return $num->value();
         }
         return $this->numify($num);

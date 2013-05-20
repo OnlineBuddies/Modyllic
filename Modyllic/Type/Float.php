@@ -36,7 +36,7 @@ class Modyllic_Type_Float extends Modyllic_Type_Numeric {
         $this->decimals = $old->decimals;
     }
     function normalize($float) {
-        if ( $float instanceOf Modyllic_Token_Reserved ) {
+        if ( $float instanceOf Modyllic_Token_Bareword and Modyllic_SQL::is_reserved($float->token()) ) {
             return $float->value();
         }
         return $this->numify($float);

@@ -1,22 +1,14 @@
 <?php
 /**
- * Copyright © 2012 Online Buddies, Inc. - All Rights Reserved
+ * Copyright © 2013 Online Buddies, Inc. - All Rights Reserved
  *
  * @package Modyllic
  * @author bturner@online-buddies.com
  */
 
 /**
- * Identifiers, eg, column names, table names, etc.
+ * Bareword type tokens
  */
-class Modyllic_Token_Ident extends Modyllic_Token implements Modyllic_Token_Bareword {
-    private $upper;
-    function token() {
-        if ( isset($this->upper) ) {
-            return $this->upper;
-        }
-        else {
-            return $this->upper = strtoupper($this->value());
-        }
-    }
+interface Modyllic_Token_Ident {
+    function is_ident();
 }
