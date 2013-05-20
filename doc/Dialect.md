@@ -262,6 +262,7 @@ Tables:
 table_option:
 
       [ENGINE=engine]
+    | [ROW_FORMAT={DEFAULT|DYNAMIC|FIXED|COMPRESSED|REDUNDANT|COMPACT}]
     | [[DEFAULT] {CHARACTER SET|CHARSET} [=] charset]
     | [[DEFAULT] COLLATE [=] collate]
     | [AUTO_INCREMENT [=] integer]

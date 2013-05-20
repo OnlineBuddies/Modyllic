@@ -9,7 +9,7 @@
 
 require_once dirname(__FILE__)."/test_environment.php";
 
-plan(33);
+plan(34);
 
 $parser = new Modyllic_Parser();
 
@@ -31,6 +31,7 @@ $test_table = $schema->tables['test'];
 ok( $test_table instanceOf Modyllic_Schema_Table, "We got an Modyllic_Schema_Table object for the table test" );
 is( $test_table->name, "test", "The name attribute got set" );
 is( $test_table->engine, "InnoDB", "The default engine got set" );
+is( $test_table->row_format, "DEFAULT", "The default row_format got set" );
 is( $test_table->charset, "utf8", "The default charset got set" );
 is( count($test_table->columns), 1, "One column found" );
 is( count($test_table->indexes), 0, "No indexes found" );

@@ -19,6 +19,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
     public $last_column;
     public $last_index;
     public $engine = 'InnoDB';
+    public $row_format = 'DEFAULT';
     public $charset = 'utf8';
     public $collate = 'utf8_general_ci';
     public $docs = "";
@@ -40,6 +41,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
         $this->last_column = unserialize(serialize($table->last_column));
         $this->last_index = unserialize(serialize($table->last_index));
         $this->engine = $table->engine;
+        $this->row_format = $table->row_format;
         $this->charset = $table->charset;
         $this->collate = $table->collate;
         $this->docs = $table->docs;
@@ -95,6 +97,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
     function equal_to( Modyllic_Schema_Table $other ) {
         if ( $this->name != $other->name ) { return false; }
         if ( $this->engine != $other->engine ) { return false; }
+        if ( $this->row_format != $other->row_format ) { return false; }
         if ( $this->charset != $other->charset ) { return false; }
         if ( $this->static != $other->static ) { return false; }
         if ( count($this->columns) != count($other->columns) ) { return false; }
