@@ -739,6 +739,9 @@ class Modyllic_Generator_ModyllicSQL {
         if ( isset( $table->engine ) ) {
             $this->extend( "ENGINE=".$table->engine );
         }
+        if ( isset ($table->row_format ) ) {
+            $this->extend( "ROW_FORMAT=".$table->row_format );
+        }
         if ( isset($table->charset) and (!isset($schema) or $table->charset!=$schema->charset) ) {
             $this->extend( "DEFAULT CHARACTER SET=".$table->charset );
         }
