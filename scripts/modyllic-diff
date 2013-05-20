@@ -51,14 +51,11 @@ $gen = new $class();
 if ( isset($args->options['only']) ) {
     try {
         $only = preg_split('/\s*,\s*/',$args->options['only']);
-        $gen->validate_schema_types($only);
+        $gen->set_what($only);
     }
     catch (Exception $e) {
         Modyllic_CommandLine::display_error($e->getMessage());
     }
-}
-else {
-    $only = $gen->schema_types();
 }
 
 $fromschema = array();
