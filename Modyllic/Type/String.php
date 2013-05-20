@@ -54,7 +54,7 @@ abstract class Modyllic_Type_String extends Modyllic_Type {
 
 
     function normalize($str) {
-        if ( $str instanceOf Modyllic_Token_Reserved ) {
+        if ( $str instanceOf Modyllic_Token_Bareword and Modyllic_SQL::is_reserved($str->token()) ) {
             return $str->value();
         }
         else if ( $str instanceOf Modyllic_Token_String ) {

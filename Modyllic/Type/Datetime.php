@@ -17,7 +17,7 @@ class Modyllic_Type_Datetime extends Modyllic_Type {
         else {
             $value = $unquoted = $date;
         }
-        if ( $date instanceOf Modyllic_Token_Reserved or (!$is_object and Modyllic_SQL::is_reserved($value) ) ) {
+        if ( ($date instanceOf Modyllic_Token_Bareword and Modyllic_SQL::is_reserved($date->token())) or (!$is_object and Modyllic_SQL::is_reserved($value) ) ) {
             return $value;
         }
         if ( is_numeric($value) and $value == 0 ) {
