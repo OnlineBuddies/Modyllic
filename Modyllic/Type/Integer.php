@@ -31,7 +31,7 @@ class Modyllic_Type_Integer extends Modyllic_Type_Numeric {
         return $sql;
     }
     function normalize($int) {
-        if ( $int instanceOf Modyllic_Token_Reserved ) {
+        if ( $int instanceOf Modyllic_Token_Bareword and Modyllic_SQL::is_reserved($int->token()) ) {
             return $int->value();
         }
         return round($this->numify($int));

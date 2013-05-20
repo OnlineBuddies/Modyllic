@@ -64,10 +64,10 @@ foreach ( $ident_tests as $name=>$test ) {
     $token = $tok->next();
     ok( $token instanceOf Modyllic_Token_Ident, "$name is an Ident token" );
     if ( $token->value() != $token->literal() ) {
-        ok( $token instanceOf Modyllic_Token_Ident_Quoted, "$name is a Quoted Ident token" );
+        ok( $token instanceOf Modyllic_Token_QuotedIdent, "$name is a Quoted Ident token" );
     }
     else {
-        ok( ! $token instanceOf Modyllic_Token_Ident_Quoted, "$name isn't a Quoted Ident token" );
+        ok( ! $token instanceOf Modyllic_Token_QuotedIdent, "$name isn't a Quoted Ident token" );
     }
     is( $token->value(), $test['value'], "$name has the right value" );
     is( $token->literal(), $test['sql'], "$name is unchanged in its literal form" );
@@ -82,7 +82,7 @@ foreach ( $comment_tests as $name=>$test ) {
 
 $tok = new Modyllic_Tokenizer("create");
 $token = $tok->next();
-ok( $token instanceOf Modyllic_Token_Reserved, "CREATE is Reserved token" );
+ok( $token instanceOf Modyllic_Token_Bareword, "CREATE is Bareword token" );
 is( $token->value(), "create", "CREATE has the right value" );
 is( $token->token(), "CREATE", "CREATE is all caps as a token" );
 

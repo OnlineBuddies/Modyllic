@@ -33,7 +33,7 @@ $invalid_date_tests = array(
     "2012-01",
     new Modyllic_Token_String(0,"'2012-01'"),
     "asdlkjfd",
-    new Modyllic_Token_Ident(0, "abc"),
+    new Modyllic_Token_Bareword(0, "abc"),
     );
 
 plan( count($invalid_date_tests) + (2*count($normalization_tests)) + 6 );
