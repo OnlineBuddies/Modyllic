@@ -59,6 +59,30 @@ class Modyllic_Loader_DB_MySQL {
             $tables[$table_row['TABLE_NAME']] = $table['Create Table'];
         }
 
+        $view_sth = self::query( $dbh, "SELECT TABLE_NAME FROM VIEWS WHERE TABLE_SCHEMA=?", array($dbname) );
+        $views = array();
+        while ( $view_row = $view_sth->fetch(PDO::FETCH_ASSOC) ) {
+            Modyllic_Status::$source_count ++;
+            $view = self::selectrow( $dbh, "SHOW CREATE VIEW ".Modyllic_SQL::quote_ident($dbname).".".Modyllic_SQL::quote_ident($view_row['TABLE_NAME']) );
+            $views[$view_row['TABLE_NAME']] = $view['Create View'];
+        }
+
+        $event_sth = self::query( $dbh, "SELECT EVENT_NAME FROM EVENTS WHERE EVENT_SCHEMA=?", array($dbname) );
+        $events = array();
+        while ( $event_row = $event_sth->fetch(PDO::FETCH_ASSOC) ) {
+            Modyllic_Status::$source_count ++;
+            $event = self::selectrow( $dbh, "SHOW CREATE EVENT ".Modyllic_SQL::quote_ident($dbname).".".Modyllic_SQL::quote_ident($event_row['EVENT_NAME']) );
+            $events[$event_row['EVENT_NAME']] = $event['Create Event'];
+        }
+
+        $trigger_sth = self::query( $dbh, "SELECT TRIGGER_NAME FROM TRIGGERS WHERE TRIGGER_SCHEMA=?", array($dbname) );
+        $triggers = array();
+        while ( $trigger_row = $trigger_sth->fetch(PDO::FETCH_ASSOC) ) {
+            Modyllic_Status::$source_count ++;
+            $trigger = self::selectrow( $dbh, "SHOW CREATE TRIGGER ".Modyllic_SQL::quote_ident($dbname).".".Modyllic_SQL::quote_ident($trigger_row['TRIGGER_NAME']) );
+            $triggers[$trigger_row['TRIGGER_NAME']] = $trigger['Create Trigger'];
+        }
+
         $routine_sth = self::query( $dbh, "SELECT ROUTINE_TYPE, ROUTINE_NAME FROM ROUTINES WHERE ROUTINE_SCHEMA=?", array($dbname) );
         $routines = array();
         while ( $routine = $routine_sth->fetch(PDO::FETCH_ASSOC) ) {
@@ -89,6 +113,27 @@ class Modyllic_Loader_DB_MySQL {
             Modyllic_Status::$source_index ++;
         }
         ksort($schema->routines);
+
+        foreach ($views as $view_name=>$view_sql) {
+            Modyllic_Status::$source_name = "$dbname.".$view_name;
+            $parser->partial( $schema, $view_sql, "$dbname.$view_name" );
+            Modyllic_Status::$source_index ++;
+        }
+        ksort($schema->views);
+
+        foreach ($events as $event_name=>$event_sql) {
+            Modyllic_Status::$source_name = "$dbname.".$event_name;
+            $parser->partial( $schema, $event_sql, "$dbname.$event_name" );
+            Modyllic_Status::$source_index ++;
+        }
+        ksort($schema->events);
+
+        foreach ($triggers as $trigger_name=>$trigger_sql) {
+            Modyllic_Status::$source_name = "$dbname.".$trigger_name;
+            $parser->partial( $schema, $trigger_sql, "$dbname.$trigger_name" );
+            Modyllic_Status::$source_index ++;
+        }
+        ksort($schema->triggers);
 
         if (isset($schema->tables['MODYLLIC'])) {
             $table = new Modyllic_Schema_MetaTable();
