@@ -1,1 +1,1 @@
-* Fix Modyllic view diff generation -- was referencing a changeset class rather then expected schema object (Rebecca Turner)
+* Actually connect to the database during apply (Aria Stewart)
