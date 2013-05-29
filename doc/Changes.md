@@ -1,5 +1,13 @@
 Revision history for PHP module Modyllic
 
+v0.2.16 2013-05-29
+
+* Actually connect to the database during apply (Aria Stewart)
+
+v0.2.15 2013-05-29
+
+* Add modyllic-apply command (Aria Stewart)
+
 v0.2.14 2013-05-29
 
 * Fix Modyllic view diff generation -- was referencing a changeset class rather then expected schema object (Rebecca Turner)
