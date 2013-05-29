@@ -1,5 +1,9 @@
 Revision history for PHP module Modyllic
 
+v0.2.16 2013-05-29
+
+* Actually connect to the database during apply (Aria Stewart)
+
 v0.2.15 2013-05-29
 
 * Add modyllic-apply command (Aria Stewart)
