@@ -1,1 +1,1 @@
-* Fix Modyllic view diff generation -- was referencing a changeset class rather then expected schema object (Rebecca Turner)
+* Add modyllic-apply command (Aria Stewart)
