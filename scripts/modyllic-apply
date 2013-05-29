@@ -1,0 +1,124 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Copyright © 2012 Online Buddies, Inc. - All Rights Reserved
+ *
+ * @package Modyllic
+ * @author bturner@online-buddies.com
+ * @author astewart@online-buddies.com
+ */
+
+if ($lib_path = getenv("MODYLLIC_LIB_PATH")) set_include_path($lib_path.":".get_include_path());
+
+require_once "Modyllic/CommandLine.php";
+
+$args = Modyllic_CommandLine::get_args(array(
+    'description' => 'Apply the SQL from filename to the database',
+    'options' => array(
+        'dsn' => array(
+            'short_name'  => '-d',
+            'long_name'   => '--dsn',
+            'action'      => 'StoreString',
+            'description' => 'The DSN of the database to update',
+            ),
+        'script' => array(
+            'short_name'  => '-s',
+            'long_name'   => '--script',
+            'action'      => 'StoreString',
+            ),
+        'after' => array(
+            'short_name'  => '-a',
+            'long_name'   => '--after',
+            'action'      => 'StoreString',
+            'description' => 'The step number to continue after',
+            ) ),
+    'arguments' => array(
+        'dsn' => array('optional'=>true),
+        'script' => array('optional'=>true)
+        )));
+
+if ( ( isset( $args->options['dsn'] ) or isset( $args->options['script'] ) ) and
+     ( isset( $args->args['dsn'] ) or isset( $args->args['script'] ) ) ) {
+    Modyllic_CommandLine::display_error( "You can't specify a schema both positionally and via options" );
+}
+
+if ( ! isset($args->options['dsn']) and ! isset( $args->args['dsn'] ) ) {
+    Modyllic_CommandLine::display_error( 'the DSN is required');
+}
+
+if ( ! isset($args->options['script']) and ! isset( $args->args['script'] ) ) {
+    Modyllic_CommandLine::display_error( 'the script to apply is required');
+}
+
+$dsntoapply = isset($args->options['dsn']) ? $args->options['dsn'] : $args->args['dsn'];
+$filename = isset($args->options['script']) ? $args->options['script'] : $args->args['script'];
+$after = isset($args->options['after']) ? (int)$args->options['after'] : 0;
+
+if ( ! Modyllic_Loader_DB::is_dsn($dsntoapply) ) {
+    Modyllic_CommandLine::display_error( 'the DSN must be a database');
+}
+
+list( $driver, $dsn, $dbname, $user, $pass ) = Modyllic_Loader_DB::parse_dsn( $dsntoapply );
+
+try {
+    $gen_class = Modyllic_Generator::dialect_to_class($driver);
+}
+catch (Exception $e) {
+    Modyllic_Commandline::display_error( 'Could not find a compatible dialect for '.$driver );
+}
+try {
+    $dbh = new PDO( $dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
+}
+catch (PDOException $e) {
+    Modyllic_Commandline::display_error( 'error connecting to database server: '.$e->getMessage() );
+}
+
+try {
+    $sql = file_get_contents($filename);
+    $tok = new Modyllic_Tokenizer($sql);
+    $tok->set_delimiter( ';' );
+    $cmd = "";
+    $stmt = 0;
+    while ( !$tok->next(true) instanceOf Modyllic_Token_EOF ) {
+        if ( $tok->cur instanceOf Modyllic_Token_Delim ) {
+            if ( preg_match('/\S/',$cmd) and (++$stmt > (int)$after or preg_match('/^SET/', $cmd)) ) {
+                try {
+                    print "#$stmt ---------------------------\n";
+                    $cmd = trim($cmd);
+                    print "$cmd\n";
+                    $sth = $dbh->prepare($cmd);
+                    $sth->execute();
+                }
+                catch (PDOException $e) {
+                    print $e->getMessage()."\n";
+                    print "To continue from after this statement, run:\n";
+                    print "{$argv[0]} -d {$dsntoapply} -s {$filename} -a $stmt\n";
+                    exit(1);
+                }
+            }
+            $cmd = "";
+        }
+        else {
+            $cmd .= $tok->cur->literal();
+        }
+    }
+}
+catch (Exception $e) {
+    print "Error while parsing $filename: ".$e->getMessage()."\n";
+    exit(1);
+}
+
+if ( preg_match('/\S/',$cmd) ) {
+    $stmt ++;
+    try {
+        print "#$stmt ---------------------------\n";
+        print "$cmd\n";
+        $sth = $dbh->prepare($cmd);
+        $sth->execute();
+    }
+    catch (PDOException $e) {
+        print $e->getMessage()."\n";
+        print "This was the last statement in the file.\n";
+        exit(1);
+    }
+}
