@@ -72,9 +72,9 @@ class Modyllic_Changeset {
     }
 
     /**
-     * @param Modyllic_View_Changeset $view
+     * @param Modyllic_Schema_View $view
      */
-    function update_view( Modyllic_View_Changeset $view ) {
+    function update_view( Modyllic_Schema_View $view ) {
         $this->update['views'][$view->name] = $view;
     }
 
