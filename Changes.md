@@ -1,5 +1,20 @@
 Revision history for PHP module Modyllic
 
+v0.2.13 2013-05-29
+
+* Remove deprecated commandline scripts (Rebecca Turner)
+* Add new Modyllic command for applying previously generated diffs to a database (Rebecca Turner)
+* Support schema prefixed view names (Rebecca Turner)
+* Add support for views/events/triggers to the MySQL loader (Rebecca Turner)
+* Add support for the mysql ROW_FORMAT table option (Aria Stewart)
+* Fix PHP5.3ism (Rebecca Turner)
+* Substantially improve delimiter related error handling (Rebecca Turner)
+* Make syntax errors consume a single character as an error token (Rebecca Turner)
+* Improve colors used to highlight errors (Rebecca Turner)
+* Fix commandline summary (Rebecca Turner)
+* Improve the 'no MODYLLIC table' situation.  Works with DBs now, but still not dumps that lack it. (Rebecca Turner)
+* Fix #192: Adding multiple columns resulted in invalid AFTER clauses (Rebecca Turner)
+
 v0.2.12 2012-11-19
 
 Bug fixes:
@@ -134,60 +149,29 @@ v0.2.0 2012-04-30
 * #85 Recursive scan directories for .sql files
 * Fix #110 - In sqlcolorize, on exit reset colors rather then explicitly setting white
 
-v0.1.2 2012-04-26
+v0.1.7 2012-04-13
 
-* Packaging updates to use our own channel and document releases
-* Class rename bug in SQL generators
-* Loader fix required for static tables, spread across multiple files
+* No changelog for this version.
 
-v0.1.3 2012-04-26
+v0.1.6 2012-03-30
 
-* Remove unused method Modyllic_Loader::from_db
-* Correct DSN loading to allow equals signs in values.
-* URL decode DSN values prior to using them.
-* Change terminal detection to only run tput if it can plausibly work.
+* No changelog for this version.
 
-v0.1.4 2012-04-26
+v0.1.5 2012-03-19
 
-* Add a debug flag to aid in debugging parser errors
-* Remove verbose output from debugging
-* Fix innumerable problems with migrate since the commandline refactor
-* Allow colons or semicolons in dsns, to make command lines less painful
-* Fix bug where the database name wasn't being emitted in some circumstances
-* SQLMETA updates were bogus, changed to just delete and insert. 
-* The static property on tables wasn't being emitted correctly.
-* Fix bugs in primary key handling caused by support for key lengths
-* Fix bug in how dynamically named indexes were emitted. Now use the name for the purposes of diffs but don't emit it
-* Fix the file roles
+* No changelog for this version.
 
-v0.1.5 2012-04-26
+v0.1.4 2012-03-06
 
-* Add IF EXISTS to events. Fixes #93.
-* Stop using 5.3 Exception form and just rethrow non-general errors
-* RETURNS COLUMN assertions should allow empty result sets (#56)
-* Implement support for extended inserts (#88)
-* Fix missing is_primary attribute on columns
-* Improve error messages for invalid delimiters (#82)
+* No changelog for this version.
 
-v0.1.6 2012-04-26
+v0.1.3 2012-03-06
 
-* Stop Modyllic_Parser::partial from having a return value
-* Complain if no toschema is provided to sqldiff
-* Fix a --progress divide by zero when the source file was empty
-* Fix bug where a DROP DATABASE would ignore any following CREATEs
-* Make the SQL generator able to only output specific kinds of data
-* Boolean types were being treated as exactly equivalent to TINYINT and this isn't actually the case
-* displayError should really be a static function
-* Fix migration --create option
-* Fix bugs around when SQLMETA is created
-* Add support for MySQL Triggers
-* Fix view changeset handling
+* No changelog for this version.
 
-v0.1.7 2012-04-26
+v0.1.2 2012-02-07
 
-* Add IF EXISTS to all of our DROPs
-* Fix bugs in --only support
-* Fix bugs in tracking sqlmeta_exists
+* No changelog for this version.
 
 v0.1.1 2012-01-31
 
