@@ -55,6 +55,7 @@ class Modyllic_Schema_Index extends Modyllic_Diffable {
         if ( $this->unique != $other->unique ) { return false; }
         if ( $this->using != $other->using ) { return false; }
         if ( $this->spatial != $other->spatial ) { return false; }
+        if ( $this->name != $other->name ) { return false; }
         return true;
     }
 }
