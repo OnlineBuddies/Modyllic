@@ -822,7 +822,7 @@ class Modyllic_Parser {
             }
 
             # A key or column spec, followed by...
-            if ( $this->is_reserved(array( "CONSTRAINT", "FOREIGN KEY", "PRIMARY KEY", "UNIQUE", "FULLTEXT", "KEY"  )) ) {
+            if ( $this->is_reserved(array( "CONSTRAINT", "FOREIGN KEY", "PRIMARY KEY", "UNIQUE", "FULLTEXT", "SPATIAL", "KEY"  )) ) {
                 $last_was = $this->load_key();
             }
             else {
