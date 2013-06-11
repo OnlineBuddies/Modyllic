@@ -13,46 +13,51 @@ if ($lib_path = getenv("MODYLLIC_LIB_PATH")) set_include_path($lib_path.":".get_
 require_once "Modyllic/CommandLine.php";
 
 $args = Modyllic_CommandLine::get_args(array(
-    'description' => 'Apply the SQL from filename to the database',
+    'description' => 'Apply an SQL file to a database',
     'options' => array(
         'dsn' => array(
             'short_name'  => '-d',
             'long_name'   => '--dsn',
             'action'      => 'StoreString',
             'description' => 'The DSN of the database to update',
-            ),
+        ),
         'script' => array(
             'short_name'  => '-s',
             'long_name'   => '--script',
             'action'      => 'StoreString',
-            ),
-        'after' => array(
-            'short_name'  => '-a',
-            'long_name'   => '--after',
+            'description' => 'The SQL to apply to the database',
+        ),
+        'skip' => array(
+            'short_name'  => '-k',
+            'long_name'   => '--skip',
             'action'      => 'StoreString',
+            'default'     => 0,
             'description' => 'The step number to continue after',
-            ) ),
+        ),
+    ),
     'arguments' => array(
         'dsn' => array('optional'=>true),
-        'script' => array('optional'=>true)
-        )));
+        'script' => array('optional'=>true),
+    ),
+));
 
-if ( ( isset( $args->options['dsn'] ) or isset( $args->options['script'] ) ) and
-     ( isset( $args->args['dsn'] ) or isset( $args->args['script'] ) ) ) {
-    Modyllic_CommandLine::display_error( "You can't specify a schema both positionally and via options" );
-}
 
-if ( ! isset($args->options['dsn']) and ! isset( $args->args['dsn'] ) ) {
-    Modyllic_CommandLine::display_error( 'the DSN is required');
-}
-
-if ( ! isset($args->options['script']) and ! isset( $args->args['script'] ) ) {
-    Modyllic_CommandLine::display_error( 'the script to apply is required');
+if ( ( isset( $args->args['dsn'] ) and isset( $args->options['dsn'] ) ) or
+     ( isset( $args->args['dsn'] ) and isset( $args->options['script'] ) ) ) {
+    Modyllic_CommandLine::display_error( "You can't specify a database and/or script both positionally and via options" );
 }
 
 $dsntoapply = isset($args->options['dsn']) ? $args->options['dsn'] : $args->args['dsn'];
 $filename = isset($args->options['script']) ? $args->options['script'] : $args->args['script'];
-$after = isset($args->options['after']) ? (int)$args->options['after'] : 0;
+$skip = isset($args->options['skip']) ? (int)$args->options['skip'] : 0;
+
+if ( ! isset($dsntoapply) ) {
+    Modyllic_CommandLine::display_error( 'You must specify both a database to connect to and a script to apply' );
+}
+
+if ( ! isset($filename) ) {
+    Modyllic_CommandLine::display_error( 'the script to apply is required');
+}
 
 if ( ! Modyllic_Loader_DB::is_dsn($dsntoapply) ) {
     Modyllic_CommandLine::display_error( 'the DSN must be a database');
@@ -79,47 +84,44 @@ try {
     $tok = new Modyllic_Tokenizer($sql);
     $tok->set_delimiter( ';' );
     $cmd = "";
-    $stmt = 0;
     while ( !$tok->next(true) instanceOf Modyllic_Token_EOF ) {
         if ( $tok->cur instanceOf Modyllic_Token_Delim ) {
-            if ( preg_match('/\S/',$cmd) and (++$stmt > (int)$after or preg_match('/^SET/', $cmd)) ) {
-                try {
-                    print "#$stmt ---------------------------\n";
-                    $cmd = trim($cmd);
-                    print "$cmd\n";
-                    $sth = $dbh->prepare($cmd);
-                    $sth->execute();
-                }
-                catch (PDOException $e) {
-                    print $e->getMessage()."\n";
-                    print "To continue from after this statement, run:\n";
-                    print "{$argv[0]} -d {$dsntoapply} -s {$filename} -a $stmt\n";
-                    exit(1);
-                }
-            }
+            apply_cmd($dbh, $cmd, $dsntoapply, $filename, $skip);
             $cmd = "";
         }
         else {
             $cmd .= $tok->cur->literal();
         }
     }
+
+    apply_cmd($dbh, $cmd, $dsntoapply, $filename);
 }
 catch (Exception $e) {
-    print "Error while parsing $filename: ".$e->getMessage()."\n";
-    exit(1);
+    Modyllic_CommandLine::display_error( "$e" );
 }
 
-if ( preg_match('/\S/',$cmd) ) {
-    $stmt ++;
-    try {
-        print "#$stmt ---------------------------\n";
-        print "$cmd\n";
-        $sth = $dbh->prepare($cmd);
-        $sth->execute();
-    }
-    catch (PDOException $e) {
-        print $e->getMessage()."\n";
-        print "This was the last statement in the file.\n";
-        exit(1);
+function apply_cmd($dbh,$cmd,$dsntoapply,$filename,$skip=null) {
+    static $stmt = 0;
+    $cmd = trim($cmd);
+    if ( $cmd != "" and (is_null($skip) or (++$stmt > $skip)) ) {
+        echo sprintf("%4s ----------------------------------------------\n", "#$stmt");
+        echo "$cmd\n";
+        try {
+            $sth = $dbh->prepare($cmd);
+            $sth->execute();
+        }
+        catch (Exception $e) {
+            echo "== ERROR ==========================================\n";
+            echo $e->getMessage()."\n";
+            echo "---------------------------------------------------\n";
+            if ( is_null($skip) ) {
+                echo "This was the last statement in the file.\n";
+            }
+            else {
+                echo "To continue from after this statement, run:\n";
+                echo "modyllic apply -d $dsntoapply -s $filename -k $stmt\n";
+            }
+            exit(1);
+        }
     }
 }
