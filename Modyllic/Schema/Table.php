@@ -24,6 +24,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
     public $charset = 'utf8';
     public $collate = 'utf8_general_ci';
     public $docs = "";
+    public $errors = array();
     /**
      * @param string $name
      */
@@ -138,15 +139,16 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
      */
     function add_row( array $row ) {
         if ( ! $this->static and ! $this instanceOf Modyllic_Schema_MetaTable ) {
-            throw new Exception("Cannot add data to ".$this->name.
-                ", not initialized for schema supplied data-- call TRUNCATE first.");
+            $this->errors[] = "Adding data to a non-static table is meaningless-- call TRUNCATE first";
         }
         foreach ($row as $col_name=>&$value) {
             if ( ! isset($this->columns[$col_name]) ) {
-                throw new Exception("INSERT references $col_name in ".$this->name." but $col_name doesn't exist");
+                $this->errors[] = "INSERT references $col_name in ".$this->name." but $col_name doesn't exist";
+                continue;
             }
             $row[$col_name] = Modyllic_Expression::create($value);
         }
+        if (! count($row)) return;
         $element = null;
         $pk = $this->primary_key();
         foreach ($this->data as $index=>$cur) {
@@ -205,7 +207,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
     }
 
     function validate($schema) {
-        $errors = array();
+        $errors = $this->errors;
         if (preg_match('/\0/',$this->name)) {
             $errors[] = 'Table names may not contain NUL characters';
         }
