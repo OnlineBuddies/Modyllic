@@ -13,17 +13,17 @@ class Modyllic_Type_Text extends Modyllic_Type_String {
     }
     function copy_from(Modyllic_Type $old) {
         parent::copy_from($old);
-        $this->length = $old->length;
+        $this->length = $old->length();
     }
     function type_name($size) { return $size . "TEXT"; }
     function to_sql(Modyllic_Type $other=null) {
-        if ( $this->length < 256 ) { // 2^8
+        if ( $this->length() < 256 ) { // 2^8
             $sql = $this->type_name("TINY");
         }
-        else if ( $this->length < 65536 ) { // 2^16
+        else if ( $this->length() < 65536 ) { // 2^16
             $sql = $this->type_name("");
         }
-        else if ( $this->length < 16777216 ) { // 2^24
+        else if ( $this->length() < 16777216 ) { // 2^24
             $sql = $this->type_name("MEDIUM");
         }
         else {

@@ -10,12 +10,11 @@ class Modyllic_Type_Char extends Modyllic_Type_VarString {
     public $default_length = 1;
     function __construct($type) {
         parent::__construct($type);
-        $this->length = $this->default_length;
     }
     function to_sql(Modyllic_Type $other=null) {
         $sql = $this->name;
-        if ( $this->length != $this->default_length ) {
-            $sql .= "(".$this->length.")";
+        if ( $this->length() != $this->default_length() ) {
+            $sql .= "(".$this->length().")";
         }
         $sql .= $this->charset_collation($other);
         return $sql;

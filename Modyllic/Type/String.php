@@ -11,7 +11,6 @@ abstract class Modyllic_Type_String extends Modyllic_Type {
     protected $default_collate = "utf8_general_ci";
     private $charset;
     private $collate;
-    public $length;
 
     function set_default_charset($value) {
         $this->default_charset = $value;
@@ -69,8 +68,8 @@ abstract class Modyllic_Type_String extends Modyllic_Type {
         else {
             throw new Exception( "Expected a valid string, got: $str" );
         }
-        if ( isset($this->length) ) {
-            $value = substr( $value, 0, $this->length );
+        if ( !is_null($this->length()) ) {
+            $value = substr( $value, 0, $this->length() );
         }
         return Modyllic_SQL::quote_str( $value );
     }
