@@ -126,4 +126,19 @@ abstract class Modyllic_Type {
     function is_valid() {
         return true;
     }
+
+    public $length = null;
+
+    public $default_length = null;
+
+    function length() {
+        if ( isset($this->length) ) {
+            return $this->length;
+        }
+        return $this->length = $this->default_length();
+    }
+
+    function default_length() {
+        return $this->default_length;
+    }
 }

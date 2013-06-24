@@ -870,8 +870,8 @@ class Modyllic_Generator_PHP {
         return $this;
     }
     function arg_validate_string(Modyllic_Schema_Arg $arg) {
-        if ( isset($arg->type->length) ) {
-            $this->validate_string_length($arg->name, $arg->type->length);
+        if ( !is_null($arg->type->length()) ) {
+            $this->validate_string_length($arg->name, $arg->type->length());
         }
         return $this;
     }

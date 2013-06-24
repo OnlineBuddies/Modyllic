@@ -11,7 +11,7 @@ class Modyllic_Type_Float extends Modyllic_Type_Numeric {
     function to_sql() {
         $sql = $this->name;
         if ( $this->decimals ) {
-            $sql .= '(' . $this->length . ',' . $this->decimals . ')';
+            $sql .= '(' . $this->length() . ',' . $this->decimals . ')';
         }
         if ( $this->unsigned ) {
             $sql .= ' UNSIGNED';
@@ -27,7 +27,7 @@ class Modyllic_Type_Float extends Modyllic_Type_Numeric {
         if ( $this->zerofill != $other->zerofill ) { return false; }
         if ( $this->decimals != $other->decimals ) { return false; }
         if ( $this->decimals ) {
-            if ( $this->length != $other->length) { return false; }
+            if ( $this->length() != $other->length()) { return false; }
         }
         return true;
     }

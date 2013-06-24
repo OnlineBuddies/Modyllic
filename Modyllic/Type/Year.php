@@ -8,27 +8,26 @@
 
 class Modyllic_Type_Year extends Modyllic_Type {
     public $default_length = 4;
-    public $length;
+
     function __construct($type) {
         parent::__construct($type);
-        $this->length = $this->default_length;
     }
 
     function to_sql() {
         $sql = $this->name;
-        if ( $this->length != $this->default_length ) {
-            $sql .= '(' . $this->length . ')';
+        if ( $this->length() != $this->default_length() ) {
+            $sql .= '(' . $this->length() . ')';
         }
         return $sql;
     }
     function equal_to(Modyllic_Type $other) {
         if ( ! parent::equal_to($other) ) { return false; }
-        if ( $this->length != $other->length ) { return false; }
+        if ( $this->length() != $other->length() ) { return false; }
         return true;
     }
     function copy_from(Modyllic_Type $old) {
         parent::copy_from($old);
-        $this->length = $old->length;
+        $this->length = $old->length();
     }
     function normalize($year) {
         $is_object = is_object($year);
