@@ -1,5 +1,10 @@
 Revision history for PHP module Modyllic
 
+v0.2.18 2013-06-24
+
+* Remove extra whitespace from view and event parsing (Rebecca Turner)
+* Make all db interactions use UTF8 with MySQL (Rebecca Turner)
+
 v0.2.17 2013-06-24
 
 * Support default lengths varying based on signedness (Rebecca Turner)
