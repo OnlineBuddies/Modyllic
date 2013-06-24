@@ -54,6 +54,7 @@ catch (Exception $e) {
 }
 try {
     $dbh = new PDO( $dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
+    $dbh->exec("SET NAMES 'UTF8'");
 }
 catch (PDOException $e) {
     Modyllic_Commandline::display_error( 'error connecting to database server: '.$e->getMessage() );

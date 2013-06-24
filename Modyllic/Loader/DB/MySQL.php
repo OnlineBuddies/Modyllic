@@ -36,6 +36,7 @@ class Modyllic_Loader_DB_MySQL {
      * @returns Modyllic_Schema
      */
     static function load(PDO $dbh, $dbname, $schema) {
+        $dbh->exec("SET NAMES 'UTF8'");
         $dbh->exec("USE information_schema");
         $dbschema = self::selectrow( $dbh, "SELECT SCHEMA_NAME, DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM SCHEMATA WHERE SCHEMA_NAME=?", array($dbname) );
         if ( ! $dbschema ) {
