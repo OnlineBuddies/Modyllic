@@ -19,8 +19,8 @@ class Modyllic_Type_Integer extends Modyllic_Type_Numeric {
     }
     function to_sql() {
         $sql = $this->name;
-        if ( $this->length != $this->default_length ) {
-            $sql .= '(' . $this->length . ')';
+        if ( $this->length() != $this->default_length() ) {
+            $sql .= '(' . $this->length() . ')';
         }
         if ( $this->unsigned ) {
             $sql .= ' UNSIGNED';

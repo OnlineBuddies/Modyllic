@@ -68,7 +68,7 @@ catch (Exception $e) {
 }
 
 $bool = Modyllic_Type::create("BOOLEAN");
-is( $bool->length, 1, "Boolean always have a length of 1");
+is( $bool->length(), 1, "Boolean always have a length of 1");
 is( $bool->to_sql(), "BOOLEAN", "Boolean types properly become themselves");
 $tinyint = Modyllic_Type::create("TINYINT");
 ok( $bool->isa_equivalent($tinyint), "BOOLEAN as a type is equivalent of TINYINT");
@@ -88,4 +88,4 @@ ok( $bit->equal_to($bit), "Bits are indeed bits" );
 ok( $bit->is_valid(), "Bits are valid" );
 
 $int = Modyllic_Type::create("INTEGER");
-is( $int->length, $int->default_length, "Length is initialized properly" );
+is( $int->length(), $int->default_length(), "Length is initialized properly" );

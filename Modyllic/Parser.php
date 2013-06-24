@@ -745,11 +745,11 @@ class Modyllic_Parser {
             }
             else {
                 $type->length = $this->get_list();
-                if ( $type instanceOf Modyllic_Type_VarChar and $type->length > 65535 ) {
-                    $type = new Modyllic_Type_Text($type->name,$type->length);
+                if ( $type instanceOf Modyllic_Type_VarChar and $type->length() > 65535 ) {
+                    $type = new Modyllic_Type_Text($type->name,$type->length());
                 }
-                else if ( $type instanceOf Modyllic_Type_VarBinary and $type->length > 65535 ) {
-                    $type = new Modyllic_Type_Blob($type->name,$type->length);
+                else if ( $type instanceOf Modyllic_Type_VarBinary and $type->length() > 65535 ) {
+                    $type = new Modyllic_Type_Blob($type->name,$type->length());
                 }
             }
         }
