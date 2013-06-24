@@ -25,4 +25,4 @@ ok( isset($schema->views['test']), "View created" );
 
 is( $schema->views['test']->name, 'test', "View name" );
 
-is ( $schema->views['test']->def, ' AS SELECT * from foo', "View defined" );
+is ( $schema->views['test']->def, 'AS SELECT * from foo', "View defined" );
