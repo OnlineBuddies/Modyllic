@@ -1,4 +1,2 @@
-* Support default lengths varying based on signedness (Rebecca Turner)
-* Merge "modyllic patch" and "modyllic apply" (Rebecca Turner)
-* Allow defaults to be functions/constants, eg, true/false (Rebecca Turner)
-* Add support for CREATE INDEX (Rebecca Turner)
+* Remove extra whitespace from view and event parsing (Rebecca Turner)
+* Make all db interactions use UTF8 with MySQL (Rebecca Turner)
