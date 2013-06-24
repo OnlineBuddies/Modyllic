@@ -514,19 +514,18 @@ class Modyllic_Parser {
             "DISABLE ON SLAVE",
             );
         if ( $this->peek_next()->token() == "AT" ) {
-            $this->ctx->schedule .= $this->get_reserved() .
-                              $this->get_expression( $term );
+            $this->ctx->schedule .= $this->get_reserved() . $this->get_expression($term);
         }
         else if ( $this->peek_next()->token() == "EVERY" ) {
             $this->ctx->schedule .= $this->get_reserved() .
-                              $this->get_expression( $term + array("STARTS","ENDS") );
+                   " " . trim($this->get_expression( $term + array("STARTS","ENDS")));
             if ( $this->peek_next()->token() == "STARTS" ) {
                 $this->ctx->schedule .= " " . $this->get_reserved() .
-                                  $this->get_expression( $term + array("ENDS") );
+                   " " . trim($this->get_expression($term + array("ENDS")));
             }
             if ( $this->peek_next()->token() == "ENDS" ) {
                 $this->ctx->schedule .= " " . $this->get_reserved() .
-                                  $this->get_expression( $term );
+                   " " . trim($this->get_expression($term));
             }
         }
         else {
@@ -570,7 +569,7 @@ class Modyllic_Parser {
         }
         $view = $this->schema->add_view( new Modyllic_Schema_View( $name ) );
         ## Minimal support for views currently
-        $view->def = $this->rest();
+        $view->def = trim($this->rest());
     }
 
     function cmd_CREATE_PROCEDURE() {
