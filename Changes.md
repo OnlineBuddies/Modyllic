@@ -1,5 +1,12 @@
 Revision history for PHP module Modyllic
 
+v0.2.17 2013-06-24
+
+* Support default lengths varying based on signedness (Rebecca Turner)
+* Merge "modyllic patch" and "modyllic apply" (Rebecca Turner)
+* Allow defaults to be functions/constants, eg, true/false (Rebecca Turner)
+* Add support for CREATE INDEX (Rebecca Turner)
+
 v0.2.16 2013-05-29
 
 * Actually connect to the database during apply (Aria Stewart)
