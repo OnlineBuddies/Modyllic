@@ -16,7 +16,7 @@ class Modyllic_Schema_View extends Modyllic_Diffable {
         $this->name = $name;
     }
     function equal_to( Modyllic_Schema_View $other ) {
-        if ( $this->def != $other->def ) { return false; }
+        if ( trim($this->def) != trim($other->def) ) { return false; }
         return true;
     }
 }

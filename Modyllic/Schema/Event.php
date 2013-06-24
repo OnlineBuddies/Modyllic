@@ -25,7 +25,7 @@ class Modyllic_Schema_Event extends Modyllic_Schema_CodeBody {
 
     function equal_to(Modyllic_Schema_CodeBody $other) {
         if ( ! parent::equal_to($other) ) { return false; }
-        if ( $this->schedule != $other->schedule ) { return false; }
+        if ( trim($this->schedule) != trim($other->schedule) ) { return false; }
         if ( $this->preserve != $other->preserve ) { return false; }
         if ( $this->status != $other->status ) { return false; }
         return true;

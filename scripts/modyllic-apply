@@ -73,6 +73,7 @@ catch (Exception $e) {
 }
 try {
     $dbh = new PDO( $dsn, $user, $pass, array( PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION ) );
+    $dbh->exec("SET NAMES 'UTF8'");
     $dbh->exec("USE $dbname");
 }
 catch (PDOException $e) {
