@@ -68,12 +68,17 @@ class Modyllic_Loader_DB_MySQL {
             $views[$view_row['TABLE_NAME']] = $view['Create View'];
         }
 
-        $event_sth = self::query( $dbh, "SELECT EVENT_NAME FROM EVENTS WHERE EVENT_SCHEMA=?", array($dbname) );
-        $events = array();
-        while ( $event_row = $event_sth->fetch(PDO::FETCH_ASSOC) ) {
-            Modyllic_Status::$source_count ++;
-            $event = self::selectrow( $dbh, "SHOW CREATE EVENT ".Modyllic_SQL::quote_ident($dbname).".".Modyllic_SQL::quote_ident($event_row['EVENT_NAME']) );
-            $events[$event_row['EVENT_NAME']] = $event['Create Event'];
+        // Events don't exist in MySQL 5.0
+        $events_exist_sth = self::query( $dbh, "SELECT 1 FROM TABLES WHERE TABLE_SCHEMA='information_schema' AND TABLE_NAME='EVENTS'", array() );
+        $events_exist = $event_sth->fetch(PDO::FETCH_NUM);
+        if ($events_exist) {
+            $event_sth = self::query( $dbh, "SELECT EVENT_NAME FROM EVENTS WHERE EVENT_SCHEMA=?", array($dbname) );
+            $events = array();
+            while ( $event_row = $event_sth->fetch(PDO::FETCH_ASSOC) ) {
+                Modyllic_Status::$source_count ++;
+                $event = self::selectrow( $dbh, "SHOW CREATE EVENT ".Modyllic_SQL::quote_ident($dbname).".".Modyllic_SQL::quote_ident($event_row['EVENT_NAME']) );
+                $events[$event_row['EVENT_NAME']] = $event['Create Event'];
+            }
         }
 
         $trigger_sth = self::query( $dbh, "SELECT TRIGGER_NAME FROM TRIGGERS WHERE TRIGGER_SCHEMA=?", array($dbname) );
