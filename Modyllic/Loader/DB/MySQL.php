@@ -70,7 +70,7 @@ class Modyllic_Loader_DB_MySQL {
 
         // Events don't exist in MySQL 5.0
         $events_exist_sth = self::query( $dbh, "SELECT 1 FROM TABLES WHERE TABLE_SCHEMA='information_schema' AND TABLE_NAME='EVENTS'", array() );
-        $events_exist = $event_sth->fetch(PDO::FETCH_NUM);
+        $events_exist = $events_exist_sth->fetch(PDO::FETCH_NUM);
         if ($events_exist) {
             $event_sth = self::query( $dbh, "SELECT EVENT_NAME FROM EVENTS WHERE EVENT_SCHEMA=?", array($dbname) );
             $events = array();
