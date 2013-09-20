@@ -666,12 +666,7 @@ class Modyllic_Parser {
                     throw $this->error("Unknown characteristic in routine declaration: ".$this->cur()->debug());
             }
         }
-        if ( $this->peek_next()->token() == 'BEGIN' ) {
-            $routine->body = trim($this->rest());
-        }
-        else {
-            $routine->body = "BEGIN\n    " . trim($this->rest()) . "\nEND";
-        }
+        $routine->body = trim($this->rest());
     }
 
     private $column_term = array( ',', ')' );
