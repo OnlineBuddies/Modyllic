@@ -119,6 +119,14 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
         return $meta;
     }
 
+    function event_meta($event) {
+        $meta = parent::event_meta($event);
+        $meta["schedule"] = $event->schedule->schedule;
+        $meta["starts"] = $event->schedule->starts;
+        $meta["ends"] = $event->schedule->ends;
+        return $meta;
+    }
+
     function routine_arg_meta( Modyllic_Schema_Arg $arg ) {
         $meta = parent::routine_arg_meta( $arg );
         if ( $arg->type instanceOf Modyllic_Type_Boolean ) {

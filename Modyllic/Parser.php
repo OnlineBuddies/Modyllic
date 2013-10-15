@@ -508,24 +508,23 @@ class Modyllic_Parser {
         // | EVERY interval
         //   [STARTS timestamp [+ INTERVAL interval] ...]
         //   [ENDS timestamp [+ INTERVAL interval] ...]
-        $this->ctx->schedule = '';
         $term = array(
             "DO", "ON COMPLETION", "ENABLE", "DISABLE",
             "DISABLE ON SLAVE",
             );
         if ( $this->peek_next()->token() == "AT" ) {
-            $this->ctx->schedule .= $this->get_reserved() . $this->get_expression($term);
+            $this->ctx->schedule->kind = $this->get_reserved();
+            $this->ctx->schedule->schedule = trim($this->get_expression(array_merge($term,array("STARTS","ENDS"))));
         }
         else if ( $this->peek_next()->token() == "EVERY" ) {
-            $this->ctx->schedule .= $this->get_reserved() .
-                   " " . trim($this->get_expression( $term + array("STARTS","ENDS")));
-            if ( $this->peek_next()->token() == "STARTS" ) {
-                $this->ctx->schedule .= " " . $this->get_reserved() .
-                   " " . trim($this->get_expression($term + array("ENDS")));
+            $this->ctx->schedule->kind = $this->get_reserved();
+            $this->ctx->schedule->schedule =
+                   trim($this->get_expression( array_merge($term,array("STARTS","ENDS")) ));
+            if ( $this->maybe("STARTS") ) {
+                $this->ctx->schedule->starts = trim($this->get_expression(array_merge($term,array("ENDS"))));
             }
-            if ( $this->peek_next()->token() == "ENDS" ) {
-                $this->ctx->schedule .= " " . $this->get_reserved() .
-                   " " . trim($this->get_expression($term));
+            if ( $this->maybe("ENDS") ) {
+                $this->ctx->schedule->ends = trim($this->get_expression($term));
             }
         }
         else {
