@@ -568,8 +568,12 @@ class Modyllic_Parser {
             throw $this->error("Can't create VIEW $name when a table of that name already exists");
         }
         $view = $this->schema->add_view( new Modyllic_Schema_View( $name ) );
+        $this->get_reserved('AS');
         ## Minimal support for views currently
         $view->def = trim($this->rest());
+        if (! $this->schema->name_is_default) {
+            $view->def = preg_replace('/`'.$this->schema->name.'`./','',$view->def);
+        }
     }
 
     function cmd_CREATE_PROCEDURE() {

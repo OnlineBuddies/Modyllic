@@ -784,7 +784,7 @@ class Modyllic_Generator_ModyllicSQL {
 // VIEW
 
     function create_view( $view ) {
-        $this->cmd( "CREATE VIEW %id %lit", $view->name, $view->def );
+        $this->cmd( "CREATE VIEW %id AS %lit", $view->name, $view->def );
         return $this;
     }
 
