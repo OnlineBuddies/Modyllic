@@ -420,11 +420,26 @@ class Modyllic_Generator_ModyllicSQL {
                 foreach ($table->remove['indexes'] as $index) {
                     $this->drop_index($index);
                 }
+                $constraints = array();
                 foreach ($table->add['indexes'] as $index) {
-                    $this->add_index($index);
+                    if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
+                        $constraints[] = $index;
+                    }
+                    else {
+                        $this->add_index($index);
+                    }
                 }
                 $this->end_list();
                 $this->end_cmd();
+                if (count($constraints)) {
+                    $this->begin_cmd( "ALTER TABLE %id ", $table->name );
+                    $this->begin_list();
+                    foreach ($constraints as $index) {
+                        $this->add_index($index);
+                    }
+                    $this->end_list();
+                    $this->end_cmd();
+                }
             }
         }
 
