@@ -70,7 +70,15 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
         $this->indexes[$name] = $index;
         $this->last_index = $index;
         foreach ($index->columns as $cname=>$value) {
-            if ( ! isset($this->columns[$cname]) ) {
+            if ( isset($this->columns[$cname]) ) {
+                if ( $index->primary ) {
+                    $this->columns[$cname]->null = false;
+                    if ( $this->columns[$cname]->default == 'NULL' ) {
+                        $this->columns[$cname]->default = null;
+                    }
+                }
+            }
+            else {
                 throw new Exception("In table ".$this->name.", index $name, can't index unknown column $cname");
             }
         }
