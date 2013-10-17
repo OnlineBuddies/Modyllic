@@ -30,5 +30,8 @@ class Modyllic_Schema_Event extends Modyllic_Schema_CodeBody {
         if ( $this->status != $other->status ) { return false; }
         return true;
     }
+    function validate() {
+        return array();
+    }
 }
 

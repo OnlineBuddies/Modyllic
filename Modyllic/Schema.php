@@ -223,4 +223,32 @@ class Modyllic_Schema extends Modyllic_Diffable {
         }
         return true;
     }
+
+    function validate() {
+        $errors = array();
+        if (preg_match('/\0/',$this->name)) {
+            $errors[] = 'Database names may not contain NUL characters';
+        }
+        if (preg_match('/ $/', $this->name)) {
+            $errors[] = 'Database names may not end in a space';
+        }
+        /// @todo charset
+        /// @todo collate
+        foreach ($this->tables as $table) {
+            $errors = array_merge($errors, $table->validate($this));
+        }
+        foreach ($this->routines as $routine) {
+            $errors = array_merge($errors, $routine->validate($this));
+        }
+        foreach ($this->events as $event) {
+            $errors = array_merge($errors, $event->validate($this));
+        }
+        foreach ($this->triggers as $trigger) {
+            $errors = array_merge($errors, $trigger->validate($this));
+        }
+        foreach ($this->views as $view) {
+            $errors = array_merge($errors, $view->validate($this));
+        }
+        return $errors;
+    }
 }

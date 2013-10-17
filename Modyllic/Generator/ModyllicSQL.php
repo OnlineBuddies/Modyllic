@@ -142,6 +142,13 @@ class Modyllic_Generator_ModyllicSQL {
 // CREATE
 
     function create_sql( Modyllic_Schema $schema ) {
+        if (count( $errors = $schema->validate() )) {
+            foreach ($errors as $error) {
+                foreach (explode("\n",$error) as $line) {
+                    $this->cmd("-- ERROR: $line");
+                }
+            }
+        }
         $this->create( $schema );
         return $this->sql_document( $this->delim, $this->sep );
     }

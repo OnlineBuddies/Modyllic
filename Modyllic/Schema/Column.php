@@ -46,5 +46,9 @@ class Modyllic_Schema_Column extends Modyllic_Diffable {
         if ( $this->aliases != $other->aliases ) { return false; }
         return true;
     }
+
+    function validate() {
+        return array();
+    }
 }
 
