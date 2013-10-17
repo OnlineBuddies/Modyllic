@@ -78,7 +78,7 @@ class Modyllic_Diff {
                 $updevt = new Modyllic_Changeset_Event();
                 $updevt->name = $name;
                 $updevt->from = $fromevt;
-                if ( $toevt->schedule != $fromevt->schedule ) {
+                if ( ! $toevt->schedule->equal_to($fromevt->schedule) ) {
                     $updevt->schedule = $toevt->schedule;
                 }
                 if ( $toevt->preserve != $fromevt->preserve ) {
