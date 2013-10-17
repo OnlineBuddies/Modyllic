@@ -40,5 +40,8 @@ class Modyllic_Schema_Event extends Modyllic_Schema_CodeBody {
             parent::inflate($key,$value);
         }
     }
-}
 
+    function validate() {
+        return array();
+    }
+}

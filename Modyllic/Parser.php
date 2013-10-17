@@ -54,14 +54,19 @@ class Modyllic_Parser {
         try {
             while ( 1 ) {
                 $this->parse_command();
-                if ( $this->next() instanceOf Modyllic_Token_Delim ) {
+                while (1) {
+                    if ( $this->next() instanceOf Modyllic_Token_EOC ) {
+                        break;
+                    }
+                    else {
+                        $this->warning("Extra tokens after end of command: ".$this->cur()->debug());
+                    }
+                }
+                if ( $this->cur() instanceOf Modyllic_Token_Delim ) {
                     continue;
                 }
-                else if ( $this->cur() instanceOf Modyllic_Token_EOF ) {
-                    break;
-                }
                 else {
-                    throw $this->error("Extra tokens after end of command: ".$this->cur()->debug());
+                    break;
                 }
             }
         }
@@ -132,7 +137,8 @@ class Modyllic_Parser {
             $this->$method();
         }
         else {
-            throw $this->error("Unsupported SQL command ".$this->cur()->debug());
+            $this->warning("Unsupported SQL command ".$this->cur()->debug());
+            $this->rest();
         }
     }
 
@@ -181,7 +187,8 @@ class Modyllic_Parser {
             $this->$method( $opts );
         }
         else {
-            throw $this->error( "Unsupported SQL command CREATE ".$this->cur()->debug());
+            $this->warning( "Unsupported SQL command CREATE ".$this->cur()->debug());
+            $this->rest();
         }
     }
 
@@ -232,7 +239,8 @@ class Modyllic_Parser {
             $table->add_row( $row );
         }
         else {
-            throw $this->error( "Expected '(col_names) VALUES (values)' or 'SET col_name=value,...'" );
+            $this->warning( "Expected '(col_names) VALUES (values)' or 'SET col_name=value,...'" );
+            $this->rest();
         }
     }
 
@@ -242,7 +250,7 @@ class Modyllic_Parser {
             $this->schema->set_name($name);
         }
         if ( $name != $this->schema->name ) {
-            throw $this->error( "Can't USE $name when creating ".$this->schema->name );
+            $this->warning( "Can't USE $name when creating ".$this->schema->name );
         }
         $this->rest();
     }
@@ -267,11 +275,11 @@ class Modyllic_Parser {
                         unset($table->indexes["~$name"]);
                     }
                     else {
-                        throw $this->error("Can't drop index $table_name.$name as $name does not exist");
+                        $this->warning("Can't drop index $table_name.$name as $name does not exist");
                     }
                 }
                 else {
-                    throw $this->error("Can't drop INDEX on $table_name as $table_name does not exist");
+                    $this->warning("Can't drop INDEX on $table_name as $table_name does not exist");
                 }
                 break;
             case 'EVENT':
@@ -292,7 +300,7 @@ class Modyllic_Parser {
                 unset($this->schema->views[$name]);
                 break;
             default:
-                throw $this->error( "Don't know how to drop a $what" );
+                $this->warning( "Don't know how to drop a $what" );
         }
     }
 
@@ -314,7 +322,8 @@ class Modyllic_Parser {
             $this->$method();
         }
         else {
-            throw $this->error( "Unsupported SQL command ALTER ".$this->cur()->debug());
+            $this->warning( "Unsupported SQL command ALTER ".$this->cur()->debug());
+            $this->rest();
         }
     }
 
@@ -328,7 +337,7 @@ class Modyllic_Parser {
             $this->schema->set_name( $name );
         }
         if ( $name != $this->schema->name ) {
-            throw $this->error( "Can't ALTER $name when creating ".$this->schema->name );
+            $this->warning( "Can't ALTER $name when creating ".$this->schema->name );
         }
         $this->get_create_specification();
     }
@@ -350,7 +359,7 @@ class Modyllic_Parser {
                         unset($table->indexes["!PRIMARY KEY"]);
                     }
                     else {
-                        throw $this->error("Can't drop primary key as there isn't one currently");
+                        $this->warning("Can't drop primary key as there isn't one currently");
                     }
                 }
                 else if ( $this->cur()->token() == "FOREIGN KEY" ) {
@@ -359,7 +368,7 @@ class Modyllic_Parser {
                         unset($table->indexes["~$name"]);
                     }
                     else {
-                        throw $this->error("Can't drop foreign key constraint $table_name.$name as $name does not exist");
+                        $this->warning("Can't drop foreign key constraint $table_name.$name as $name does not exist");
                     }
                 }
                 else if ( $this->cur()->token() == "INDEX" or $this->cur()->token() == "KEY" ) {
@@ -368,7 +377,7 @@ class Modyllic_Parser {
                         unset($table->indexes[$name]);
                     }
                     else {
-                        throw $this->error("Can't drop index $table_name.$name as $name does not exist");
+                        $this->warning("Can't drop index $table_name.$name as $name does not exist");
                     }
                 }
                 else if ( $this->cur()->token() == "COLUMN" or $this->cur() instanceOf Modyllic_Token_Ident ) {
@@ -382,15 +391,15 @@ class Modyllic_Parser {
                         unset($table->columns[$name]);
                     }
                     else {
-                        throw $this->error("Can't drop column $table_name.$name as $name does not exist");
+                        $this->warning("Can't drop column $table_name.$name as $name does not exist");
                     }
                 }
                 else {
-                    throw $this->error("Don't know how to DROP ".$this->cur()->debug());
+                    $this->warning("Don't know how to DROP ".$this->cur()->debug());
                 }
             }
             else {
-                throw $this->error("Unknown token in ALTER TABLE $table_name");
+                $this->warning("Unknown token in ALTER TABLE $table_name");
             }
         }
     }
@@ -528,7 +537,7 @@ class Modyllic_Parser {
             }
         }
         else {
-            throw $this->error("Expected AT or EVERY in event schedule");
+            $this->warning("Expected AT or EVERY in event schedule");
         }
     }
 
@@ -598,10 +607,10 @@ class Modyllic_Parser {
                     $this->get_symbol('(');
                     $values = $this->get_array();
                     if ( count($values) != 2 ) {
-                        throw $this->error("MAP proc return type must have two arguments");
+                        $this->warning("MAP proc return type must have two arguments");
                     }
-                    $proc->returns['key'] = $values[0];
-                    $proc->returns['value'] = $values[1];
+                    @$proc->returns['key'] = $values[0];
+                    @$proc->returns['value'] = $values[1];
                     break;
                 }
                 break;
@@ -666,7 +675,7 @@ class Modyllic_Parser {
                 case 'CALL';
                     break;
                 default:
-                    throw $this->error("Unknown characteristic in routine declaration: ".$this->cur()->debug());
+                    $this->warning("Unknown characteristic in routine declaration: ".$this->cur()->debug());
             }
         }
         $routine->body = trim($this->rest());
@@ -684,7 +693,9 @@ class Modyllic_Parser {
         $lastarg = null;
         while ( $this->cur()->value() != ')' ) {
             if ( $this->cur() instanceOf Modyllic_Token_EOC ) {
-                throw $this->error("Command ended while looking for close of argument list");
+                $this->warning("Command ended while looking for close of argument list");
+                $this->tok->inject($this->cur());
+                return;
             }
             $arg = new Modyllic_Schema_Arg();
             while ( $this->cur() instanceOf Modyllic_Token_Comment ) {
@@ -787,7 +798,7 @@ class Modyllic_Parser {
         }
 
         if ( ! $type->is_valid() ) {
-#            throw $this->error( "Syntax error in type declaration of ".$type->to_sql() );
+            $this->warning( "Syntax error in type declaration of ".$type->to_sql() );
         }
 
         return $type;
@@ -1122,7 +1133,7 @@ class Modyllic_Parser {
                 break;
             }
             else {
-                throw $this->error( "Error in index declaration, expected PRIMARY KEY, UNIQUE, FULLTEXT or KEY, got ".$this->cur()->debug() );
+                $this->warning( "Error in index declaration, expected PRIMARY KEY, UNIQUE, FULLTEXT or KEY, got ".$this->cur()->debug() );
             }
             $token = $this->next()->token();
         }
@@ -1190,7 +1201,7 @@ class Modyllic_Parser {
                 $key->docs = trim( $key->docs . ' ' . $this->cur()->value() );
             }
             else {
-                throw $this->error( "Error in foreign key declaration in ".$this->ctx->name.", expecting one of ".
+                $this->warning( "Error in foreign key declaration in ".$this->ctx->name.", expecting one of ".
                     "'".implode("', '", array( 'ON DELETE', 'ON UPDATE' ) + $this->column_term )."' got ".$this->cur()->debug() );
             }
         }
@@ -1206,7 +1217,7 @@ class Modyllic_Parser {
         $columns = array();
         while ( $this->next()->value() != ')' ) {
             if ( $this->cur() instanceOf Modyllic_Token_EOC ) {
-                throw $this->error( "Hit end of command while looking for $end" );
+                $this->error( "Hit end of command while looking for $end" );
             }
             if ( $this->cur()->value() != ',' ) {
                 $colname = $this->cur()->value();
@@ -1522,6 +1533,10 @@ class Modyllic_Parser {
         $line = $this->tok->line();
         $col  = $this->tok->col();
         return new Modyllic_Exception( $this->filename, $line + 1, $col + 1, $this->tok->context(), $message );
+    }
+
+    function warning($token,$message=null) {
+        $this->schema->errors[] = $this->error($token,$message)->getMessage();
     }
 }
 

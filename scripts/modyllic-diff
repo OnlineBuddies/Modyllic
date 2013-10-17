@@ -93,6 +93,7 @@ if ( $to->source != "db" ) {
 }
 
 $diff = new Modyllic_Diff( $from, $to );
+$gen->errors($to);
 $gen->alter($diff);
 
 if ( ! $diff->changeset->has_changes() or ! $gen->sql_commands($diff)) {

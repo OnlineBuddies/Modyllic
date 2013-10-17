@@ -58,4 +58,8 @@ class Modyllic_Schema_Index extends Modyllic_Diffable {
         if ( $this->name != $other->name ) { return false; }
         return true;
     }
+
+    function validate() {
+        return array();
+    }
 }
