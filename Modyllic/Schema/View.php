@@ -19,4 +19,8 @@ class Modyllic_Schema_View extends Modyllic_Diffable {
         if ( trim($this->def) != trim($other->def) ) { return false; }
         return true;
     }
+
+    function validate() {
+        return array();
+    }
 }

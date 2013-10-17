@@ -51,4 +51,7 @@ abstract class Modyllic_Schema_Routine extends Modyllic_Schema_CodeBody {
         }
         return true;
     }
+    function validate() {
+        return array();
+    }
 }

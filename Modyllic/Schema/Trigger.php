@@ -31,4 +31,8 @@ class Modyllic_Schema_Trigger extends Modyllic_Schema_CodeBody {
         if ( $this->body != $other->body   ) { return false; }
         return true;
     }
+
+    function validate() {
+        return array();
+    }
 }

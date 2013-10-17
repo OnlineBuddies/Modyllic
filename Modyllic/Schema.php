@@ -24,6 +24,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     public $collate = self::DEFAULT_COLLATE;
     public $docs = "";
     public $source = "generated";
+    public $errors = array();
 
     function reset() {
         $this->triggers       = array();
@@ -222,5 +223,33 @@ class Modyllic_Schema extends Modyllic_Diffable {
             if ( ! $view->equal_to( $other->views[$key] ) ) { return false; }
         }
         return true;
+    }
+
+    function validate() {
+        $errors = $this->errors;
+        if (preg_match('/\0/',$this->name)) {
+            $errors[] = 'Database names may not contain NUL characters';
+        }
+        if (preg_match('/ $/', $this->name)) {
+            $errors[] = 'Database names may not end in a space';
+        }
+        /// @todo charset
+        /// @todo collate
+        foreach ($this->tables as $table) {
+            $errors = array_merge($errors, $table->validate($this));
+        }
+        foreach ($this->routines as $routine) {
+            $errors = array_merge($errors, $routine->validate($this));
+        }
+        foreach ($this->events as $event) {
+            $errors = array_merge($errors, $event->validate($this));
+        }
+        foreach ($this->triggers as $trigger) {
+            $errors = array_merge($errors, $trigger->validate($this));
+        }
+        foreach ($this->views as $view) {
+            $errors = array_merge($errors, $view->validate($this));
+        }
+        return $errors;
     }
 }

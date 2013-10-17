@@ -195,4 +195,24 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
         return $where;
     }
 
+    function validate($schema) {
+        $errors = array();
+        if (preg_match('/\0/',$this->name)) {
+            $errors[] = 'Table names may not contain NUL characters';
+        }
+        if (preg_match('/ $/', $this->name)) {
+            $errors[] = 'Table names may not end in a space';
+        }
+        /// @todo engine
+        /// @todo row_format
+        /// @todo charset
+        /// @todo collate
+        foreach ($this->columns as $column) {
+            $errors = array_merge($errors, $column->validate($schema,$this));
+        }
+        foreach ($this->indexes as $index) {
+            $errors = array_merge($errors, $index->validate($schema,$this));
+        }
+        return $errors;
+    }
 }
