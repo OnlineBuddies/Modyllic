@@ -508,24 +508,23 @@ class Modyllic_Parser {
         // | EVERY interval
         //   [STARTS timestamp [+ INTERVAL interval] ...]
         //   [ENDS timestamp [+ INTERVAL interval] ...]
-        $this->ctx->schedule = '';
         $term = array(
             "DO", "ON COMPLETION", "ENABLE", "DISABLE",
             "DISABLE ON SLAVE",
             );
         if ( $this->peek_next()->token() == "AT" ) {
-            $this->ctx->schedule .= $this->get_reserved() . $this->get_expression($term);
+            $this->ctx->schedule->kind = $this->get_reserved();
+            $this->ctx->schedule->schedule = trim($this->get_expression(array_merge($term,array("STARTS","ENDS"))));
         }
         else if ( $this->peek_next()->token() == "EVERY" ) {
-            $this->ctx->schedule .= $this->get_reserved() .
-                   " " . trim($this->get_expression( $term + array("STARTS","ENDS")));
-            if ( $this->peek_next()->token() == "STARTS" ) {
-                $this->ctx->schedule .= " " . $this->get_reserved() .
-                   " " . trim($this->get_expression($term + array("ENDS")));
+            $this->ctx->schedule->kind = $this->get_reserved();
+            $this->ctx->schedule->schedule =
+                   trim($this->get_expression( array_merge($term,array("STARTS","ENDS")) ));
+            if ( $this->maybe("STARTS") ) {
+                $this->ctx->schedule->starts = trim($this->get_expression(array_merge($term,array("ENDS"))));
             }
-            if ( $this->peek_next()->token() == "ENDS" ) {
-                $this->ctx->schedule .= " " . $this->get_reserved() .
-                   " " . trim($this->get_expression($term));
+            if ( $this->maybe("ENDS") ) {
+                $this->ctx->schedule->ends = trim($this->get_expression($term));
             }
         }
         else {
@@ -568,8 +567,12 @@ class Modyllic_Parser {
             throw $this->error("Can't create VIEW $name when a table of that name already exists");
         }
         $view = $this->schema->add_view( new Modyllic_Schema_View( $name ) );
+        $this->get_reserved('AS');
         ## Minimal support for views currently
         $view->def = trim($this->rest());
+        if (! $this->schema->name_is_default) {
+            $view->def = preg_replace('/`'.$this->schema->name.'`./','',$view->def);
+        }
     }
 
     function cmd_CREATE_PROCEDURE() {

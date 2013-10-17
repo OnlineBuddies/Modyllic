@@ -784,7 +784,7 @@ class Modyllic_Generator_ModyllicSQL {
 // VIEW
 
     function create_view( $view ) {
-        $this->cmd( "CREATE VIEW %id %lit", $view->name, $view->def );
+        $this->cmd( "CREATE VIEW %id AS %lit", $view->name, $view->def );
         return $this;
     }
 
@@ -1061,7 +1061,13 @@ class Modyllic_Generator_ModyllicSQL {
 
     function create_event( $event ) {
         $this->begin_cmd( "CREATE EVENT %id", $event->name );
-        $this->extend( "ON SCHEDULE %lit", $event->schedule );
+        $this->extend( "ON SCHEDULE %lit %lit", $event->schedule->kind, $event->schedule->schedule );
+        if ($event->schedule->starts) {
+            $this->extend( "STARTS %lit", $event->schedule->starts );
+        }
+        if ($event->schedule->ends) {
+            $this->extend( "ENDS %lit", $event->schedule->ends );
+        }
         if ( $event->preserve ) {
             $this->extend( "ON COMPLETION PRESERVE" );
         }
@@ -1077,7 +1083,13 @@ class Modyllic_Generator_ModyllicSQL {
     function alter_event( $event ) {
         $this->begin_cmd( "ALTER EVENT %id", $event->name );
         if ( isset($event->schedule) ) {
-            $this->extend( "ON SCHEDULE %lit", $event->schedule );
+            $this->extend( "ON SCHEDULE %lit %lit", $event->schedule->kind, $event->schedule->schedule );
+            if ($event->schedule->starts) {
+                $this->extend( "STARTS", $event->schedule->starts );
+            }
+            if ($event->schedule->ends) {
+                $this->extend( "ENDS", $event->schedule->ends );
+            }
         }
         if ( isset($event->preserve) ) {
             if ( $event->preserve ) {
