@@ -31,6 +31,7 @@ try {
     $color = CLEAR();
     print $color;
     while ( !$tok->next(true) instanceOf Modyllic_Token_EOF ) {
+        $string = $tok->cur->literal();
         if ( $tok->cur instanceOf Modyllic_Token_Reserved ) {
             $newcolor = BRIGHT_RED();
         }
@@ -48,7 +49,12 @@ try {
             $newcolor = BRIGHT_RED();
         }
         else if ( $tok->cur instanceOf Modyllic_Token_Comment ) {
-            $newcolor = GREEN();
+            if (preg_match('/^-- ERROR:/',$string)) {
+                $newcolor = BRIGHT_YELLOW();
+            }
+            else {
+                $newcolor = GREEN();
+            }
         }
         else if ( $tok->cur instanceOf Modyllic_Token_Delim ) {
             $newcolor = BRIGHT_WHITE();
@@ -66,7 +72,7 @@ try {
             print $newcolor;
             $color = $newcolor;
         }
-        $lines = explode("\n",$tok->cur->literal());
+        $lines = explode("\n",$string);
         print array_shift($lines);
         if (count($lines)) {
             foreach ($lines as $line) {

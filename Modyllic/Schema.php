@@ -24,6 +24,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     public $collate = self::DEFAULT_COLLATE;
     public $docs = "";
     public $source = "generated";
+    public $errors = array();
 
     function reset() {
         $this->triggers       = array();
@@ -225,7 +226,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     }
 
     function validate() {
-        $errors = array();
+        $errors = $this->errors;
         if (preg_match('/\0/',$this->name)) {
             $errors[] = 'Database names may not contain NUL characters';
         }

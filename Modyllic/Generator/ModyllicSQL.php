@@ -76,6 +76,7 @@ class Modyllic_Generator_ModyllicSQL {
 // ALTER
 
     function alter_sql( Modyllic_Diff $diff ) {
+        $this->errors( $diff->to );
         $this->alter( $diff );
         return $this->sql_document( $this->delim, $this->sep );
     }
@@ -139,16 +140,20 @@ class Modyllic_Generator_ModyllicSQL {
         return $this;
     }
 
-// CREATE
-
-    function create_sql( Modyllic_Schema $schema ) {
+    function errors( Modyllic_Schema $schema ) {
         if (count( $errors = $schema->validate() )) {
             foreach ($errors as $error) {
                 foreach (explode("\n",$error) as $line) {
-                    $this->cmd("-- ERROR: $line");
+                    $this->add("-- ERROR: $line\n");
                 }
             }
         }
+    }
+
+// CREATE
+
+    function create_sql( Modyllic_Schema $schema ) {
+        $this->errors( $schema );
         $this->create( $schema );
         return $this->sql_document( $this->delim, $this->sep );
     }
@@ -180,6 +185,7 @@ class Modyllic_Generator_ModyllicSQL {
 // DROP
 
     function drop_sql( Modyllic_Schema $schema ) {
+        $this->errors( $schema );
         $this->drop($schema);
         return $this->sql_document( $this->delim, $this->sep );
     }
