@@ -1,5 +1,17 @@
 Revision history for PHP module Modyllic
 
+vv0.2.19 2013-10-18
+
+* Fix false event diffs Events are tricky to handle right, for two reasons:
+* Whenever possible, produce error messages rather than exceptions
+* Add schema validation as a feature
+* Work around limitation of MySQL's constraint alteration by separating drops from the adds.
+* Fix bug where marking a column as a primary key did not also mark it as not null
+* Fix false view diffs MySQL compresses the spaces between the AS keyword and the select statement, so we need to parse at least that far.
+* Remove needless body rewriting from code bodies
+* Fix guard against events not existing
+* Fix #249: Guard against events not existing in MySQL 5.0
+
 v0.2.18 2013-06-24
 
 * Remove extra whitespace from view and event parsing (Rebecca Turner)
@@ -15,10 +27,6 @@ v0.2.17 2013-06-24
 v0.2.16 2013-05-29
 
 * Actually connect to the database during apply (Aria Stewart)
-
-v0.2.15 2013-05-29
-
-* Add modyllic-apply command (Aria Stewart)
 
 v0.2.14 2013-05-29
 
