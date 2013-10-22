@@ -1,9 +1,1 @@
-* Fix false event diffs Events are tricky to handle right, for two reasons:
-* Whenever possible, produce error messages rather than exceptions
-* Add schema validation as a feature
-* Work around MySQL constraint limitations, separating drops from adds.
-* Fix handling of marking a column as a primary key-- columns are then marked not null by implication
-* Fix false view diffs MySQL compresses the spaces between the AS keyword and the select statement, so we need to parse at least that far.
-* Stop rewriting code body blocks when we didn't need to
-* Fix guard against events not existing
-* Fix #249: Guard against events not existing in MySQL 5.0
+* Fix emitting of altered events
