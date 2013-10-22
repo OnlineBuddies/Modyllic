@@ -1,8 +1,8 @@
 Revision history for PHP module Modyllic
 
-vv0.2.20 2013-10-22
+v0.2.20 2013-10-22
 
-* Fix emitting of altered event
+* Fix emitting of altered events
 
 v0.2.19 2013-10-18
 
