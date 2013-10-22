@@ -1,5 +1,9 @@
 Revision history for PHP module Modyllic
 
+vv0.2.20 2013-10-22
+
+* Fix emitting of altered event
+
 v0.2.19 2013-10-18
 
 * Fix false event diffs Events are tricky to handle right, for two reasons:
