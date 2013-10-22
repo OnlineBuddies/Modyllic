@@ -1113,10 +1113,10 @@ class Modyllic_Generator_ModyllicSQL {
         if ( isset($event->schedule) ) {
             $this->extend( "ON SCHEDULE %lit %lit", $event->schedule->kind, $event->schedule->schedule );
             if ($event->schedule->starts) {
-                $this->extend( "STARTS", $event->schedule->starts );
+                $this->extend( "STARTS %lit", $event->schedule->starts );
             }
             if ($event->schedule->ends) {
-                $this->extend( "ENDS", $event->schedule->ends );
+                $this->extend( "ENDS %lit", $event->schedule->ends );
             }
         }
         if ( isset($event->preserve) ) {
