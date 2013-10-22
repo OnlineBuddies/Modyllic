@@ -421,6 +421,16 @@ class Modyllic_Generator_ModyllicSQL {
                 if ($table->options->has_changes()) {
                     $this->table_options( $table->options );
                 }
+                foreach ($table->remove['indexes'] as $index) {
+                    if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
+                        $this->drop_index($index);
+                    }
+                }
+                foreach ($table->remove['indexes'] as $index) {
+                    if ( ! $index instanceOf Modyllic_Schema_Index_Foreign ) {
+                        $this->drop_index($index);
+                    }
+                }
                 foreach (array_reverse($table->add['columns']) as $column) {
                     $this->add_column( $column );
                 }
@@ -429,9 +439,6 @@ class Modyllic_Generator_ModyllicSQL {
                 }
                 foreach ($table->update['columns'] as $column) {
                     $this->alter_column($column);
-                }
-                foreach ($table->remove['indexes'] as $index) {
-                    $this->drop_index($index);
                 }
                 $constraints = array();
                 foreach ($table->add['indexes'] as $index) {
