@@ -1,1 +1,2 @@
-* Fix emitting of altered events
+* Match the function signature up with Modyllic_Schema_Index_Foreign::validate
+* Drop constraints, THEN indexes, THEN columns
