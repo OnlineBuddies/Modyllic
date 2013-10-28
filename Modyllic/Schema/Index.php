@@ -59,7 +59,7 @@ class Modyllic_Schema_Index extends Modyllic_Diffable {
         return true;
     }
 
-    function validate() {
+    function validate($schema,$table) {
         return array();
     }
 }
