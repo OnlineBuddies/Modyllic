@@ -1,5 +1,10 @@
 Revision history for PHP module Modyllic
 
+v0.2.21 2013-10-28
+
+* Match the function signature up with Modyllic_Schema_Index_Foreign::validate
+* Drop constraints, THEN indexes, THEN columns
+
 v0.2.20 2013-10-22
 
 * Fix emitting of altered events
@@ -31,6 +36,10 @@ v0.2.17 2013-06-24
 v0.2.16 2013-05-29
 
 * Actually connect to the database during apply (Aria Stewart)
+
+v0.2.15 2013-05-29
+
+* Add modyllic-apply command (Aria Stewart)
 
 v0.2.14 2013-05-29
 
