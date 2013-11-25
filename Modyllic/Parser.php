@@ -586,7 +586,7 @@ class Modyllic_Parser {
             $this->add_event( $this->ctx );
         }
         if ( $this->maybe(array('ENABLE','DISABLE','DISABLE ON SLAVE')) ) {
-            $this->assert_reserved();
+            $this->ctx->status = $this->assert_reserved();
         }
         if ( $this->maybe('DO') ) {
             $this->assert_reserved();
