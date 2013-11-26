@@ -137,9 +137,12 @@ class Modyllic_Schema extends Modyllic_Diffable {
         }
         if ( $metadata ) {
             foreach ($metadata as &$row) {
-                $kind = $this->unquote_sql_str($row['kind']);
-                $which = $this->unquote_sql_str($row['which']);
-                $meta = json_decode($this->unquote_sql_str($row['value']), true);
+                //$kind = $this->unquote_sql_str($row['kind']);
+                //$which = $this->unquote_sql_str($row['which']);
+                //$meta = json_decode($this->unquote_sql_str($row['value']), true);
+                $kind = $row['kind']->token->unquote();
+                $which = $row['which']->token->unquote();
+                $meta  = json_decode($row['value']->token->unquote(),true);
                 $obj = null;
                 switch ($kind) {
                     case 'TABLE':
@@ -175,6 +178,26 @@ class Modyllic_Schema extends Modyllic_Diffable {
                             $obj = $this->events[$which];
                         }
                         break;
+                    case 'DATA':
+                        preg_match('/^([^.]+) WHERE (.*)/',$which,$matches);
+                        $table_name = $matches[1];
+                        $where_sql = $matches[2];
+                        $where_exp = Modyllic_Parser::parse_expr($where_sql);
+                        $match = null;
+                        foreach ($this->tables[$table_name]->data as $row) {
+                            if (Modyllic_Evaluate::exec($where_exp,$row)) {
+                                $match = $row;
+                                break;
+                            }
+                        }
+                        if ($match) {
+                            $obj = $match;
+                        }
+                        break;
+                        
+                        // @todo, find pk cols from the schema, then find
+                        // the matching row and update its value with the
+                        // one from $meta
                     default:
                         throw new Exception("Unknown kind of metadata '$kind' found in the metadata table");
                         break;
@@ -185,6 +208,20 @@ class Modyllic_Schema extends Modyllic_Diffable {
                     }
                 }
             }
+        }
+    }
+
+    function and_list_to_array($list) {
+        $op = $list[0];
+        if ($op == 'AND') {
+           return array_merge($this->and_list_to_array($list[1]),$this->and_list_to_array($list[2]));
+            return $result;
+        }
+        else if ($op == '=') {
+            return array($list[1]=>$list[2]);
+        }
+        else {
+            throw new Exception("Operator $op is not allowed in AND-lists, only AND and = are allowed");
         }
     }
 

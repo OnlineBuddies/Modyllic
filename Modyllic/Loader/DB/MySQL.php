@@ -161,6 +161,7 @@ class Modyllic_Loader_DB_MySQL {
             $schema->tables['SQLMETA'] = $table;
         }
 
+        // We do this before data loading because we don't know what tables are static until we do...
         $schema->load_meta();
 
         // Look for data to load...
@@ -173,5 +174,8 @@ class Modyllic_Loader_DB_MySQL {
             }
         }
 
+        // Then load meta data again... because reasons. We have metadata on our data rows, and they didn't exist
+        // last time when we called this.  Stupid chicken/egg problems. ;.;
+        $schema->load_meta();
     }
 }

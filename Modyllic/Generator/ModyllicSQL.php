@@ -33,6 +33,33 @@ class Modyllic_Generator_ModyllicSQL {
             foreach ( $table->indexes as $index ) {
                 $meta->add_metadata( "INDEX", $table->name . "." . $index->name, $this->index_meta($index) );
             }
+            if (isset($table->data)) {
+                $pk = $table->primary_key();
+                foreach ($table->data as $row) {
+                    $pkwhere = null;
+                    foreach ($pk as $col=>$len) {
+                        $colid = new Modyllic_Token_Bareword(0,$col);
+                        if ($len) {
+                            $keywhere = Modyllic_Expression::create($colid,'=', Modyllic_Expression::create('SUBSTR',array($row[$col],1,$len)));
+                        }
+                        else {
+                            $value = Modyllic_Expression::create($row[$col]);
+                            $value->setType($table->columns[$col]->type);
+                            $keywhere = Modyllic_Expression::create($colid, '=', $value);
+                        }
+                        if ($pkwhere) {
+                            $pkwhere = Modyllic_Expression::create( $pkwhere, 'AND', $keywhere );
+                        }
+                        else {
+                            $pkwhere = $keywhere;
+                        }
+                        
+                    }
+                    $key = $pkwhere->normalize(Modyllic_Type::create('LONGTEXT'));
+                    $meta->add_metadata( "DATA", $table->name . " WHERE " . $key,
+                         $this->data_meta($table,$row) );
+                }
+            }
         }
         foreach ($schema->routines as $routine) {
             $meta->add_metadata( "ROUTINE",$routine->name, $this->routine_meta($routine) );
@@ -165,7 +192,7 @@ class Modyllic_Generator_ModyllicSQL {
         }
         if ( isset($this->what['tables']) ) {
             $this->create_tables( $schema->tables, $schema );
-        }
+            }
         if ( isset($this->what['views']) ) {
             $this->create_views( $schema->views );
         }
@@ -470,10 +497,7 @@ class Modyllic_Generator_ModyllicSQL {
             $this->begin_cmd();
             $this->partial( "DELETE FROM %id WHERE ", $table->name);
             $this->begin_list( " AND " );
-            foreach ($row as $col=>$val) {
-                $this->next_list_item();
-                $this->partial( "%id=%lit", $col, $val );
-            }
+            $this->data_column_list($table->to,$row['where']);
             $this->end_list();
             $this->end_cmd();
         }
@@ -481,24 +505,25 @@ class Modyllic_Generator_ModyllicSQL {
             $this->begin_cmd();
             $this->partial( "UPDATE %id SET ", $table->name );
             $this->begin_list();
-            foreach ($row['updated'] as $col=>$val) {
-                $this->next_list_item();
-                $this->partial( "%id=%lit", $col, $val );
-            }
+            $this->data_column_list($table->to,$row['data']);
             $this->end_list();
             $this->partial(" WHERE ");
             $this->begin_list(" AND ");
-            foreach ($row['where'] as $col=>$val) {
-                $this->next_list_item();
-                $this->partial( "%id=%lit", $col, $val );
-            }
+            $this->data_column_list($table->to,$row['where']);
             $this->end_list();
             $this->end_cmd();
         }
         foreach ($table->add['data'] as $row ) {
-            $this->create_data( $table, $row );
+            $this->create_data( $table->to, $row['data'] );
         }
         return $this;
+    }
+
+    function data_column_list($table,$data) {
+        foreach ($data as $col=>$val) {
+            $this->next_list_item();
+            $this->partial( "%id=%lit", $col, $val->normalize($table->columns[$col]->type ));
+        }
     }
 
     function drop_table( Modyllic_Schema_Table $table ) {
@@ -506,6 +531,8 @@ class Modyllic_Generator_ModyllicSQL {
         $this->cmd( "DROP TABLE IF EXISTS %id", $table->name );
         return $this;
     }
+
+    function data_meta( $table, $row ) { return array(); }
 
     function column_meta( Modyllic_Schema_Column $col) { return array(); }
 
@@ -792,7 +819,7 @@ class Modyllic_Generator_ModyllicSQL {
         $this->begin_list();
         foreach ($row as $col=>$val) {
             $this->next_list_item();
-            $this->partial( "%id=%lit", $col, $val );
+            $this->partial( "%id=%lit", $col, $val->normalize($table->columns[$col]->type) );
         }
         $this->end_list();
         $this->end_cmd();
