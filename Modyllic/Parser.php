@@ -1431,12 +1431,8 @@ class Modyllic_Parser {
      * @returns bool
      */
     function maybe($thing) {
-        if ( ! is_array($thing) ) {
-            $thing = array($thing);
-        }
-        if ( in_array( $this->peek_next()->token(), $thing ) ) {
-            $this->next();
-            return true;
+        if ( in_array( $this->peek_next()->token(), (array)$thing ) ) {
+            return $this->next();
         }
         else {
             return false;
