@@ -19,6 +19,15 @@ class Modyllic_Parser {
 
     private $tok; // An instance of the tokenizer
 
+    function __construct($tok=null) {
+        $this->tok = $tok;
+    }
+
+    static function parse_expr($sql) {
+        $parser = new self( new Modyllic_Tokenizer($sql) );
+        return $parser->get_expr();
+    }
+
     /**
      * This parses the SQL in $sql returns an Modyllic_Schema object.
      *
