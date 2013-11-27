@@ -543,7 +543,7 @@ class Modyllic_Parser {
     }
 
     function updated_collate( $old, $new, $collate ) {
-        return preg_replace( "/^\Q$old\E/", $new, $collate );
+        return preg_replace( "/^\Q$old\E/u", $new, $collate );
     }
 
     function get_create_specification() {
@@ -704,7 +704,7 @@ class Modyllic_Parser {
         ## Minimal support for views currently
         $view->def = trim($this->rest());
         if (! $this->schema->name_is_default) {
-            $view->def = preg_replace('/`'.$this->schema->name.'`./','',$view->def);
+            $view->def = preg_replace('/`\Q'.$this->schema->name.'\E`./u','',$view->def);
         }
     }
 

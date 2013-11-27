@@ -48,7 +48,7 @@ class Modyllic_Expression_Operator_Binary extends Modyllic_Expression {
         $type1 = $type2 = $type;
         if ($this->type1) $type1 = $this->type1;
         if ($this->type2) $type2 = $this->type2;
-        $op = preg_replace('/(\w+)/',' $1 ',$this->op->token());
+        $op = preg_replace('/(\w+)/u',' $1 ',$this->op->token());
         return $this->exp1->normalize($type2) . $op . $this->exp2->normalize($type2);
     }
     function to_php() {

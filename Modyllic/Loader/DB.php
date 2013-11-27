@@ -14,7 +14,7 @@ class Modyllic_Loader_DB {
     static public function db_driver($dialect) {
         if ( !isset(self::$dialect_map) ) { self::$dialect_map = array(); }
         if ( ! isset(self::$dialect_map[$dialect]) ) {
-            $cap_dialect = preg_replace( "/sql/", "SQL", $dialect );
+            $cap_dialect = preg_replace( "/sql/u", "SQL", $dialect );
             $classes_to_try = array(
                 "Modyllic_Loader_DB_".ucfirst($cap_dialect),
                 "Modyllic_Loader_DB_".ucfirst($dialect)."SQL",
@@ -25,7 +25,7 @@ class Modyllic_Loader_DB {
                 $dialect,
                 );
             foreach ($classes_to_try as $class) {
-                $file = preg_replace("/_/","/", $class) . ".php";
+                $file = preg_replace("/_/u","/", $class) . ".php";
                 if ( class_exists($class) ) {
                     self::$dialect_map[$dialect] = $class;
                     self::$dialect_map[$class] = $class;
@@ -40,17 +40,17 @@ class Modyllic_Loader_DB {
     }
 
     static function is_dsn($source) {
-        return preg_match("/^(\w+):(.*)/",$source);
+        return preg_match("/^(\w+):(.*)/u",$source);
     }
 
     static function parse_dsn($source) {
-        if ( preg_match("/^(\w+):(.*)/",$source,$matches) ) {
+        if ( preg_match("/^(\w+):(.*)/u",$source,$matches) ) {
             $driver = $matches[1];
             $username = null;
             $password = null;
             $dbname = null;
             $opts = array();
-            foreach ( preg_split('/[:;]/',$matches[2]) as $opt_pair ) {
+            foreach ( preg_split('/[:;]/u',$matches[2]) as $opt_pair ) {
                 list($name,$value) = explode('=',$opt_pair,2);
                 $value = rawurldecode($value);
                 if ( $name == 'username' ) {

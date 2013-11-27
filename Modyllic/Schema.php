@@ -171,7 +171,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
                     }
                     break;
                 case 'ROW':
-                    preg_match('/^([^.]+) WHERE (.*)/',$which,$matches);
+                    preg_match('/^([^.]+) WHERE (.*)/u',$which,$matches);
                     $table_name = $matches[1];
                     $where_sql = $matches[2];
                     $where_exp = Modyllic_Parser::parse_expr($where_sql);
@@ -234,8 +234,8 @@ class Modyllic_Schema extends Modyllic_Diffable {
         if (preg_match('/\0/',$this->name)) {
             $errors[] = 'Database names may not contain NUL characters';
         }
-        if (preg_match('/ $/', $this->name)) {
-            $errors[] = 'Database names may not end in a space';
+        if (preg_match('/\s$/u', $this->name)) {
+            $errors[] = 'Database names may not end in whitespace';
         }
         /// @todo charset
         /// @todo collate

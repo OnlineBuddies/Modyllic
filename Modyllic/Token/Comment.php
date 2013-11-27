@@ -16,9 +16,9 @@ class Modyllic_Token_Comment extends Modyllic_Token {
         $this->literal = $literal;
     }
     function value() {
-        return preg_replace('/\r/','',$this->value);
+        return preg_replace('/\r/u','',$this->value);
     }
     function literal() {
-        return preg_replace('/\r/','',$this->literal);
+        return preg_replace('/\r/u','',$this->literal);
     }
 }

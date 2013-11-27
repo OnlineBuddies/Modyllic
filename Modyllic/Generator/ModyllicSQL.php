@@ -1301,7 +1301,7 @@ class Modyllic_Generator_ModyllicSQL {
     protected $_format_args;
     protected function _format( $str, array $args ) {
         $this->_format_args = $args;
-        $formatted = preg_replace_callback( '/%(id|str|lit)/', array($this,'_format_replace'), $str );
+        $formatted = preg_replace_callback( '/%(id|str|lit)/u', array($this,'_format_replace'), $str );
         unset($this->_format_args);
         return $formatted;
         return $this;

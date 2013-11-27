@@ -16,13 +16,13 @@ abstract class Modyllic_Schema_CodeBody extends Modyllic_Diffable {
     function _body_no_comments() {
         $stripped = $this->body;
         # Strip C style comments
-        $stripped = preg_replace('{/[*].*?[*]/}s', '', $stripped);
+        $stripped = preg_replace('{/[*].*?[*]/}su', '', $stripped);
         # Strip shell and SQL style comments
-        $stripped = preg_replace('/(#|--).*/', '', $stripped);
+        $stripped = preg_replace('/(#|--).*/u', '', $stripped);
         # Strip leading and trailing whitespace
-        $stripped = preg_replace('/^[ \t]+|[ \t]+$/m', '', $stripped);
+        $stripped = preg_replace('/^\h+|\h+$/mu', '', $stripped);
         # Collapse repeated newlines
-        $stripped = preg_replace('/\n+/', "\n", $stripped);
+        $stripped = preg_replace('/\n+/u', "\n", $stripped);
         return $stripped;
     }
 

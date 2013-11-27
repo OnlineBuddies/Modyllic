@@ -49,7 +49,7 @@ class Modyllic_Evaluate {
         else if ($expr instanceOf Modyllic_Expression_Function) {
             $func = $expr->func->token();
             if ($func == 'SUBSTR') {
-                return substr( self::exec($expr->args[0],$row), self::exec($expr->args[1],$row)-1, self::exec($expr->args[2],$row) );
+                return mb_substr( self::exec($expr->args[0],$row), self::exec($expr->args[1],$row)-1, self::exec($expr->args[2],$row), 'UTF-8' );
             }
             else {
                 throw new Exception("Error while evaluating SQL, unsupported function '$func'");

@@ -11,7 +11,7 @@ abstract class Modyllic_Expression {
     function equal_to($exp,$type,$length=null) {
         if (! $this instanceOf $exp) return false;
         if (isset($length) and $length) {
-            return (substr($this->normalize($type),0,$length) == substr($exp->normalize($type),0,$length));
+            return (mb_substr($this->normalize($type),0,$length,'UTF-8') == mb_substr($exp->normalize($type),0,$length,'UTF-8'));
         }
         else {
             return ($this->normalize($type) == $exp->normalize($type));

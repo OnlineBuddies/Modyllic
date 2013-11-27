@@ -13,8 +13,8 @@ class Modyllic_Token_QuotedIdent extends Modyllic_Token implements Modyllic_Toke
     function value() {
         $quote = $this->value[0];
         $unquoted = substr( $this->value, 1, -1 );
-        $unquoted = preg_replace("/$quote{2}/", $quote, $unquoted );
-        $unquoted = preg_replace('/\\\\(.)/', '$1', $unquoted );
+        $unquoted = preg_replace("/\Q$quote\E{2}/u", $quote, $unquoted );
+        $unquoted = preg_replace('/\\\\(.)/u', '$1', $unquoted );
         return $unquoted;
     }
     function is_ident() {

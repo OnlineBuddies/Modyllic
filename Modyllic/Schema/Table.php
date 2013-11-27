@@ -208,8 +208,8 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
         if (preg_match('/\0/',$this->name)) {
             $errors[] = 'Table names may not contain NUL characters';
         }
-        if (preg_match('/ $/', $this->name)) {
-            $errors[] = 'Table names may not end in a space';
+        if (preg_match('/\s$/u', $this->name)) {
+            $errors[] = 'Table names may not end in whitespace';
         }
         /// @todo engine
         /// @todo row_format

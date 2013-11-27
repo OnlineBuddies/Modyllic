@@ -72,7 +72,7 @@ abstract class Modyllic_Type_String extends Modyllic_Type {
             throw new Exception( "Expected a valid string, got: $str" );
         }
         if ( !is_null($this->length()) ) {
-            $value = substr( $value, 0, $this->length() );
+            $value = mb_substr( $value, 0, $this->length(), 'UTF-8' );
         }
         return Modyllic_SQL::quote_str( $value );
     }
@@ -94,7 +94,7 @@ abstract class Modyllic_Type_String extends Modyllic_Type {
             $sql .= " CHARACTER SET ".$this->charset();
         }
         if ( $diff_collate ) {
-            if ( preg_match('/_bin$/', $this->collate() ) ) {
+            if ( preg_match('/_bin$/u', $this->collate() ) ) {
                 $sql .= " BINARY";
             }
             else {
