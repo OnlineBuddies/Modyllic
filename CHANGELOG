@@ -1,2 +1,5 @@
-* Match the function signature up with Modyllic_Schema_Index_Foreign::validate
-* Drop constraints, THEN indexes, THEN columns
+* Make unknown metadata an error rather than an exception
+* Remove SQLMETA backwards compatibility
+* Allow enabling or disabling an event through ALTER EVENT
+* Upgrade substrs and matches to UTF-8
+* Support for SQL expressions in INSERT commands
