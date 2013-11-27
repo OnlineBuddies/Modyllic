@@ -11,6 +11,9 @@ class Modyllic_Type_Date extends Modyllic_Type {
         if ( $date instanceOf Modyllic_Token_Bareword and Modyllic_SQL::is_reserved($date->token()) ) {
             return $date->value();
         }
+        elseif ( $date instanceOf Modyllic_Token_Bareword ) {
+            return Modyllic_SQL::quote_ident($date->unquote());
+        }
         if ( $date instanceOf Modyllic_Token_Num ) {
             if ( $date->value() == 0 ) {
                 return "'0000-00-00'";
@@ -25,7 +28,7 @@ class Modyllic_Type_Date extends Modyllic_Type {
         if ( $date->value() == '0' ) {
             return "'0000-00-00'";
         }
-        if ( ! preg_match( '/^\d\d\d\d-\d\d-\d\d$/', $date->unquote() ) ) {
+        if ( ! preg_match( '/^\d\d\d\d-\d\d-\d\d$/u', $date->unquote() ) ) {
             throw new Exception("Invalid default for date: $date");
         }
         return $date->value();

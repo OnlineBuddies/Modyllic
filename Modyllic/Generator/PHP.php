@@ -147,7 +147,7 @@ class Modyllic_Generator_PHP {
         return $this;
     }
     protected function add_var($var) {
-        $var = preg_replace("/\W/","_",$var);
+        $var = preg_replace("/\W/u","_",$var);
         $this->cmd( '$' . $var, ';' );
         return $this;
     }
@@ -788,7 +788,7 @@ class Modyllic_Generator_PHP {
         $this->begin_assert()
                ->func_var('is_null',$name)
                ->op('or')
-               ->preg_match( '/^\d\d\d\d-\d\d-\d\d$/', $name )
+               ->preg_match( '/^\d\d\d\d-\d\d-\d\d$/u', $name )
              ->end_assert();
         return $this;
     }
@@ -800,7 +800,7 @@ class Modyllic_Generator_PHP {
                ->op('or')
                ->op_var($name,'===',"'0'")
                ->op('or')
-               ->preg_match( '/^(\d{1,4})-(\d\d?)-(\d\d?)(?: (\d\d?)(?::(\d\d?)(?::(\d\d?))?)?)?$/', $name )
+               ->preg_match( '/^(\d{1,4})-(\d\d?)-(\d\d?)(?: (\d\d?)(?::(\d\d?)(?::(\d\d?))?)?)?$/u', $name )
              ->end_assert();
         return $this;
     }
@@ -808,7 +808,7 @@ class Modyllic_Generator_PHP {
         $this->begin_assert()
                ->func_var('is_null',$name)
                ->op('or')
-               ->preg_match('/^\d\d(?::\d\d(?::\d\d)?)?$/' , $name)
+               ->preg_match('/^\d\d(?::\d\d(?::\d\d)?)?$/u' , $name)
              ->end_assert();
         return $this;
     }
@@ -818,7 +818,7 @@ class Modyllic_Generator_PHP {
                ->op('or')
                ->op_var($name,'==',0)
                ->op('or')
-               ->preg_match('/^\d{14}$/' , $name)
+               ->preg_match('/^\d{14}$/u' , $name)
              ->end_assert();
         return $this;
     }
@@ -828,7 +828,7 @@ class Modyllic_Generator_PHP {
                ->op('or')
                ->op_var($name,'===',0)
                ->op('or')
-               ->preg_match('/^\d\d(?:\d\d)?$/' , $name)
+               ->preg_match('/^\d\d(?:\d\d)?$/u' , $name)
              ->end_assert();
         return $this;
     }

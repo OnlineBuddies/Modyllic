@@ -26,7 +26,7 @@ class Modyllic_Type_Datetime extends Modyllic_Type {
         if ( $is_object and ! $date instanceOf Modyllic_Token_String ) {
             throw new Exception("Invalid date value: $date");
         }
-        if ( preg_match( '/^(\d{1,4})-(\d\d?)-(\d\d?)(?: (\d\d?)(?::(\d\d?)(?::(\d\d?))?)?)?$/', $unquoted, $matches ) ) {
+        if ( preg_match( '/^(\d{1,4})-(\d\d?)-(\d\d?)(?: (\d\d?)(?::(\d\d?)(?::(\d\d?))?)?)?$/u', $unquoted, $matches ) ) {
             $year = $matches[1];
             $mon  = $matches[2];
             $day  = $matches[3];

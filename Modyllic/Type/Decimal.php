@@ -41,6 +41,9 @@ class Modyllic_Type_Decimal extends Modyllic_Type_Numeric {
         if ( $num instanceOf Modyllic_Token_Bareword and Modyllic_SQL::is_reserved($num->token()) ) {
             return $num->value();
         }
+        elseif ( $num instanceOf Modyllic_Token_Bareword ) {
+            return Modyllic_SQL::quote_ident($num->unquote());
+        }
         return $this->numify($num);
     }
 }

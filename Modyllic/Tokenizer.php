@@ -17,8 +17,8 @@ class Modyllic_Tokenizer {
     public $cur;
     private $prev;
                             //      neg/pos   num+decimal     or just dec  optional exponent
-    private $num_re        = '/\G ( [+-]?   (?: \d+(?:[.]\d+)? | [.]\d+ ) (?:[Ee][-+]?\d+)? ) \b  /x';
-    private $whitespace_re = '/\G(\s+)/';
+    private $num_re        = '/\G ( [+-]?   (?: \d+(?:[.]\d+)? | [.]\d+ ) (?:[Ee][-+]?\d+)? ) \b  /xu';
+    private $whitespace_re = '/\G(\s+)/u';
     private $quote_chars   = array( "'"=>true, '"'=>true, '`'=>true );
     private $safe_symbol_chars  = array( ','=>true, '('=>true, ')'=>true, '='=>true, '@'=>true, ';'=>true, '!'=>true, '$'=>true, '*'=>true, '+'=>true, ':'=>true, '<'=>true, '>'=>true, '.'=>true, '&'=>true, '|'=>true, '%'=>true );
     private $other_symbol_chars  = array(  '/'=>true, '-'=>true );
@@ -38,7 +38,7 @@ class Modyllic_Tokenizer {
         $this->cmdstr = $sql;
         $this->len = strlen($this->cmdstr);
         $this->generate_reserved_re();
-        $this->ident_re = '/\G('.Modyllic_SQL::$valid_ident_re.')/';
+        $this->ident_re = '/\G('.Modyllic_SQL::$valid_ident_re.')/u';
         $this->cur = new Modyllic_Token_SOC(0);
     }
 
@@ -69,7 +69,7 @@ class Modyllic_Tokenizer {
      */
     public function line() {
         $sofar = substr( $this->cmdstr, 0, $this->pos );
-        return preg_match_all( "/\n/", $sofar, $matches );
+        return preg_match_all( "/\n/u", $sofar, $matches );
     }
 
     /**
@@ -77,8 +77,12 @@ class Modyllic_Tokenizer {
      */
     public function col() {
         $remaining = substr( $this->cmdstr, 0, $this->pos );
-        preg_match("/([^\n]*)$/",$remaining,$matches);
-        return strlen($matches[1]);
+        if (preg_match("/([^\n]*)$/u",$remaining,$matches)) {
+            return strlen($matches[1]);
+        }
+        else {
+            return 0;
+        }
     }
 
     /**
@@ -112,7 +116,7 @@ class Modyllic_Tokenizer {
             $reserved[] = substr($word,3);
         }
 
-        self::$reserved_words_re = '/\G(' . implode('|',$reserved) .')\b/si';
+        self::$reserved_words_re = '/\G(' . implode('|',$reserved) .')\b/siu';
     }
 
     private $injected = array();
@@ -157,10 +161,10 @@ class Modyllic_Tokenizer {
         return $this->pos >= $this->len;
     }
     function is_delimiter() {
-        return isset($this->delimiter) and preg_match( "/\G\Q$this->delimiter\E/", $this->cmdstr, $matches, 0, $this->pos );
+        return isset($this->delimiter) and preg_match( "/\G\Q$this->delimiter\E/u", $this->cmdstr, $matches, 0, $this->pos );
     }
     function is_new_delimiter(array &$matches) {
-        return $this->prev instanceOf Modyllic_Token_SOC and preg_match( "/\G((DELIMITER(?:\h+(\S+))?)([^\n]*?)(?=\n|\z))/i", $this->cmdstr, $matches, 0, $this->pos);
+        return $this->prev instanceOf Modyllic_Token_SOC and preg_match( "/\G((DELIMITER(?:\h+(\S+))?)([^\n]*?)(?=\n|\z))/iu", $this->cmdstr, $matches, 0, $this->pos);
     }
     function is_string() {
         return isset( $this->quote_chars[$this->cmdstr[$this->pos]] );
@@ -178,16 +182,16 @@ class Modyllic_Tokenizer {
         return preg_match( $this->ident_re, $this->cmdstr, $matches, 0, $this->pos );
     }
     function is_mysql_comment(&$matches) {
-        return preg_match( '{\G((/[*]!\d+)\s+.*?)[*]/}s', $this->cmdstr, $matches, 0, $this->pos );
+        return preg_match( '{\G((/[*]!\d+)\s+.*?)[*]/}su', $this->cmdstr, $matches, 0, $this->pos );
     }
     function is_sql_comment(&$matches) {
-        return preg_match( '/\G(--(?:[\t ](.*))?)/', $this->cmdstr, $matches, 0, $this->pos );
+        return preg_match( '/\G(--(?:\h(.*))?)/u', $this->cmdstr, $matches, 0, $this->pos );
     }
     function is_shell_comment(&$matches) {
-        return preg_match( '/\G(#(.*))/', $this->cmdstr, $matches, 0, $this->pos );
+        return preg_match( '/\G(#(.*))/u', $this->cmdstr, $matches, 0, $this->pos );
     }
     function is_c_comment(&$matches) {
-        return preg_match( '{\G(/[*](.*?)[*]/)}s', $this->cmdstr, $matches, 0, $this->pos );
+        return preg_match( '{\G(/[*](.*?)[*]/)}su', $this->cmdstr, $matches, 0, $this->pos );
     }
     function is_safe_symbol() {
         return isset($this->safe_symbol_chars[ $this->cmdstr[$this->pos] ]);
@@ -250,7 +254,7 @@ class Modyllic_Tokenizer {
             // C style comments
             else if ( $this->is_c_comment($matches) ) {
                 $this->pos += strlen($matches[1]);
-                $comment = preg_replace( '/^[*]\s*$|^\s+[*]\s?/m', '', $matches[2] );
+                $comment = preg_replace( '/^[*]\s*$|^\s+[*]\s?/mu', '', $matches[2] );
                 return $matches[1];
             }
             // Symbol characters
@@ -259,13 +263,18 @@ class Modyllic_Tokenizer {
                 $this->pos ++;
                 return $char;
             }
-
-            else if ( preg_match( '{\G([^-/#"\''.$this->delimiter.']+)}sm', $this->cmdstr, $matches, 0, $this->pos ) ) {
-                $this->pos += strlen($matches[1]);
-                return $matches[1];
-            }
             else {
-                return $this->cmdstr[$this->pos++];
+                $delim_first_char = mb_substr($this->delimiter,0,1,'UTF-8');
+                if ($delim_first_char == ']' or $delim_first_char == '}') {
+                    $delim_first_char = '\\'.$delim_first_char;
+                }
+                if ( preg_match( "{\G([^-/#\"'$delim_first_char]+)}smu", $this->cmdstr, $matches, 0, $this->pos ) ) {
+                    $this->pos += strlen($matches[1]);
+                    return $matches[1];
+                }
+                else {
+                    return $this->cmdstr[$this->pos++];
+                }
             }
         } while ($redo);
         return null;
@@ -331,7 +340,7 @@ class Modyllic_Tokenizer {
                     $this->inject( new Modyllic_Token_Error_Delimiter($this->pos, $this->line(), $this->col(), $matches[1]) );
                 }
                 else {
-                    if ( preg_match("/\S/",$matches[4])) {
+                    if ( preg_match("/\S/u",$matches[4])) {
                         $this->inject( new Modyllic_Token_Error_Delimiter($this->pos, $this->line(), $this->col(), $matches[4]) );
                     }
                     $this->cur = new Modyllic_Token_NewDelim( $this->pos, $matches[2]);
@@ -377,7 +386,7 @@ class Modyllic_Tokenizer {
             // C style comments
             else if ( $this->is_c_comment($matches) ) {
                 $this->pos += strlen($matches[1]);
-                $comment = preg_replace( '/^[*]\s*$|^\s+[*]\s?/m', '', $matches[2] );
+                $comment = preg_replace( '/^[*]\s*$|^\s+[*]\s?/mu', '', $matches[2] );
                 $this->cur = new Modyllic_Token_Comment($this->pos, $matches[1], trim($comment) );
             }
             // Symbol characters

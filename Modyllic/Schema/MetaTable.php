@@ -43,6 +43,9 @@ class Modyllic_Schema_MetaTable extends Modyllic_Schema_Table {
         if (count($value) == 0 ) {
             return;
         }
-        $this->add_row(array( "kind"=>$kind, "which"=>$name, "value"=>json_encode($value) ));
+        $this->add_row(array(
+            "kind"  => Modyllic_Expression::create($kind),
+            "which" => Modyllic_Expression::create($name),
+            "value" => new Modyllic_Expression_Value(new Modyllic_Token_PHPString(0,json_encode($value)) )));
     }
 }

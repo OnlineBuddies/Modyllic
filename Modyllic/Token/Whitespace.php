@@ -11,6 +11,6 @@
  */
 class Modyllic_Token_Whitespace extends Modyllic_Token {
     function value() {
-        return preg_replace('/\r/','',$this->value);
+        return preg_replace('/\r/u','',$this->value);
     }
 }

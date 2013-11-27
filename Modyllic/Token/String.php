@@ -11,7 +11,7 @@
  */
 class Modyllic_Token_String extends Modyllic_Token {
     function value() {
-        return preg_replace('/\r/','',$this->value);
+        return preg_replace('/\r/u','',$this->value);
     }
     function unquote() {
         $value = $this->value();

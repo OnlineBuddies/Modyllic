@@ -324,6 +324,6 @@ class Modyllic_SQL {
      * @returns bool True if $word is a valid unquoted identifier
      */
     static function valid_ident($word) {
-        return preg_match('/^('.Modyllic_SQL::$valid_ident_re.')$/',$word);
+        return preg_match('/^('.Modyllic_SQL::$valid_ident_re.')$/u',$word);
     }
 }

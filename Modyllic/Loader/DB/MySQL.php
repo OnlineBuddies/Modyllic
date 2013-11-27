@@ -161,17 +161,19 @@ class Modyllic_Loader_DB_MySQL {
             $schema->tables['SQLMETA'] = $table;
         }
 
-        $schema->load_meta();
+        // Load table metadata so we know which tables are static
+        $schema->load_meta(array('TABLE'));
 
-        // Look for data to load...
+        // Look for static tables to load rows from
         foreach ($schema->tables as $name=>$table) {
-            if ( $table->static ) {
-                $data_sth = self::query( $dbh, "SELECT * FROM ".Modyllic_SQL::quote_ident($dbname).".".Modyllic_SQL::quote_ident($name));
-                while ( $data_row = $data_sth->fetch(PDO::FETCH_ASSOC) ) {
-                    $table->add_row( $data_row );
-                }
+            if ( !$table->static ) continue;
+            $data_sth = self::query( $dbh, "SELECT * FROM ".Modyllic_SQL::quote_ident($dbname).".".Modyllic_SQL::quote_ident($name));
+            while ( $data_row = $data_sth->fetch(PDO::FETCH_ASSOC) ) {
+                $table->add_row( $data_row );
             }
         }
 
+        // Now load the metadata for the rows we just added
+        $schema->load_meta(array('ROW'));
     }
 }

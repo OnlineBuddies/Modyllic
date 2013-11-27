@@ -19,6 +19,15 @@ class Modyllic_Parser {
 
     private $tok; // An instance of the tokenizer
 
+    function __construct($tok=null) {
+        $this->tok = $tok;
+    }
+
+    static function parse_expr($sql) {
+        $parser = new self( new Modyllic_Tokenizer($sql) );
+        return $parser->get_expr();
+    }
+
     /**
      * This parses the SQL in $sql returns an Modyllic_Schema object.
      *
@@ -233,8 +242,7 @@ class Modyllic_Parser {
                 $this->maybe(',');
                 $col = $this->get_ident();
                 $this->get_symbol('=');
-                $value = $this->next();
-                $row[$col] = $value;
+                $row[$col] = $this->get_expr();
             }
             $table->add_row( $row );
         }
@@ -242,6 +250,122 @@ class Modyllic_Parser {
             $this->warning( "Expected '(col_names) VALUES (values)' or 'SET col_name=value,...'" );
             $this->rest();
         }
+    }
+
+    function is_end_of_expr() {
+        $next = $this->peek_next();
+        return ($next instanceOf Modyllic_Token_EOC or $next->token()==',' or $next->token()==')');
+    }
+
+    function get_expr($op=null) {
+        $expr = null;
+        while (true) {
+            if ($this->is_end_of_expr()) {
+                return $expr;
+            }
+            else if ($subop = $this->maybe_unary_prefix_op()) {
+                if ( isset($expr) or $this->op_gt($op,"u:$subop") ) {
+                    $this->tok->inject($this->cur());
+                    return $expr;
+                }
+                $expr = Modyllic_Expression::create( $this->cur(), $this->get_expr("u:$subop") );
+            }
+            else if ($subop = $this->maybe_binary_op()) {
+                if ( $this->op_gt($op,$subop) ) {
+                    $this->tok->inject($this->cur());
+                    return $expr;
+                }
+                if ( ! isset($expr) ) {
+                    throw $this->error("Binary operator found without an LVALUE");
+                }
+                $expr = Modyllic_Expression::create( $expr, $subop, $this->get_expr($subop) );
+            }
+            else if ($this->maybe_unsupported_op()) {
+                throw $this->error($this->next(),"Complicated operators (BETWEEN..., CASE...) are not yet supported");
+            }
+            else if (isset($expr)) {
+                return $expr;
+            }
+            else if ($funcname = $this->maybe_ident()) {
+                if ($this->maybe_symbol('(')) {
+                    $args = array();
+                    while (true) {
+                        if ($this->is_end_of_expr()) {
+                            if ($this->maybe(',')) {
+                                continue;
+                            }
+                            else {
+                                break;
+                            }
+                        }
+                        $args[] = $this->get_expr();
+                    }
+                    $this->get_symbol(')');
+                    $expr = Modyllic_Expression::create($funcname, $args);
+                }
+                else {
+                    $expr = Modyllic_Expression::create($funcname);
+                }
+            }
+            else {
+                $expr = Modyllic_Expression::create($this->next());
+            }
+        }
+    }
+
+    function op_gt($high,$low) {
+        if (!isset($high) or !isset($low)) { return null; }
+        $precedence = array(
+            array(':='),
+            array('||','OR'),
+            array('XOR'),
+            array('&&','AND'),
+            array('NOT'),
+            array('BETWEEN','CASE','WHEN','THEN','ELSE'),
+            array('=','<=>','>=','>','<=','<','<>','!=','IS','LIKE','REGEXP','IN'),
+            array('|'),
+            array('&'),
+            array('<<','>>'),
+            array('-','+'),
+            array('*','/','DIV','%','MOD'),
+            array('^'),
+            array('u:-','u:~'),
+            array('u:!'),
+            array('BINARY','COLLATE'),
+            array('INTERVAL'),
+            );
+        foreach ($precedence as $pval=>$ops) {
+            if (in_array($high,$ops)) {
+                $high_val = $pval;
+            }
+            if (in_array($low,$ops)) {
+                $low_val = $pval;
+            }
+        }
+        return $high_val > $low_val;
+    }
+
+    function maybe_op($ops) {
+        if ( in_array($this->peek_next()->token(), (array)$ops) ) {
+            return $this->next()->token();;
+        }
+        else {
+            return false;
+        }
+    }
+
+    function maybe_unary_prefix_op() {
+        return $this->maybe_op(array('BINARY','~','!','NOT','-'));
+    }
+    function maybe_binary_op() {
+        return $this->maybe_op(array(
+            'AND','&&','=',':=','&','|','^','DIV','/','<=>','>=','>',
+            'IS','<<','<=','<','LIKE','-','%','MOD','!=','<>',
+            '||','OR','+','REGEXP','>>','RLIKE',
+            'SOUNDS','*','XOR'));
+    }
+    function maybe_unsupported_op() {
+        return $this->maybe_op(array('INTERVAL','COLLATE','BETWEEN','CASE','WHEN','THEN','ELSE'));
     }
 
     function cmd_USE() {
@@ -419,7 +543,7 @@ class Modyllic_Parser {
     }
 
     function updated_collate( $old, $new, $collate ) {
-        return preg_replace( "/^\Q$old\E/", $new, $collate );
+        return preg_replace( "/^\Q$old\E/u", $new, $collate );
     }
 
     function get_create_specification() {
@@ -580,7 +704,7 @@ class Modyllic_Parser {
         ## Minimal support for views currently
         $view->def = trim($this->rest());
         if (! $this->schema->name_is_default) {
-            $view->def = preg_replace('/`'.$this->schema->name.'`./','',$view->def);
+            $view->def = preg_replace('/`\Q'.$this->schema->name.'\E`./u','',$view->def);
         }
     }
 
@@ -1307,12 +1431,8 @@ class Modyllic_Parser {
      * @returns bool
      */
     function maybe($thing) {
-        if ( ! is_array($thing) ) {
-            $thing = array($thing);
-        }
-        if ( in_array( $this->peek_next()->token(), $thing ) ) {
-            $this->next();
-            return true;
+        if ( in_array( $this->peek_next()->token(), (array)$thing ) ) {
+            return $this->next();
         }
         else {
             return false;
@@ -1326,6 +1446,15 @@ class Modyllic_Parser {
     function get_ident() {
         $this->next();
         return $this->assert_ident();
+    }
+
+    function maybe_ident() {
+        if ( $this->peek_next() instanceOf Modyllic_Token_Ident ) {
+            return $this->next();
+        }
+        else {
+            return false;
+        }
     }
 
     /**
@@ -1368,6 +1497,17 @@ class Modyllic_Parser {
     function get_symbol($valid_symbols = null) {
         $this->next();
         return $this->assert_symbol($valid_symbols);
+    }
+
+    function maybe_symbol($valid_symbols) {
+        $peek = $this->peek_next();
+        if ( ! $peek instanceOf Modyllic_Token_Symbol ) {
+            return false;
+        }
+        if ( isset($valid_symbols) and ! in_array($peek->value(),(array)$valid_symbols) ) {
+            return false;
+        }
+        return $this->next();
     }
 
     /**

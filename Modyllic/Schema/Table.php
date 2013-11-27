@@ -144,16 +144,15 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
             if ( ! isset($this->columns[$col_name]) ) {
                 throw new Exception("INSERT references $col_name in ".$this->name." but $col_name doesn't exist");
             }
-            $col = $this->columns[$col_name];
-            $norm_value = $col->type->normalize($value);
-            $row[$col_name] = $norm_value;
+            $row[$col_name] = Modyllic_Expression::create($value);
         }
         $element = null;
         $pk = $this->primary_key();
         foreach ($this->data as $index=>$cur) {
             $match = true;
             foreach ( $pk as $col=>$col_obj ) {
-                if ( $cur[$col]!=$row[$col] ) {
+                $type = $this->columns[$col_name]->type;
+                if ( ! isset($cur[$col]) or ! $cur[$col]->equal_to($row[$col],$type) ) {
                     $match = false;
                     break;
                 }
@@ -163,6 +162,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
                 break;
             }
         }
+        $row = new Modyllic_Schema_Table_Row($row);
         if ( isset($element) ) {
             $this->data[$element] = $row;
         }
@@ -195,7 +195,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
      * on the primary key for this table.
      * @returns array
      */
-    function match_row(array $row) {
+    function match_row(Modyllic_Schema_Table_Row $row) {
         $where = array();
         foreach ($this->primary_key() as $key=>$len) {
              $where[$key] = @$row[$key];
@@ -208,8 +208,8 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
         if (preg_match('/\0/',$this->name)) {
             $errors[] = 'Table names may not contain NUL characters';
         }
-        if (preg_match('/ $/', $this->name)) {
-            $errors[] = 'Table names may not end in a space';
+        if (preg_match('/\s$/u', $this->name)) {
+            $errors[] = 'Table names may not end in whitespace';
         }
         /// @todo engine
         /// @todo row_format

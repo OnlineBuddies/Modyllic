@@ -34,6 +34,9 @@ class Modyllic_Type_Integer extends Modyllic_Type_Numeric {
         if ( $int instanceOf Modyllic_Token_Bareword and Modyllic_SQL::is_reserved($int->token()) ) {
             return $int->value();
         }
+        elseif ( $int instanceOf Modyllic_Token_Bareword ) {
+            return Modyllic_SQL::quote_ident($int->unquote());
+        }
         return round($this->numify($int));
     }
 }
