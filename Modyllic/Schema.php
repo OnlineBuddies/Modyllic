@@ -122,10 +122,6 @@ class Modyllic_Schema extends Modyllic_Diffable {
         if ( isset($this->tables['MODYLLIC']) and isset($this->tables['MODYLLIC']->data) ) {
             return $this->tables['MODYLLIC']->data;
         }
-        # @todo to be removed in 0.2.11+
-        else if ( isset($this->tables['SQLMETA']) and isset($this->tables['SQLMETA']->data) ) {
-            return $this->tables['SQLMETA']->data;
-        }
     }
 
     function load_meta($kinds=null) {
