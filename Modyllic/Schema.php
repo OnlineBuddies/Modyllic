@@ -187,7 +187,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
                     }
                     break;
                 default:
-                    throw new Exception("Unknown kind of metadata '$kind' found in the metadata table");
+                    $this->errors[] = "Unknown kind of metadata '$kind' found in the metadata table";
                     break;
             }
             if ( isset($obj) ) {
