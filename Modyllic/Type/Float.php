@@ -39,6 +39,9 @@ class Modyllic_Type_Float extends Modyllic_Type_Numeric {
         if ( $float instanceOf Modyllic_Token_Bareword and Modyllic_SQL::is_reserved($float->token()) ) {
             return $float->value();
         }
+        elseif ( $float instanceOf Modyllic_Token_Bareword ) {
+            return Modyllic_SQL::quote_ident($float->unquote());
+        }
         return $this->numify($float);
     }
 }

@@ -56,6 +56,9 @@ abstract class Modyllic_Type_String extends Modyllic_Type {
         if ( $str instanceOf Modyllic_Token_Bareword and Modyllic_SQL::is_reserved($str->token()) ) {
             return $str->value();
         }
+        elseif ( $str instanceOf Modyllic_Token_Bareword ) {
+            return Modyllic_SQL::quote_ident($str->unquote());
+        }
         else if ( $str instanceOf Modyllic_Token_String ) {
             $value = $str->unquote();
         }
