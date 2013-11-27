@@ -1,5 +1,13 @@
 Revision history for PHP module Modyllic
 
+v0.2.22 2013-11-27
+
+* Make unknown metadata an error rather than an exception
+* Remove SQLMETA backwards compatibility
+* Allow enabling or disabling an event through ALTER EVENT
+* Upgrade substrs and matches to UTF-8
+* Support for SQL expressions in INSERT commands
+
 v0.2.21 2013-10-28
 
 * Match the function signature up with Modyllic_Schema_Index_Foreign::validate
