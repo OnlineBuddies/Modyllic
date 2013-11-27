@@ -55,7 +55,7 @@ class Modyllic_Generator_ModyllicSQL {
                         }
                     }
                     $key = $pkwhere->normalize(Modyllic_Type::create('LONGTEXT'));
-                    $meta->add_metadata( "DATA", $table->name . " WHERE " . $key,
+                    $meta->add_metadata( "ROW", $table->name . " WHERE " . $key,
                          $this->data_meta($table,$row) );
                 }
             }

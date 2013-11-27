@@ -73,6 +73,15 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
         return $meta;
     }
 
+    function data_meta($table,$row) {
+        $meta = parent::data_meta($table,$row);
+        foreach ($row as $col=>$val) {
+            if ($val instanceOf Modyllic_Expression_Value) continue;
+            $meta[$col] = $val->normalize($table->columns[$col]->type);
+        }
+        return $meta;
+    }
+
     function column_meta( Modyllic_Schema_Column $col) {
         $meta = parent::column_meta( $col );
         if ( count($col->aliases) ) {
