@@ -170,6 +170,7 @@ class Modyllic_Diff {
             $tablediff = new Modyllic_Changeset_Table($tablename);
 
             $tablediff->from = $fromtable;
+            $tablediff->to   = $totable;
 
             if ( $fromtable->static != $totable->static ) {
                 $tablediff->static = $totable->static;
@@ -288,24 +289,24 @@ class Modyllic_Diff {
                     foreach ( $from_data as $fromrow ) {
                         $match = true;
                         foreach ( $primary as $key => $len ) {
-                            if ( $len === false ) {
-                                if ( @$torow[$key] != @$fromrow[$key] ) {
-                                    $match = false;
-                                    break;
-                                }
+                            if ( isset($torow[$key]) and ! isset($fromrow[$key]) ) {
+                                $match = false;
+                                break;
                             }
-                            else {
-                                if ( @substr($torow[$key],0,$len) != @substr($fromrow[$key],0,$len) ) {
-                                    $match = false;
-                                    break;
-                                }
+                            if ( ! isset($torow[$key]) and isset($fromrow[$key]) ) {
+                                $match = false;
+                                break;
+                            }
+                            if ( ! $torow[$key]->equal_to($fromrow[$key],$totable->columns[$key]->type,$len) ) {
+                                $match = false;
+                                break;
                             }
                         }
                         if ( $match ) {
                             $exists = true;
                             $set = array();
                             foreach ($torow as $col=>$toval) {
-                                if ( !isset($fromrow[$col]) or $fromrow[$col]!=$toval ) {
+                                if ( !isset($fromrow[$col]) or ! $toval->equal_to($fromrow[$col],$totable->columns[$col]->type) ) {
                                     $set[$col] = $toval;
                                 }
                             }
@@ -316,7 +317,7 @@ class Modyllic_Diff {
                         }
                     }
                     if (!$exists) {
-                        $tablediff->add_row($torow);
+                        $tablediff->add_row($torow,$totable->match_row($torow));
                     }
                 }
                 # And then removed rows
@@ -325,17 +326,17 @@ class Modyllic_Diff {
                     foreach ( $to_data as $torow ) {
                         $match = true;
                         foreach ( $primary as $key=>$len ) {
-                            if ( $len === false ) {
-                                if ( @$torow[$key] != @$fromrow[$key] ) {
-                                    $match = false;
-                                    break;
-                                }
+                            if ( isset($torow[$key]) and ! isset($fromrow[$key]) ) {
+                                $match = false;
+                                break;
                             }
-                            else {
-                                if ( @substr($torow[$key],0,$len) != @substr($fromrow[$key],0,$len) ) {
-                                    $match = false;
-                                    break;
-                                }
+                            if ( ! isset($torow[$key]) and isset($fromrow[$key]) ) {
+                                $match = false;
+                                break;
+                            }
+                            if ( ! $torow[$key]->equal_to($fromrow[$key],$totable->columns[$key]->type,$len) ) {
+                                $match = false;
+                                break;
                             }
                         }
                         if ( $match ) {
@@ -344,7 +345,7 @@ class Modyllic_Diff {
                         }
                     }
                     if (!$exists) {
-                        $tablediff->remove_row($fromtable->match_row($fromrow));
+                        $tablediff->remove_row(new Modyllic_Schema_Table_Row($fromtable->match_row($fromrow)));
                     }
                 }
             }

@@ -15,6 +15,7 @@ class Modyllic_Changeset_Table {
     public $remove;
     public $update;
     public $from;
+    public $to;
     public $options;
     public $static;
 
@@ -92,23 +93,24 @@ class Modyllic_Changeset_Table {
     /**
      * @param array $row
      */
-    function add_row(array $row) {
-        $this->add['data'][] = $row;
+    function add_row(Modyllic_Schema_Table_Row $row,array $pk) {
+        $this->add['data'][] = array("data"=>$row,"where"=>$pk);
     }
 
     /**
-     * @param array $row
+     * @param Modyllic_Schema_Table_Row $row
      */
-    function remove_row(array $row) {
-        $this->remove['data'][] = $row;
+    function remove_row(Modyllic_Schema_Table_Row $row) {
+        $this->remove['data'][] = array("where"=>$row);
     }
 
     /**
      * @param array $updated
      * @param array $where
+     * @param Modyllic_Schema_Table_Row $from
      */
-    function update_row(array $updated,array $where,array $from) {
-        $this->update['data'][] = array("updated"=>$updated,"where"=>$where,"from"=>$from);
+    function update_row(array $updated,array $where,Modyllic_Schema_Table_Row $from) {
+        $this->update['data'][] = array("data"=>$updated,"where"=>$where,"from"=>$from);
     }
 
     function has_data_changes() {
@@ -129,6 +131,10 @@ class Modyllic_Changeset_Table {
             + $this->options->has_changes()
             ;
          return $changed;
+    }
+
+    function match_row($row) {
+        return $this->to->match_row($row);
     }
 
 }
