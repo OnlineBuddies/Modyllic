@@ -150,16 +150,6 @@ class Modyllic_Loader_DB_MySQL {
             }
             $schema->tables['MODYLLIC'] = $table;
         }
-        /// @todo Remove this-- Only keep this around till 0.2.10 or 0.2.11 or so
-        else if (isset($schema->tables['SQLMETA'])) {
-            $table = new Modyllic_Schema_MetaTable();
-            $table->copy_from($schema->tables['SQLMETA']);
-            $meta_sth = self::query( $dbh, "SELECT kind,which,value FROM ".Modyllic_SQL::quote_ident($dbname).".SQLMETA");
-            while ( $meta = $meta_sth->fetch(PDO::FETCH_ASSOC) ) {
-                $table->add_row( $meta );
-            }
-            $schema->tables['SQLMETA'] = $table;
-        }
 
         // Load table metadata so we know which tables are static
         $schema->load_meta(array('TABLE'));
