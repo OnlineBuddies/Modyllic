@@ -10,7 +10,7 @@ abstract class Modyllic_Expression {
     abstract function normalize($type);
     function equal_to($exp,$type,$length=null) {
         if (! $this instanceOf $exp) return false;
-        if (isset($length) and $length) {
+        if (isset($length) and $length and $length <= PHP_INT_MAX) {
             return (mb_substr($this->normalize($type),0,$length,'UTF-8') == mb_substr($exp->normalize($type),0,$length,'UTF-8'));
         }
         else {

@@ -49,7 +49,15 @@ class Modyllic_Evaluate {
         else if ($expr instanceOf Modyllic_Expression_Function) {
             $func = $expr->func->token();
             if ($func == 'SUBSTR') {
-                return mb_substr( self::exec($expr->args[0],$row), self::exec($expr->args[1],$row)-1, self::exec($expr->args[2],$row), 'UTF-8' );
+                $value  = self::exec($expr->args[0],$row);
+                $start  = self::exec($expr->args[1],$row)-1;
+                $length = self::exec($expr->args[2],$row);
+                if ($start <= PHP_INT_MAX and $length <= PHP_INT_MAX) {
+                    return mb_substr( self::exec($expr->args[0],$row), self::exec($expr->args[1],$row)-1, self::exec($expr->args[2],$row), 'UTF-8' );
+                }
+                else {
+                    throw new Exception("Error while evaluating SQL, substr start and length arguments must be less than or equal to ".PHP_INT_MAX);
+                }
             }
             else {
                 throw new Exception("Error while evaluating SQL, unsupported function '$func'");

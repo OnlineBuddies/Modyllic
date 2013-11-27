@@ -71,7 +71,7 @@ abstract class Modyllic_Type_String extends Modyllic_Type {
         else {
             throw new Exception( "Expected a valid string, got: $str" );
         }
-        if ( !is_null($this->length()) ) {
+        if ( !is_null($this->length()) and $this->length()<=PHP_INT_MAX ) {
             $value = mb_substr( $value, 0, $this->length(), 'UTF-8' );
         }
         return Modyllic_SQL::quote_str( $value );
