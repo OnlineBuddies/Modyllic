@@ -115,74 +115,84 @@ class Modyllic_Schema extends Modyllic_Diffable {
         return $view;
     }
 
-    function unquote_sql_str($sql) {
-        $tok = new Modyllic_Tokenizer( $sql );
-        return $tok->next()->unquote();
-    }
-
-    /**
-     * Generates a meta table entry that wasn't in the schema
-     */
-    function load_meta() {
-        $metadata = null;
+    private function get_metatable() {
         # If we already have an metadata table then this is a load directly
         # from a database (or a dump from a database).  We'll want to
         # convert that back into our usual metadata.
         if ( isset($this->tables['MODYLLIC']) and isset($this->tables['MODYLLIC']->data) ) {
-            $metadata = $this->tables['MODYLLIC']->data;
+            return $this->tables['MODYLLIC']->data;
         }
         # @todo to be removed in 0.2.11+
         else if ( isset($this->tables['SQLMETA']) and isset($this->tables['SQLMETA']->data) ) {
-            $metadata = $this->tables['SQLMETA']->data;
+            return $this->tables['SQLMETA']->data;
         }
-        if ( $metadata ) {
-            foreach ($metadata as &$row) {
-                $kind = $this->unquote_sql_str($row['kind']);
-                $which = $this->unquote_sql_str($row['which']);
-                $meta = json_decode($this->unquote_sql_str($row['value']), true);
-                $obj = null;
-                switch ($kind) {
-                    case 'TABLE':
-                        if ( isset($this->tables[$which]) ) {
-                            $obj = $this->tables[$which];
-                        }
-                        break;
-                    case 'COLUMN':
-                        list($table,$col) = explode(".",$which);
-                        if ( isset($this->tables[$table]) and isset($this->tables[$table]->columns[$col]) ) {
-                            $obj = $this->tables[$table]->columns[$col];
-                        }
-                        break;
-                    case 'INDEX':
-                        list($table,$index) = explode(".",$which);
-                        if ( isset($this->tables[$table]) and isset($this->tables[$table]->indexes[$index]) ) {
-                            $obj = $this->tables[$table]->indexes[$index];
-                        }
-                        break;
-                    case 'ROUTINE':
-                        if ( isset($this->routines[$which]) ) {
-                            $obj = $this->routines[$which];
-                        }
-                        break;
-                    case 'ARG':
-                        list($routine,$arg) = explode(".",$which);
-                        if ( isset($this->routines[$routine]) and isset($this->routines[$routine]->args[$arg]) ) {
-                            $obj = $this->routines[$routine]->args[$arg];
-                        }
-                        break;
-                    case 'EVENT':
-                        if ( isset($this->events[$which]) ) {
-                            $obj = $this->events[$which];
-                        }
-                        break;
-                    default:
-                        throw new Exception("Unknown kind of metadata '$kind' found in the metadata table");
-                        break;
-                }
-                if ( isset($obj) ) {
-                    foreach ($meta as $metakey=>$metavalue) {
-                        $obj->inflate($metakey,$metavalue);
+    }
+
+    function load_meta($kinds=null) {
+        if (! $metadata = $this->get_metatable()) return;
+        foreach ($metadata as &$row) {
+            $kind = $row['kind']->token->unquote();
+            if ($kinds and !in_array($kind,$kinds)) continue;
+            $which = $row['which']->token->unquote();
+            $meta  = json_decode($row['value']->token->unquote(),true);
+            $obj = null;
+            switch ($kind) {
+                case 'TABLE':
+                    if ( isset($this->tables[$which]) ) {
+                        $obj = $this->tables[$which];
                     }
+                    break;
+                case 'COLUMN':
+                    list($table,$col) = explode(".",$which);
+                    if ( isset($this->tables[$table]) and isset($this->tables[$table]->columns[$col]) ) {
+                        $obj = $this->tables[$table]->columns[$col];
+                    }
+                    break;
+                case 'INDEX':
+                    list($table,$index) = explode(".",$which);
+                    if ( isset($this->tables[$table]) and isset($this->tables[$table]->indexes[$index]) ) {
+                        $obj = $this->tables[$table]->indexes[$index];
+                    }
+                    break;
+                case 'ROUTINE':
+                    if ( isset($this->routines[$which]) ) {
+                        $obj = $this->routines[$which];
+                    }
+                    break;
+                case 'ARG':
+                    list($routine,$arg) = explode(".",$which);
+                    if ( isset($this->routines[$routine]) and isset($this->routines[$routine]->args[$arg]) ) {
+                        $obj = $this->routines[$routine]->args[$arg];
+                    }
+                    break;
+                case 'EVENT':
+                    if ( isset($this->events[$which]) ) {
+                        $obj = $this->events[$which];
+                    }
+                    break;
+                case 'ROW':
+                    preg_match('/^([^.]+) WHERE (.*)/',$which,$matches);
+                    $table_name = $matches[1];
+                    $where_sql = $matches[2];
+                    $where_exp = Modyllic_Parser::parse_expr($where_sql);
+                    $match = null;
+                    foreach ($this->tables[$table_name]->data as $row) {
+                        if (Modyllic_Evaluate::exec($where_exp,$row)) {
+                            $match = $row;
+                            break;
+                        }
+                    }
+                    if ($match) {
+                        $obj = $match;
+                    }
+                    break;
+                default:
+                    throw new Exception("Unknown kind of metadata '$kind' found in the metadata table");
+                    break;
+            }
+            if ( isset($obj) ) {
+                foreach ($meta as $metakey=>$metavalue) {
+                    $obj->inflate($metakey,$metavalue);
                 }
             }
         }
