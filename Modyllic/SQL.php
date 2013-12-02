@@ -45,6 +45,66 @@ class Modyllic_SQL {
         return "$quote$str$quote";
     }
 
+    /**
+     * @param string $word
+     * @returns bool True if $word has special meaning to Modyllic / MySQL, without being a reserved word
+     */
+    static function is_special($word) {
+        static $special = array(
+            "AFTER" => true,
+            "ALGORITHM" => true,
+            "ALIASES" => true,
+            "ARGS" => true,
+            "ASCII" => true,
+            "AT" => true,
+            "AUTO_INCREMENT" => true,
+            "AVG_ROW_LENGTH" => true,
+            "BEGIN" => true,
+            "BOOLEAN" => true,
+            "BTREE" => true,
+            "CHARSET" => true,
+            "COMPACT" => true,
+            "COMPRESSED" => true,
+            "DAY" => true,
+            "DEFINER" => true,
+            "DISABLE" => true,
+            "DO" => true,
+            "DYNAMIC" => true,
+            "ENABLE" => true,
+            "ENDS" => true,
+            "END" => true,
+            "ENGINE" => true,
+            "EVENT" => true,
+            "EVERY" => true,
+            "FIRST" => true,
+            "FIXED" => true,
+            "FUNCTION" => true,
+            "HASH" => true,
+            "LAST_INSERT_ID" => true,
+            "LIST" => true,
+            "MAP" => true,
+            "MAX_ROWS" => true,
+            "MODIFY" => true,
+            "NAMES" => true,
+            "NONE" => true,
+            "PACK_KEYS" => true,
+            "PRESERVE" => true,
+            "REDUNDENT" => true,
+            "RETURNS" => true,
+            "ROW_FORMAT" => true,
+            "ROW" => true,
+            "SERIAL" => true,
+            "SIGNED" => true,
+            "SOUNDS" => true,
+            "STARTS" => true,
+            "STH" => true,
+            "TRUNCATE" => true,
+            "UNICODE" => true,
+            "VIEW" => true,
+            "WEAKLY" => true,
+        );
+        return isset($special[strtoupper($word)]);
+    }
 
     /**
      * @param string $word
@@ -305,10 +365,6 @@ class Modyllic_SQL {
             "YEAR_MONTH" => true,
             "ZEROFILL" => true,
             "_FILENAME" => true,
-            // We also need
-            "AT" => true,
-            "DAY" => true,
-            "END" => true,
         );
         return isset($mysql_reserved[strtoupper($word)]);
     }
