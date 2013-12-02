@@ -108,8 +108,7 @@ function apply_cmd($dbh,$cmd,$dsntoapply,$filename,$skip=null) {
         echo sprintf("%4s ----------------------------------------------\n", "#$stmt");
         echo "$cmd\n";
         try {
-            $sth = $dbh->prepare($cmd);
-            $sth->execute();
+            $dbh->exec($cmd);
         }
         catch (Exception $e) {
             echo "== ERROR ==========================================\n";
