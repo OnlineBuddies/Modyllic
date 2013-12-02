@@ -45,7 +45,7 @@ try {
             $newcolor = BRIGHT_RED();
         }
         else if ( $tok->cur instanceOf Modyllic_Token_Ident and ! $tok->cur instanceOf Modyllic_Token_Ident_Quoted and
-                  Modyllic_SQL::is_reserved($tok->cur->value()) ) {
+                  ( Modyllic_SQL::is_reserved($tok->cur->value()) or Modyllic_SQL::is_special($tok->cur->value()) ) ) {
             $newcolor = BRIGHT_RED();
         }
         else if ( $tok->cur instanceOf Modyllic_Token_Comment ) {

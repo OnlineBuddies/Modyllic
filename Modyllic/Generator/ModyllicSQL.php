@@ -275,7 +275,7 @@ class Modyllic_Generator_ModyllicSQL {
 
     function drop_database($schema) {
         if ($schema->name_is_default) return $this;
-        $this->cmd( "DROP DATABASE IF EXISTS %id", $schema->name );
+        $this->cmd( "DROP DATABASE %id", $schema->name );
         return $this;
     }
 
@@ -527,7 +527,7 @@ class Modyllic_Generator_ModyllicSQL {
 
     function drop_table( Modyllic_Schema_Table $table ) {
         if ( ! isset($this->what['meta']) and $table instanceOf Modyllic_Schema_MetaTable ) { return; }
-        $this->cmd( "DROP TABLE IF EXISTS %id", $table->name );
+        $this->cmd( "DROP TABLE %id", $table->name );
         return $this;
     }
 
@@ -797,10 +797,10 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function table_options($table,$schema=null) {
-        if ( isset( $table->engine ) ) {
+        if ( isset($table->engine) ) {
             $this->extend( "ENGINE=".$table->engine );
         }
-        if ( isset ($table->row_format ) ) {
+        if ( isset($table->row_format) and $table->row_format != Modyllic_Schema_Table::ROW_FORMAT_DEFAULT ) {
             $this->extend( "ROW_FORMAT=".$table->row_format );
         }
         if ( isset($table->charset) and (!isset($schema) or $table->charset!=$schema->charset) ) {
@@ -856,7 +856,7 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function drop_view( $view ) {
-        $this->cmd( "DROP VIEW IF EXISTS %id", $view->name );
+        $this->cmd( "DROP VIEW %id", $view->name );
         return $this;
     }
 
@@ -1059,7 +1059,7 @@ class Modyllic_Generator_ModyllicSQL {
         return $this;
     }
     function drop_function( $func ) {
-        $this->cmd( "DROP FUNCTION IF EXISTS %id", $func->name );
+        $this->cmd( "DROP FUNCTION %id", $func->name );
         return $this;
     }
 
@@ -1090,7 +1090,7 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function drop_procedure( $proc ) {
-        $this->cmd( "DROP PROCEDURE IF EXISTS %id", $proc->name );
+        $this->cmd( "DROP PROCEDURE %id", $proc->name );
         return $this;
     }
 
@@ -1113,7 +1113,7 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function drop_trigger( $trigger ) {
-        $this->cmd( "DROP TRIGGER IF EXISTS %id", $trigger->name );
+        $this->cmd( "DROP TRIGGER %id", $trigger->name );
     }
 
 // EVENT
@@ -1174,7 +1174,7 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function drop_event( $event ) {
-        $this->cmd( "DROP EVENT IF EXISTS %id", $event->name );
+        $this->cmd( "DROP EVENT %id", $event->name );
         return $this;
     }
 
