@@ -147,4 +147,39 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
         return $meta;
     }
 
+    function drop_database($schema) {
+        if ($schema->name_is_default) return $this;
+        $this->cmd( "DROP DATABASE IF EXISTS %id", $schema->name );
+        return $this;
+    }
+
+    function drop_table( Modyllic_Schema_Table $table ) {
+        if ( ! isset($this->what['meta']) and $table instanceOf Modyllic_Schema_MetaTable ) { return; }
+        $this->cmd( "DROP TABLE IF EXISTS %id", $table->name );
+        return $this;
+    }
+
+    function drop_view( $view ) {
+        $this->cmd( "DROP VIEW IF EXISTS %id", $view->name );
+        return $this;
+    }
+
+    function drop_function( $func ) {
+        $this->cmd( "DROP FUNCTION IF EXISTS %id", $func->name );
+        return $this;
+    }
+
+    function drop_procedure( $proc ) {
+        $this->cmd( "DROP PROCEDURE IF EXISTS %id", $proc->name );
+        return $this;
+    }
+
+    function drop_trigger( $trigger ) {
+        $this->cmd( "DROP TRIGGER IF EXISTS %id", $trigger->name );
+    }
+
+    function drop_event( $event ) {
+        $this->cmd( "DROP EVENT IF EXISTS %id", $event->name );
+        return $this;
+    }
 }

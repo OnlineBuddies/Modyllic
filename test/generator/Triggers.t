@@ -19,13 +19,13 @@ FOR EACH ROW BEGIN
     CALL do_something();
 END
 EOSQL;
-$drop_sql[] = "DROP TRIGGER IF EXISTS trig1";
+$drop_sql[] = "DROP TRIGGER trig1";
 $create_sql[] = <<< EOSQL
 CREATE TRIGGER trig2
 AFTER DELETE ON bar
 FOR EACH ROW INSERT INTO foo (id) VALUES (27)
 EOSQL;
-$drop_sql[] = "DROP TRIGGER IF EXISTS trig2";
+$drop_sql[] = "DROP TRIGGER trig2";
 
 plan( 5 + count($create_sql) + count($drop_sql) );
 
@@ -77,7 +77,7 @@ $sql = $gen->alter( $diff, array('triggers') )->sql_commands();
 
 is( count($sql), 2, "Diff requires two SQL commands" );
 
-$drop_sql = "DROP TRIGGER IF EXISTS trig1";
+$drop_sql = "DROP TRIGGER trig1";
 is( $sql[0], $drop_sql, "Drop trigger part of update" );
 
 $create_sql = <<<EOSQL
