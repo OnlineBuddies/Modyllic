@@ -800,7 +800,7 @@ class Modyllic_Generator_ModyllicSQL {
         if ( isset($table->engine) ) {
             $this->extend( "ENGINE=".$table->engine );
         }
-        if ( isset ($table->row_format ) ) {
+        if ( isset($table->row_format) and $table->row_format != Modyllic_Schema_Table::ROW_FORMAT_DEFAULT ) {
             $this->extend( "ROW_FORMAT=".$table->row_format );
         }
         if ( isset($table->charset) and (!isset($schema) or $table->charset!=$schema->charset) ) {

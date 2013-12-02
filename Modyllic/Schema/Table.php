@@ -19,7 +19,8 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
     public $last_column;
     public $last_index;
     public $engine = 'InnoDB';
-    public $row_format = 'DEFAULT';
+    const ROW_FORMAT_DEFAULT = 'DEFAULT';
+    public $row_format = self::ROW_FORMAT_DEFAULT;
     public $charset = 'utf8';
     public $collate = 'utf8_general_ci';
     public $docs = "";
