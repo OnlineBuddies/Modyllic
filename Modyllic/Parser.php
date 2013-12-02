@@ -218,7 +218,9 @@ class Modyllic_Parser {
         //   | SET col_name=value, ...
         $table_name = $this->get_ident();
         if ( ! isset($this->schema->tables[$table_name]) ) {
-            throw $this->error( "Can't INSERT INTO table $table_name before it is CREATEd" );
+            $this->warning("Inserts into $table_name found before it was created, ignoring them");
+            $this->rest();
+            return;
         }
         $table = $this->schema->tables[$table_name];
         $row = array();
@@ -230,7 +232,8 @@ class Modyllic_Parser {
                 $this->get_symbol('(');
                 $values = $this->get_token_array();
                 if ( count($columns) != count($values) ) {
-                    throw $this->error("INSERT INTO column count doesn't match value count" );
+                    $this->warning("INSERT INTO $table_name column count doesn't match value count" );
+                    continue;
                 }
                 $row = array_combine( $columns, $values );
                 $table->add_row( $row );
