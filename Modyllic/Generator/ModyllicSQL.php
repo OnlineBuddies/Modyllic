@@ -797,7 +797,7 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function table_options($table,$schema=null) {
-        if ( isset( $table->engine ) ) {
+        if ( isset($table->engine) ) {
             $this->extend( "ENGINE=".$table->engine );
         }
         if ( isset ($table->row_format ) ) {
