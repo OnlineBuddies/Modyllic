@@ -86,7 +86,13 @@ class Modyllic_Loader_DB_MySQL {
         while ( $trigger_row = $trigger_sth->fetch(PDO::FETCH_ASSOC) ) {
             Modyllic_Status::$source_count ++;
             $trigger = self::selectrow( $dbh, "SHOW CREATE TRIGGER ".Modyllic_SQL::quote_ident($dbname).".".Modyllic_SQL::quote_ident($trigger_row['TRIGGER_NAME']) );
-            $triggers[$trigger_row['TRIGGER_NAME']] = $trigger['Create Trigger'];
+            if (isset($trigger['SQL Original Statement'])) {
+                $triggers[$trigger_row['TRIGGER_NAME']] = $trigger['SQL Original Statement'];
+            } elseif (isset($trigger['Create Trigger'])) {
+                $triggers[$trigger_row['TRIGGER_NAME']] = $trigger['Create Trigger'];
+            } else {
+                throw new Modyllic_Exception("Cannot determine which field to use for definition of trigger");
+            }
         }
 
         $routine_sth = self::query( $dbh, "SELECT ROUTINE_TYPE, ROUTINE_NAME FROM ROUTINES WHERE ROUTINE_SCHEMA=?", array($dbname) );
