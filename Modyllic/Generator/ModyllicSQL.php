@@ -488,7 +488,11 @@ class Modyllic_Generator_ModyllicSQL {
                 }
             }
         }
+        $this->alter_table_data($table);
+        return $this;
+    }
 
+    function alter_table_data($table) {
         if ( isset($table->static) and $table->static and ! $table->from->static ) {
             $this->cmd("TRUNCATE %id", $table->name);
         }
