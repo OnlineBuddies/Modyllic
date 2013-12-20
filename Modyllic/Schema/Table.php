@@ -154,7 +154,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
         foreach ($this->data as $index=>$cur) {
             $match = true;
             foreach ( $pk as $col=>$col_obj ) {
-                $type = $this->columns[$col_name]->type;
+                $type = $this->columns[$col]->type;
                 if ( ! isset($cur[$col]) or ! $cur[$col]->equal_to($row[$col],$type) ) {
                     $match = false;
                     break;
