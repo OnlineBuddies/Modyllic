@@ -54,6 +54,9 @@ abstract class Modyllic_Expression {
         if ($value instanceOf Modyllic_Token) {
             return new Modyllic_Expression_Value($value,$type);
         }
+        if (is_null($value)) {
+            return new Modyllic_Expression_Value(new Modyllic_Token_Bareword(0,'NULL'));
+        }
         if (is_int($value) or is_float($value)) {
             if (!isset($type)) $type = Modyllic_Type::create('NUMERIC');
             return new Modyllic_Expression_Value(new Modyllic_Token_Num(0,$value),$type);
