@@ -1,5 +1,17 @@
 Revision history for PHP module Modyllic
 
+v0.2.23 2014-01-06
+
+* Static tables with null values will now compare correctly
+* Comparing normalized types will now always use the right type while normalizing
+* Add ability to issue alters individually for, eg, replicating 5.5->5.6
+* Make attempts to insert into tables that don't yet exist non fatal-- although the insert WILL fail
+* Add facility for determining non-reserved keywords for highlighting purposes
+* Only emit ROW_FORMAT when it differs from the default.
+* Stop emitting IF EXISTS in ModyllicSQL
+* Use exec instead of prepare/execute to bypass bind param checking
+* Add examples to readme
+
 v0.2.22 2013-11-27
 
 * Make unknown metadata an error rather than an exception
