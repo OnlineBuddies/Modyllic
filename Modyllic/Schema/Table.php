@@ -130,7 +130,18 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
         $this->static = true;
     }
 
-    function upgrade_row( array $row ) {
+    function get_row_primary_key($row) {
+        $pk = $this->primary_key();
+        $rowpk = array();
+        foreach ($pk as $col=>$col_obj) {
+            if (isset($row[$col])) {
+                $rowpk[] = Modyllic_Evaluate::exec($row[$col],$row);
+            }
+            else {
+                $rowpk[] = 'NULL';
+            }
+        }
+        return serialize($rowpk);
     }
 
     /**
@@ -149,29 +160,8 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
             $row[$col_name] = Modyllic_Expression::create($value);
         }
         if (! count($row)) return;
-        $element = null;
-        $pk = $this->primary_key();
-        foreach ($this->data as $index=>$cur) {
-            $match = true;
-            foreach ( $pk as $col=>$col_obj ) {
-                $type = $this->columns[$col]->type;
-                if ( ! isset($cur[$col]) or ! $cur[$col]->equal_to($row[$col],$type) ) {
-                    $match = false;
-                    break;
-                }
-            }
-            if ( $match ) {
-                $element = $index;
-                break;
-            }
-        }
-        $row = new Modyllic_Schema_Table_Row($row);
-        if ( isset($element) ) {
-            $this->data[$element] = $row;
-        }
-        else {
-            $this->data[] = $row;
-        }
+        $pk = $this->get_row_primary_key($row);
+        $this->data[$pk] = new Modyllic_Schema_Table_Row($row);
     }
 
     /**
