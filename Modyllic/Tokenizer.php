@@ -17,7 +17,6 @@ class Modyllic_Tokenizer {
     public $cur;
     private $prev;
                             //      neg/pos   num+decimal     or just dec  optional exponent
-    private $num_re        = '/\G ( [+-]?   (?: \d+(?:[.]\d+)? | [.]\d+ ) (?:[Ee][-+]?\d+)? ) \b  /xu';
     private $quote_chars   = array( "'"=>true, '"'=>true, '`'=>true );
     private $safe_symbol_chars  = array( ','=>true, '('=>true, ')'=>true, '='=>true, '@'=>true, ';'=>true, '!'=>true, '$'=>true, '*'=>true, '+'=>true, ':'=>true, '<'=>true, '>'=>true, '.'=>true, '&'=>true, '|'=>true, '%'=>true );
     private $other_symbol_chars  = array(  '/'=>true, '-'=>true );
@@ -184,7 +183,34 @@ class Modyllic_Tokenizer {
         return preg_match( self::$reserved_words_re, $this->cmdstr, $matches, 0, $this->pos);
     }
     function is_num(&$matches) {
-        return preg_match( $this->num_re, $this->cmdstr, $matches, 0, $this->pos );
+        $cur = $this->pos;
+        $digits = 0;
+        if ($this->cmdstr{$cur} == '+' or $this->cmdstr{$cur} == '-') $cur++;
+        while ($cur < $this->len and ctype_digit($this->cmdstr{$cur})) {
+            $cur++;
+            $digits++;
+        }
+        if ($cur < $this->len and $this->cmdstr{$cur} == '.') $cur++;
+        while ($cur < $this->len and ctype_digit($this->cmdstr{$cur})) {
+            $cur++;
+            $digits++;
+        }
+
+        if (!$digits) return false;
+
+        if ($cur < $this->len and $this->cmdstr{$cur} == 'e' || $this->cmdstr{$cur} == 'E') {
+            $cur++;
+            if ($this->cmdstr{$cur} == '+' or $this->cmdstr{$cur} == '-') $cur++;
+            if (!ctype_digit($this->cmdstr{$cur})) {
+                return false;
+            } else {
+                while ($cur < $this->len and ctype_digit($this->cmdstr{$cur})) $cur++;
+            }
+        }
+
+        $matches = array('', substr($this->cmdstr, $this->pos, $cur - $this->pos));
+
+        return true;
     }
     function is_ident(&$matches) {
         return preg_match( $this->ident_re, $this->cmdstr, $matches, 0, $this->pos );
