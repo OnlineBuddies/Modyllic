@@ -34,21 +34,6 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
         }
     }
 
-    function copy_from($table) {
-        $this->name = $table->name;
-        $this->columns = unserialize(serialize($table->columns));
-        $this->indexes = unserialize(serialize($table->indexes));
-        $this->static = $table->static;
-        $this->data = unserialize(serialize($table->data));
-        $this->last_column = unserialize(serialize($table->last_column));
-        $this->last_index = unserialize(serialize($table->last_index));
-        $this->engine = $table->engine;
-        $this->row_format = $table->row_format;
-        $this->charset = $table->charset;
-        $this->collate = $table->collate;
-        $this->docs = $table->docs;
-    }
-
     /**
      * @param Modyllic_Schema_Column $column
      */
