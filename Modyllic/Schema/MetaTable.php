@@ -44,6 +44,7 @@ class Modyllic_Schema_MetaTable extends Modyllic_Schema_Table {
         foreach ($table as $prop=>$value) {
             $meta->$prop = $value;
         }
+        return $meta;
     }
 
     function add_metadata($kind, $name, $value) {
