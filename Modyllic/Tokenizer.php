@@ -180,7 +180,7 @@ class Modyllic_Tokenizer {
         }
     }
     function is_reserved(&$matches) {
-        return preg_match( self::$reserved_words_re, $this->cmdstr, $matches, 0, $this->pos);
+        return ctype_alpha($this->cmdstr{$this->pos}) and preg_match( self::$reserved_words_re, $this->cmdstr, $matches, 0, $this->pos);
     }
     function is_num(&$matches) {
         $cur = $this->pos;
