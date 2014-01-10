@@ -163,28 +163,28 @@ class Modyllic_Tokenizer {
         if ($this->cmdstr{$this->pos} != $this->delimiter{0}) return false;
         return substr($this->cmdstr, $this->pos, strlen($this->delimiter)) == $this->delimiter;
     }
-    function is_new_delimiter(array &$matches) {
+    function is_new_delimiter(&$matches) {
         return $this->prev instanceOf Modyllic_Token_SOC and preg_match( "/\G((DELIMITER(?:\h+(\S+))?)([^\n]*?)(?=\n|\z))/iu", $this->cmdstr, $matches, 0, $this->pos);
     }
     function is_string() {
         return isset( $this->quote_chars[$this->cmdstr[$this->pos]] );
     }
-    function is_whitespace(&$matches) {
+    function is_whitespace(&$match) {
         $cur = $this->pos;
         $len = strlen($this->cmdstr);
         while ($cur < $len and $this->cmdstr{$cur} == ' ' || $this->cmdstr{$cur} == "\t" || $this->cmdstr{$cur} == "\n" || $this->cmdstr{$cur} == "\r" || $this->cmdstr{$cur} == "\v") $cur++;
         if ($cur != $this->pos) {
-            $matches = array('', substr($this->cmdstr, $this->pos, $cur - $this->pos));
+            $match = substr($this->cmdstr, $this->pos, $cur - $this->pos);
             return true;
         } else {
-            $matches = array();
+            $match = null;
             return false;
         }
     }
     function is_reserved(&$matches) {
         return ctype_alpha($this->cmdstr{$this->pos}) and preg_match( self::$reserved_words_re, $this->cmdstr, $matches, 0, $this->pos);
     }
-    function is_num(&$matches) {
+    function is_num(&$match) {
         $cur = $this->pos;
         $digits = 0;
         if ($this->cmdstr{$cur} == '+' or $this->cmdstr{$cur} == '-') $cur++;
@@ -210,7 +210,7 @@ class Modyllic_Tokenizer {
             }
         }
 
-        $matches = array('', substr($this->cmdstr, $this->pos, $cur - $this->pos));
+        $match = substr($this->cmdstr, $this->pos, $cur - $this->pos);
 
         return true;
     }
@@ -363,9 +363,9 @@ class Modyllic_Tokenizer {
             }
 
             // Our simple regexp token matchers...
-            else if ( $this->is_whitespace($matches) ) {
-                $this->pos += strlen($matches[1]);
-                $this->cur = new Modyllic_Token_Whitespace( $this->pos, $matches[1] );
+            else if ( $this->is_whitespace($match) ) {
+                $this->pos += strlen($match);
+                $this->cur = new Modyllic_Token_Whitespace( $this->pos, $match );
             }
             else if ( $this->is_new_delimiter($matches) ) {
                 if ( $matches[3] != '' ) {
@@ -386,9 +386,9 @@ class Modyllic_Tokenizer {
                 $this->pos += strlen($matches[1]);
                 $this->cur = new Modyllic_Token_Reserved($this->pos,$matches[1]);
             }
-            else if ( $this->is_num($matches) ) {
-                $this->pos += strlen($matches[1]);
-                $this->cur = new Modyllic_Token_Num($this->pos,$matches[1]);
+            else if ( $this->is_num($match) ) {
+                $this->pos += strlen($match);
+                $this->cur = new Modyllic_Token_Num($this->pos,$match);
             }
             else if ( $this->is_ident($matches) ) {
                 $this->pos += strlen($matches[1]);
