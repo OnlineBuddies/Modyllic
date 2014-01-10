@@ -148,7 +148,7 @@ class Modyllic_Loader_DB_MySQL {
         ksort($schema->triggers);
 
         if (isset($schema->tables['MODYLLIC'])) {
-            $metatable = $schema->tqbles['MODYLLIC'] = Modyllic_Schema_MetaTable::create_from($schema->tables['MODYLLIC']);
+            $metatable = $schema->tables['MODYLLIC'] = Modyllic_Schema_MetaTable::create_from($schema->tables['MODYLLIC']);
             $meta_sth = self::query( $dbh, "SELECT kind,which,value FROM ".Modyllic_SQL::quote_ident($dbname).".MODYLLIC");
             while ( $metadata = $meta_sth->fetch(PDO::FETCH_ASSOC) ) {
                 $metatable->add_row( $metadata );
