@@ -18,7 +18,6 @@ class Modyllic_Tokenizer {
     private $prev;
                             //      neg/pos   num+decimal     or just dec  optional exponent
     private $num_re        = '/\G ( [+-]?   (?: \d+(?:[.]\d+)? | [.]\d+ ) (?:[Ee][-+]?\d+)? ) \b  /xu';
-    private $whitespace_re = '/\G(\s+)/u';
     private $quote_chars   = array( "'"=>true, '"'=>true, '`'=>true );
     private $safe_symbol_chars  = array( ','=>true, '('=>true, ')'=>true, '='=>true, '@'=>true, ';'=>true, '!'=>true, '$'=>true, '*'=>true, '+'=>true, ':'=>true, '<'=>true, '>'=>true, '.'=>true, '&'=>true, '|'=>true, '%'=>true );
     private $other_symbol_chars  = array(  '/'=>true, '-'=>true );
@@ -170,7 +169,16 @@ class Modyllic_Tokenizer {
         return isset( $this->quote_chars[$this->cmdstr[$this->pos]] );
     }
     function is_whitespace(&$matches) {
-        return preg_match( $this->whitespace_re, $this->cmdstr, $matches, 0, $this->pos );
+        $cur = $this->pos;
+        $len = strlen($this->cmdstr);
+        while ($cur < $len and $this->cmdstr{$cur} == ' ' || $this->cmdstr{$cur} == "\t" || $this->cmdstr{$cur} == "\n" || $this->cmdstr{$cur} == "\r" || $this->cmdstr{$cur} == "\v") $cur++;
+        if ($cur != $this->pos) {
+            $matches = array('', substr($this->cmdstr, $this->pos, $cur - $this->pos));
+            return true;
+        } else {
+            $matches = array();
+            return false;
+        }
     }
     function is_reserved(&$matches) {
         return preg_match( self::$reserved_words_re, $this->cmdstr, $matches, 0, $this->pos);
