@@ -12,7 +12,7 @@ if ($lib_path = getenv("MODYLLIC_LIB_PATH")) set_include_path($lib_path.":".get_
 require_once "Modyllic/CommandLine.php";
 
 require_once "xhprof_lib/utils/xhprof_lib.php";
-require_once "xhprof/xhprof_lib/utils/xhprof_runs.php";
+require_once "xhprof_lib/utils/xhprof_runs.php";
 
 $args = Modyllic_CommandLine::get_args(array(
     'description' => 'Loads a schema with xhprof enabled',

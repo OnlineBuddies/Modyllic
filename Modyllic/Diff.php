@@ -280,71 +280,37 @@ class Modyllic_Diff {
             else if ( ! isset($totable->data) and isset($fromtable->data) ) {
                 $tablediff->update_option("static",false);
             }
-            if ( isset($totable->data) ) {
-                $primary = $totable->primary_key();
 
+            if (serialize($totable->primary_key()) != serialize($fromtable->primary_key())) {
+                $indexed = array();
+                foreach ($from_data as $row) {
+                    $indexed[$totable->get_row_primary_key($row)] = $row;
+                }
+                $from_data = $indexed;
+            }
+            if ( isset($totable->data) ) {
                 # First, new and updated rows
-                foreach ( $to_data as $torow ) {
-                    $exists = false;
-                    foreach ( $from_data as $fromrow ) {
-                        $match = true;
-                        foreach ( $primary as $key => $len ) {
-                            if ( isset($torow[$key]) and ! isset($fromrow[$key]) ) {
-                                $match = false;
-                                break;
-                            }
-                            if ( ! isset($torow[$key]) and isset($fromrow[$key]) ) {
-                                $match = false;
-                                break;
-                            }
-                            if ( ! $torow[$key]->equal_to($fromrow[$key],$totable->columns[$key]->type,$len) ) {
-                                $match = false;
-                                break;
+                foreach ( $to_data as $topk=>$torow ) {
+                    if (isset($from_data[$topk])) {
+                        $fromrow = $from_data[$topk];
+                        $set = array();
+                        foreach ($torow as $col=>$toval) {
+                            if ( !isset($fromrow[$col]) or ! $toval->equal_to($fromrow[$col],$totable->columns[$col]->type) ) {
+                                $set[$col] = $toval;
                             }
                         }
-                        if ( $match ) {
-                            $exists = true;
-                            $set = array();
-                            foreach ($torow as $col=>$toval) {
-                                if ( !isset($fromrow[$col]) or ! $toval->equal_to($fromrow[$col],$totable->columns[$col]->type) ) {
-                                    $set[$col] = $toval;
-                                }
-                            }
-                            if ( count($set) ) {
-                                $tablediff->update_row($set,$totable->match_row($fromrow),$fromrow);
-                            }
-                            break;
+                        if ( count($set) ) {
+                            $tablediff->update_row($set,$totable->match_row($fromrow),$fromrow);
                         }
                     }
-                    if (!$exists) {
+                    else {
                         $tablediff->add_row($torow,$totable->match_row($torow));
                     }
                 }
                 # And then removed rows
-                foreach ( $from_data as $fromrow ) {
+                foreach ( $from_data as $frompk=>$fromrow ) {
                     $exists = false;
-                    foreach ( $to_data as $torow ) {
-                        $match = true;
-                        foreach ( $primary as $key=>$len ) {
-                            if ( isset($torow[$key]) and ! isset($fromrow[$key]) ) {
-                                $match = false;
-                                break;
-                            }
-                            if ( ! isset($torow[$key]) and isset($fromrow[$key]) ) {
-                                $match = false;
-                                break;
-                            }
-                            if ( ! $torow[$key]->equal_to($fromrow[$key],$totable->columns[$key]->type,$len) ) {
-                                $match = false;
-                                break;
-                            }
-                        }
-                        if ( $match ) {
-                            $exists = true;
-                            break;
-                        }
-                    }
-                    if (!$exists) {
+                    if (! isset($to_data[$frompk])) {
                         $tablediff->remove_row(new Modyllic_Schema_Table_Row($fromtable->match_row($fromrow)));
                     }
                 }
