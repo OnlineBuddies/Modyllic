@@ -161,7 +161,7 @@ class Modyllic_Tokenizer {
         return $this->pos >= $this->len;
     }
     function is_delimiter() {
-        return isset($this->delimiter) and preg_match( "/\G\Q$this->delimiter\E/u", $this->cmdstr, $matches, 0, $this->pos );
+        return isset($this->delimiter) and substr($this->cmdstr, $this->pos, strlen($this->delimiter)) == $this->delimiter;
     }
     function is_new_delimiter(array &$matches) {
         return $this->prev instanceOf Modyllic_Token_SOC and preg_match( "/\G((DELIMITER(?:\h+(\S+))?)([^\n]*?)(?=\n|\z))/iu", $this->cmdstr, $matches, 0, $this->pos);
