@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-print "Revision history for PHP module Modyllic\n\n";
+print "[Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic\n\n";
 
 // You can optionally pass in a version and changelog file to load and
 // prepend to the changelog.  This is used to generate the changelog wiki
@@ -18,7 +18,7 @@ foreach (explode("\n",trim(`git for-each-ref --sort='-refname' --sort='-authorda
 }
 
 function print_version($tag,$date,$changes) {
-    echo "$tag $date\n\n";
+    echo "[$tag](https://github.com/OnlineBuddies/Modyllic/releases/tag/$tag) $date\n\n";
     if ( $changes == "" ) {
         $changes = "* No changelog for this version.";
     }
