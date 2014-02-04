@@ -1,9 +1,8 @@
-* Static tables with null values will now compare correctly
-* Comparing normalized types will now always use the right type while normalizing
-* Add ability to issue alters individually for, eg, replicating 5.5->5.6
-* Make attempts to insert into tables that don't yet exist non fatal-- although the insert WILL fail
-* Add facility for determining non-reserved keywords for highlighting purposes
-* Only emit ROW_FORMAT when it differs from the default.
-* Stop emitting IF EXISTS in ModyllicSQL
-* Use exec instead of prepare/execute to bypass bind param checking
-* Add examples to readme
+* Major speed improvements!
+  * Minor speedup to is_delimiter (Aria Stewart)
+  * Guard is_reserved with a cheap check, killing a huge amount of time (Aria Stewart)
+  * Speed up is_num token check (Aria Stewart)
+  * Speed up is_whitespace token check (Aria Stewart)
+  * Speed up delimiter token check (Aria Stewart)
+  * Actually index our table data =D (Rebecca Turner)
+* Refactor the upgrading of a MODYLLIC table in the DB to a MetaTable schema object (Rebecca Turner)
