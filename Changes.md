@@ -1,5 +1,16 @@
 Revision history for PHP module Modyllic
 
+v0.2.24 2014-02-04
+
+* Major speed improvements!
+  * Minor speedup to is_delimiter (Aria Stewart)
+  * Guard is_reserved with a cheap check, killing a huge amount of time (Aria Stewart)
+  * Speed up is_num token check (Aria Stewart)
+  * Speed up is_whitespace token check (Aria Stewart)
+  * Speed up delimiter token check (Aria Stewart)
+  * Actually index our table data =D (Rebecca Turner)
+* Refactor the upgrading of a MODYLLIC table in the DB to a MetaTable schema object (Rebecca Turner)
+
 v0.2.23 2014-01-06
 
 * Static tables with null values will now compare correctly
