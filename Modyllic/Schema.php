@@ -38,6 +38,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
         $this->collate        = self::DEFAULT_COLLATE;
         $this->docs           = "";
         $this->source         = "generated";
+        $this->errors         = array();
     }
 
     function set_name( $name ) {
@@ -73,6 +74,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
         foreach ($schema->triggers as $trigger) {
             $this->add_trigger($trigger);
         }
+        $this->errors = array_merge( $this->errors, $schema->errors );
     }
 
     /**
