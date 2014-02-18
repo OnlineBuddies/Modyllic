@@ -1,5 +1,9 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.26](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.26) 2014-02-18
+
+* Nope, now that we're properly merging errors, we don't actually want to emit them at preparse time
+
 [v0.2.25](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.25) 2014-02-18
 
 * Errors should be propagated when merging parsed schema, eg, loading preparse files
