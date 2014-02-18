@@ -1,5 +1,11 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.25](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.25) 2014-02-18
+
+* Errors should be propagated when merging parsed schema, eg, loading preparse files
+* Fail preparsing when errors are detected
+* Add links to the release history to the generated changelog
+
 [v0.2.24](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.24) 2014-02-04
 
 * Major speed improvements!
