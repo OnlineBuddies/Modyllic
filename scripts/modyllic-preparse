@@ -18,12 +18,4 @@ $args = Modyllic_CommandLine::get_args(array(
 
 $schema = Modyllic_CommandLine::schema($args->args['spec']);
 
-$errors = $schema->validate();
-if (count($errors)) {
-    foreach ($errors as $error) {
-        fwrite(STDERR,"$error\n");
-    }
-    exit(1);
-}
-
 print serialize($schema);
