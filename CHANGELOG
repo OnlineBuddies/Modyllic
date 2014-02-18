@@ -1,3 +1,1 @@
-* Errors should be propagated when merging parsed schema, eg, loading preparse files
-* Fail preparsing when errors are detected
-* Add links to the release history to the generated changelog
+* Nope, now that we're properly merging errors, we don't actually want to emit them at preparse time
