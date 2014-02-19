@@ -108,7 +108,11 @@ function apply_cmd($dbh,$cmd,$dsntoapply,$filename,$skip=null) {
         echo sprintf("%4s ----------------------------------------------\n", "#$stmt");
         echo "$cmd\n";
         try {
-            $dbh->exec($cmd);
+            $sth = $dbh->query($cmd);
+            // Do the full iteration over the result sets to un-cover any errors.
+            do {
+                if ($sth->rowCount()) foreach ($sth as $row) $row;
+            } while($sth->nextRowset());
         }
         catch (Exception $e) {
             echo "== ERROR ==========================================\n";
