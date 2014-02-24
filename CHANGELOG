@@ -1,1 +1,1 @@
-* Nope, now that we're properly merging errors, we don't actually want to emit them at preparse time
+* Fully iterate the result sets to un-cover any errors (Aria Stewart)
