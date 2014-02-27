@@ -1,1 +1,1 @@
-* Fully iterate the result sets to un-cover any errors (Aria Stewart)
+* Fix problem where strings in expressions would be set to '' on 64bit PHP
