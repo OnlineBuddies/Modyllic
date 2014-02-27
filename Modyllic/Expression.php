@@ -7,10 +7,13 @@
  */
 
 abstract class Modyllic_Expression {
+    // Regardless of your PHP being 32 or 64bit, mb_substr can and will be limited to 32bit signed integers.
+    const MAX_SUBSTR_LENGTH = 0x7fffffff;
+
     abstract function normalize($type);
     function equal_to($exp,$type,$length=null) {
         if (! $this instanceOf $exp) return false;
-        if (isset($length) and $length and $length <= PHP_INT_MAX) {
+        if (isset($length) and $length and $length <= Modyllic_Expression::MAX_SUBSTR_LENGTH) {
             return (mb_substr($this->normalize($type),0,$length,'UTF-8') == mb_substr($exp->normalize($type),0,$length,'UTF-8'));
         }
         else {

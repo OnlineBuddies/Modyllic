@@ -52,11 +52,11 @@ class Modyllic_Evaluate {
                 $value  = self::exec($expr->args[0],$row);
                 $start  = self::exec($expr->args[1],$row)-1;
                 $length = self::exec($expr->args[2],$row);
-                if ($start <= PHP_INT_MAX and $length <= PHP_INT_MAX) {
+                if ($start <= Modyllic_Expression::MAX_SUBSTR_LENGTH and $length <= Modyllic_Expression::MAX_SUBSTR_LENGTH) {
                     return mb_substr( self::exec($expr->args[0],$row), self::exec($expr->args[1],$row)-1, self::exec($expr->args[2],$row), 'UTF-8' );
                 }
                 else {
-                    throw new Exception("Error while evaluating SQL, substr start and length arguments must be less than or equal to ".PHP_INT_MAX);
+                    throw new Exception("Error while evaluating SQL, substr start and length arguments must be less than or equal to ".Modyllic_Expression::MAX_SUBSTR_LENGTH);
                 }
             }
             else {
