@@ -1,5 +1,9 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.28](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.28) 2014-02-27
+
+* Fix problem where strings in expressions would be set to '' on 64bit PHP
+
 [v0.2.27](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.27) 2014-02-24
 
 * Fully iterate the result sets to un-cover any errors (Aria Stewart)
