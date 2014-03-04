@@ -112,17 +112,26 @@ class Modyllic_Generator_ModyllicSQL {
         if ( ! $diff->changeset->has_changes() ) {
             return $this;
         }
+
         if ( isset($this->what['database']) ) {
             $this->alter_database( $diff->changeset->schema );
         }
+
+        if ( isset($this->what['routines']) ) {
+            $this->drop_routines( $diff->changeset->remove['routines'] );
+        }
+        if ( isset($this->what['routines']) ) {
+            $this->create_routines( $diff->changeset->add['routines'] );
+        }
+        if ( isset($this->what['routines']) ) {
+            $this->alter_routines( $diff->changeset->update['routines'] );
+        }
+
         if ( isset($this->what['triggers']) ) {
             $this->drop_triggers( $diff->changeset->remove['triggers'] );
         }
         if ( isset($this->what['events']) ) {
             $this->drop_events( $diff->changeset->remove['events'] );
-        }
-        if ( isset($this->what['routines']) ) {
-            $this->drop_routines( $diff->changeset->remove['routines'] );
         }
         if ( isset($this->what['views']) ) {
             $this->drop_views( $diff->changeset->remove['views'] );
@@ -137,9 +146,6 @@ class Modyllic_Generator_ModyllicSQL {
         if ( isset($this->what['views']) ) {
             $this->create_views( $diff->changeset->add['views'] );
         }
-        if ( isset($this->what['routines']) ) {
-            $this->create_routines( $diff->changeset->add['routines'] );
-        }
         if ( isset($this->what['events']) ) {
             $this->create_events( $diff->changeset->add['events'] );
         }
@@ -152,9 +158,6 @@ class Modyllic_Generator_ModyllicSQL {
         }
         if ( isset($this->what['views']) ) {
             $this->alter_views( $diff->changeset->update['views'] );
-        }
-        if ( isset($this->what['routines']) ) {
-            $this->alter_routines( $diff->changeset->update['routines'] );
         }
         if ( isset($this->what['events']) ) {
             $this->alter_events( $diff->changeset->update['events'] );
@@ -189,14 +192,14 @@ class Modyllic_Generator_ModyllicSQL {
         if ( isset($this->what['database']) ) {
             $this->create_database( $schema );
         }
+        if ( isset($this->what['routines']) ) {
+            $this->create_routines( $schema->routines );
+        }
         if ( isset($this->what['tables']) ) {
             $this->create_tables( $schema->tables, $schema );
         }
         if ( isset($this->what['views']) ) {
             $this->create_views( $schema->views );
-        }
-        if ( isset($this->what['routines']) ) {
-            $this->create_routines( $schema->routines );
         }
         if ( isset($this->what['events']) ) {
             $this->create_events( $schema->events );
