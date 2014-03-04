@@ -1,1 +1,1 @@
-* Fix problem where strings in expressions would be set to '' on 64bit PHP
+* Handle errors coming when fetching from a non-result-returning query. Thanks, PDO. (Aria Stewart)
