@@ -1,5 +1,9 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.29](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.29) 2014-03-04
+
+* Handle errors coming when fetching from a non-result-returning query. Thanks, PDO. (Aria Stewart)
+
 [v0.2.28](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.28) 2014-02-27
 
 * Fix problem where strings in expressions would be set to '' on 64bit PHP
