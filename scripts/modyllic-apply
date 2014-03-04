@@ -110,9 +110,14 @@ function apply_cmd($dbh,$cmd,$dsntoapply,$filename,$skip=null) {
         try {
             $sth = $dbh->query($cmd);
             // Do the full iteration over the result sets to un-cover any errors.
-            do {
-                if ($sth->rowCount()) foreach ($sth as $row) $row;
-            } while($sth->nextRowset());
+            try {
+                do {
+                    if ($sth->rowCount()) foreach ($sth as $row) $row;
+                } while($sth->nextRowset());
+            }
+            catch (PDOException $e) {
+                if (strpos($e->getMessage(), 'SQLSTATE[HY000]: General error') !== false) throw $e;
+            }
         }
         catch (Exception $e) {
             echo "== ERROR ==========================================\n";
