@@ -1,5 +1,11 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.30](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.30) 2014-03-24
+
+* Correct documentation when referring to how to encode a username
+* Stop issuing trucates with MySQL as they're not safe with foreign_key_checks=0 and innodb and file_per_table
+* Generate routines before we generate tables given that tables can
+
 [v0.2.29](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.29) 2014-03-04
 
 * Handle errors coming when fetching from a non-result-returning query. Thanks, PDO. (Aria Stewart)
