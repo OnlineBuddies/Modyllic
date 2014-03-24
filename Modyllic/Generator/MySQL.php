@@ -182,4 +182,14 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
         $this->cmd( "DROP EVENT IF EXISTS %id", $event->name );
         return $this;
     }
+
+    function truncate_table($table) {
+        $this->cmd("DELETE FROM %id", $table->name);
+        foreach ($table->columns as $col) {
+            if (! $col->auto_increment) continue;
+            $this->cmd("ALTER TABLE %id AUTO_INCREMENT = 1", $table->name);
+            break;
+        }
+    }
+
 }
