@@ -492,9 +492,13 @@ class Modyllic_Generator_ModyllicSQL {
         return $this;
     }
 
+    function truncate_table($table) {
+        $this->cmd("TRUNCATE %id", $table->name);
+    }
+
     function alter_table_data($table) {
         if ( isset($table->static) and $table->static and ! $table->from->static ) {
-            $this->cmd("TRUNCATE %id", $table->name);
+            $this->truncate_table($table);
         }
         foreach ($table->remove['data'] as $row ) {
             $this->begin_cmd();
@@ -831,7 +835,7 @@ class Modyllic_Generator_ModyllicSQL {
 
     function create_table_data($table) {
         if ( $table->static ) {
-            $this->cmd( "TRUNCATE TABLE %id", $table->name );
+            $this->truncate_table($table);
             foreach ($table->data as $row) {
                 $this->create_data( $table, $row );
             }
