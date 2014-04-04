@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/OnlineBuddies/Modyllic.svg?branch=master)](https://travis-ci.org/OnlineBuddies/Modyllic)
+
 Modyllic is an SQL parser and set of schema management tools, written in PHP
 5.2, and useful for anyone working with SQL.
 
