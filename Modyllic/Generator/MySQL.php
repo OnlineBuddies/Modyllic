@@ -184,10 +184,11 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
     }
 
     function truncate_table($table) {
-        $this->cmd("DELETE FROM %id", $table->name);
-        foreach ($table->columns as $col) {
+        $target = isset($table->to) ? $table->to : $table;
+        $this->cmd("DELETE FROM %id", $target->name);
+        foreach ($target->columns as $col) {
             if (! $col->auto_increment) continue;
-            $this->cmd("ALTER TABLE %id AUTO_INCREMENT = 1", $table->name);
+            $this->cmd("ALTER TABLE %id AUTO_INCREMENT = 1", $target->name);
             break;
         }
     }
