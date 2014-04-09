@@ -1,5 +1,9 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.31](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.31) 2014-04-09
+
+* When generating SQL from a diff, ->columns is not available, but ->to->columns is (Rebecca Turner)
+
 [v0.2.30](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.30) 2014-03-24
 
 * Correct documentation when referring to how to encode a username
