@@ -1,1 +1,1 @@
-* When generating SQL from a diff, ->columns is not available, but ->to->columns is (Rebecca Turner)
+* For MySQL, drop and create all foreign key constraints on all modified tables
