@@ -1,1 +1,1 @@
-* For MySQL, drop and create all foreign key constraints on all modified tables
+* Fix bug introcued in last version where changing table options resulted in crash
