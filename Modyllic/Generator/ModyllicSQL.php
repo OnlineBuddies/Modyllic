@@ -506,7 +506,7 @@ class Modyllic_Generator_ModyllicSQL {
         if ( $table->has_schema_changes() ) {
             $this->clear_queue();
             if ($table->options->has_changes()) {
-                $this->queue_change( 'table_options', $table->options );
+                $this->queue_change( 'table_options', array($table->options) );
             }
             $this->queue_remove_foreign_keys($table->remove['indexes']);
             $this->queue_remove_keys($table->remove['indexes']);
