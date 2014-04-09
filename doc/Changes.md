@@ -1,5 +1,9 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.33](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.33) 2014-04-09
+
+* Fix bug introcued in last version where changing table options resulted in crash
+
 [v0.2.32](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.32) 2014-04-09
 
 * For MySQL, drop and create all foreign key constraints on all modified tables
