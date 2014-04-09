@@ -56,13 +56,8 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
 
     function sql_header() {
         return array(
-            "SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0",
             $this->_format("SET NAMES %str",array("utf8")),
             );
-    }
-
-    function sql_footer() {
-        return array( "SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS" );
     }
 
     function table_meta($table) {
@@ -145,6 +140,50 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
             $meta["type"] = "SERIAL";
         }
         return $meta;
+    }
+
+    function queue_remove_foreign_keys($indexes) {}
+    function queue_add_foreign_keys($indexes) {}
+
+    function alter_tables($tables) {
+        // Here we disable all of the foreign keys in the tables we're modifying and that reference the tables that we're modifying
+        foreach ( $this->source->from->tables as $table ) {
+            $todrop = array();
+            foreach ( $table->indexes as $index ) {
+                if (! $index instanceOf Modyllic_Schema_Index_Foreign) continue;
+                if (! isset($tables[$table->name]) and ! isset($tables[$index->references['table']])) continue;
+                $todrop[] = $index;
+            }
+            if (count($todrop)) {
+                $this->begin_alter_table($table);
+                foreach ($todrop as $index) {
+                    $this->drop_index($index);
+                }
+                $this->end_alter_table($table);
+            }
+        }
+
+        // then alter tables as we usually do
+        foreach ( $tables as $table ) {
+            $this->alter_table($table);
+        }
+
+        // then recreate the constraints we removed
+        foreach ( $this->source->to->tables as $table ) {
+            $todrop = array();
+            foreach ( $table->indexes as $index ) {
+                if (! $index instanceOf Modyllic_Schema_Index_Foreign) continue;
+                if (! isset($tables[$table->name]) and ! isset($tables[$index->references['table']])) continue;
+                $todrop[] = $index;
+            }
+            if (count($todrop)) {
+                $this->begin_alter_table($table);
+                foreach ($todrop as $index) {
+                    $this->add_index($index);
+                }
+                $this->end_alter_table($table);
+            }
+        }
     }
 
     function drop_database($schema) {

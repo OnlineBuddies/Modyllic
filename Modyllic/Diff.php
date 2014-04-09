@@ -36,6 +36,7 @@ class Modyllic_Diff {
 
         $this->changeset->schema->name = $this->to->name;
         $this->changeset->schema->from = $this->from;
+        $this->changeset->schema->to   = $this->to;
         if ( $this->from->charset != $this->to->charset ) {
             $this->changeset->schema->charset = $this->to->charset;
         }

@@ -14,6 +14,7 @@ class Modyllic_Changeset_Schema {
     public $charset;
     public $collate;
     public $from;
+    public $to;
 
     /**
      * Check to see if anything has actually been changed
