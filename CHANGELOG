@@ -1,3 +1,1 @@
-* Correct documentation when referring to how to encode a username
-* Stop issuing trucates with MySQL as they're not safe with foreign_key_checks=0 and innodb and file_per_table
-* Generate routines before we generate tables given that tables can 
+* When generating SQL from a diff, ->columns is not available, but ->to->columns is (Rebecca Turner)
