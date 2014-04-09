@@ -1,5 +1,9 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.32](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.32) 2014-04-09
+
+* For MySQL, drop and create all foreign key constraints on all modified tables
+
 [v0.2.31](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.31) 2014-04-09
 
 * When generating SQL from a diff, ->columns is not available, but ->to->columns is (Rebecca Turner)
