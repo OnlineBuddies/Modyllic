@@ -108,7 +108,7 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function alter( Modyllic_Diff $diff ) {
-        $this->source = $diff->changeset;
+        $this->source = $diff;
         if ( ! $diff->changeset->has_changes() ) {
             return $this;
         }
@@ -439,56 +439,93 @@ class Modyllic_Generator_ModyllicSQL {
         return $this;
     }
 
+    function remove_foreign_keys($indexes) {
+        foreach ($indexes as $index) {
+            if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
+                $this->drop_index($index);
+            }
+        }
+    }
+
+    function clear_queue() {
+        $this->queue = array();
+    }
+    function queue_change( $method, $args ) {
+        $this->queue[] = array($method, $args);
+    }
+    function execute_queue() {
+        foreach ($this->queue as $todo) {
+            list($method, $args) = $todo;
+            call_user_func_array(array($this,$method),$args);
+        }
+    }
+
+    function queue_remove_keys($indexes) {
+        foreach ($indexes as $index) {
+            if ( ! $index instanceOf Modyllic_Schema_Index_Foreign ) {
+                $this->queue_change('drop_index',array($index));
+            }
+        }
+    }
+
+    function queue_remove_foreign_keys($indexes) {
+        foreach ($indexes as $index) {
+            if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
+                $this->queue_change('drop_index',array($index));
+            }
+        }
+    }
+
+    function queue_add_foreign_keys($indexes) {
+        foreach ($indexes as $index) {
+            if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
+                $this->queue_change('add_index',array($index));
+            }
+        }
+    }
+
+    function queue_add_keys($indexes) {
+        foreach ($indexes as $index) {
+            if ( ! $index instanceOf Modyllic_Schema_Index_Foreign ) {
+                $this->queue_change('add_index',array($index));
+            }
+        }
+    }
+
+    function begin_alter_table($table) {
+        $this->begin_cmd( "ALTER TABLE %id ", $table->name );
+        $this->begin_list();
+    }
+    function end_alter_table($table) {
+        $this->end_list();
+        $this->end_cmd();
+    }
+
     function alter_table( $table ) {
         if ( ! isset($this->what['meta']) and $table instanceOf Modyllic_Schema_MetaTable ) { return; }
         if ( $table->has_schema_changes() ) {
-            if ( $table->options->has_changes() or
-                 count($table->add['columns'])+count($table->remove['columns'])+count($table->update['columns'])+
-                 count($table->add['indexes'])+count($table->remove['indexes']) > 0 ) {
-                $this->begin_cmd( "ALTER TABLE %id ", $table->name );
-                $this->begin_list();
-                if ($table->options->has_changes()) {
-                    $this->table_options( $table->options );
-                }
-                foreach ($table->remove['indexes'] as $index) {
-                    if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
-                        $this->drop_index($index);
-                    }
-                }
-                foreach ($table->remove['indexes'] as $index) {
-                    if ( ! $index instanceOf Modyllic_Schema_Index_Foreign ) {
-                        $this->drop_index($index);
-                    }
-                }
-                foreach (array_reverse($table->add['columns']) as $column) {
-                    $this->add_column( $column );
-                }
-                foreach ($table->remove['columns'] as $column) {
-                    $this->drop_column($column);
-                }
-                foreach ($table->update['columns'] as $column) {
-                    $this->alter_column($column);
-                }
-                $constraints = array();
-                foreach ($table->add['indexes'] as $index) {
-                    if ( $index instanceOf Modyllic_Schema_Index_Foreign ) {
-                        $constraints[] = $index;
-                    }
-                    else {
-                        $this->add_index($index);
-                    }
-                }
-                $this->end_list();
-                $this->end_cmd();
-                if (count($constraints)) {
-                    $this->begin_cmd( "ALTER TABLE %id ", $table->name );
-                    $this->begin_list();
-                    foreach ($constraints as $index) {
-                        $this->add_index($index);
-                    }
-                    $this->end_list();
-                    $this->end_cmd();
-                }
+            $this->clear_queue();
+            if ($table->options->has_changes()) {
+                $this->queue_change( 'table_options', $table->options );
+            }
+            $this->queue_remove_foreign_keys($table->remove['indexes']);
+            $this->queue_remove_keys($table->remove['indexes']);
+            foreach (array_reverse($table->add['columns']) as $column) {
+                $this->queue_change( 'add_column', array( $column ) );
+            }
+            foreach ($table->remove['columns'] as $column) {
+                $this->queue_change( 'drop_column', array($column) );
+            }
+            foreach ($table->update['columns'] as $column) {
+                $this->queue_change( 'alter_column', array($column) );
+            }
+            $this->queue_add_keys($table->add['indexes']);
+            $this->queue_add_foreign_keys($table->add['indexes']);
+
+            if (count($this->queue)) {
+                $this->begin_alter_table($table);
+                $this->execute_queue();
+                $this->end_alter_table($table);
             }
         }
         $this->alter_table_data($table);
