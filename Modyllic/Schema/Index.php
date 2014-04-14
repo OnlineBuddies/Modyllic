@@ -36,19 +36,14 @@ class Modyllic_Schema_Index extends Modyllic_Diffable {
      * @param Modyllic_Schema_Index $other
      * @returns bool True if $other is equivalent to $this
      */
-    function equal_to(Modyllic_Schema_Index $other, array $fromnames=null) {
-        if ( get_class($other) != get_class($this) )   { return false; }
-        if ( isset($fromnames) ) {
-            if ( count($this->columns) != count($other->columns) ) { return false; }
-            foreach ($other->columns as $name=>$column) {
-                if ( ( ! isset($fromnames[$name]) or ! isset($this->columns[$fromnames[$name]]) ) and
-                     ! isset($this->columns[$name]) ) {
-                    return false;
-                }
+    function equal_to(Modyllic_Schema_Index $other, array $fromnames=array()) {
+        if ( get_class($other) != get_class($this) ) { return false; }
+        if ( count($this->columns) != count($other->columns) ) { return false; }
+        foreach ($other->columns as $name=>$fromcolumn) {
+            $tocolumn = isset($fromnames[$name]) ? $this->columns[$fromnames[$name]] : @$this->columns[$name];
+            if ($tocolumn != $fromcolumn) {
+                return false;
             }
-        }
-        else {
-            if ( $this->columns != $other->columns ) { return false; }
         }
         if ( $this->primary != $other->primary ) { return false; }
         if ( $this->fulltext != $other->fulltext ) { return false; }
