@@ -40,7 +40,9 @@ class Modyllic_Schema_Index extends Modyllic_Diffable {
         if ( get_class($other) != get_class($this) ) { return false; }
         if ( count($this->columns) != count($other->columns) ) { return false; }
         foreach ($other->columns as $name=>$fromcolumn) {
-            $tocolumn = isset($fromnames[$name]) ? $this->columns[$fromnames[$name]] : @$this->columns[$name];
+            $toname   = isset($fromnames[$name]) ? $fromnames[$name] : $name;
+            if (!isset($this->columns[$toname])) return false;
+            $tocolumn = $this->columns[$toname];
             if ($tocolumn != $fromcolumn) {
                 return false;
             }
