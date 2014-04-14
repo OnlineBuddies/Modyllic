@@ -43,12 +43,12 @@ abstract class Modyllic_Expression {
     static function createFunction($func,$args) {
         $inflated_args = array();
         foreach ($args as $arg) {
-            $inflated_args = self::create($arg);
+            $inflated_args[] = self::create($arg);
         }
         if (! $func instanceOf Modyllic_Token) {
             $func = new Modyllic_Token_Bareword(0,$func);
         }
-        return new Modyllic_Expression_Function( $func, $args );
+        return new Modyllic_Expression_Function( $func, $inflated_args );
     }
     static function createValue($value,$type=null) {
         if ($value instanceOf Modyllic_Expression) {
