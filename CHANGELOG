@@ -1,1 +1,2 @@
-* Fix bug introcued in last version where changing table options resulted in crash
+* Fix bug that broke handling of truncated primary keys
+* Fix bug that stopped indexes with different truncations from registering as different
