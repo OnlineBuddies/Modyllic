@@ -116,7 +116,7 @@ function apply_cmd($dbh,$cmd,$dsntoapply,$filename,$skip=null) {
                 } while($sth->nextRowset());
             }
             catch (PDOException $e) {
-                if (strpos($e->getMessage(), 'SQLSTATE[HY000]: General error') !== false) throw $e;
+                if (strpos($e->getMessage(), 'SQLSTATE[HY000]: General error') === false) throw $e;
             }
         }
         catch (Exception $e) {
