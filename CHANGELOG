@@ -1,2 +1,3 @@
-* Fix bug that broke handling of truncated primary keys
-* Fix bug that stopped indexes with different truncations from registering as different
+* Defer creating foreign keys until as late as possible
+  This solves some issues with foreign key constraints and static tables
+* Fix modyllic-apply's eating of "general errors" when we try to fetch result sets
