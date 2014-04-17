@@ -1,5 +1,13 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+
+Warning: date(): It is not safe to rely on the system's timezone settings. You are *required* to use the date.timezone setting or the date_default_timezone_set() function. In case you used any of those methods and you are still getting this warning, you most likely misspelled the timezone identifier. We selected the timezone 'UTC' for now, but please set date.timezone to select your timezone. in /Users/rebecca/src/modyllic/build-changelog on line 11
+[v0.2.35](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.35) 2014-04-17
+
+* Defer creating foreign keys until as late as possible
+  This solves some issues with foreign key constraints and static tables
+* Fix modyllic-apply's eating of "general errors" when we try to fetch result sets
+
 [v0.2.34](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.34) 2014-04-14
 
 * Fix bug that broke handling of truncated primary keys
