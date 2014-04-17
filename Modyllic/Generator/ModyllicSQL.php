@@ -155,6 +155,7 @@ class Modyllic_Generator_ModyllicSQL {
 
         if ( isset($this->what['tables']) ) {
             $this->alter_tables( $diff->changeset->update['tables'] );
+            $this->create_constraints( $diff->changeset->add['tables'] );
         }
         if ( isset($this->what['views']) ) {
             $this->alter_views( $diff->changeset->update['views'] );
@@ -197,6 +198,7 @@ class Modyllic_Generator_ModyllicSQL {
         }
         if ( isset($this->what['tables']) ) {
             $this->create_tables( $schema->tables, $schema );
+            $this->create_constraints( $schema->tables );
         }
         if ( isset($this->what['views']) ) {
             $this->create_views( $schema->views );
@@ -287,6 +289,13 @@ class Modyllic_Generator_ModyllicSQL {
     function create_tables( $tables, $schema ) {
         foreach ( $tables as $table ) {
             $this->create_table($table, $schema);
+        }
+        return $this;
+    }
+
+    function create_constraints( $tables ) {
+        foreach ( $tables as $table ) {
+            $this->create_constraint($table);
         }
         return $this;
     }
@@ -409,7 +418,7 @@ class Modyllic_Generator_ModyllicSQL {
         $this->table_docs( $table );
         $this->extend( "CREATE TABLE %id (", $table->name );
         $this->indent();
-        $indexes = array_filter( $table->indexes, array($this,"active_index_filter") );
+        $indexes = array_filter( array_filter( $table->indexes, array($this,"active_index_filter") ), array($this,"not_foreign_key_filter") );
         $entries = count($table->columns) + count($indexes);
         $completed = 0;
         foreach ( $table->columns as $column ) {
@@ -436,6 +445,24 @@ class Modyllic_Generator_ModyllicSQL {
         $this->end_cmd();
 
         $this->create_table_data( $table );
+        return $this;
+    }
+
+    function create_constraint( Modyllic_Schema_Table $table ) {
+        if ( ! isset($this->what['meta']) and $table instanceOf Modyllic_Schema_MetaTable ) { return; }
+        $indexes = array_filter( array_filter( $table->indexes, array($this,"active_index_filter") ), array($this,"foreign_key_only_filter") );
+        $entries = count($indexes);
+        if ( ! $entries ) { return; }
+        $this->begin_cmd( "ALTER TABLE %id", $table->name );
+        $completed = 0;
+        ksort($indexes);
+        foreach ( $indexes as $index ) {
+            $this->create_index( $index );
+            if ( ++$completed < $entries ) {
+                $this->add(",");
+            }
+        }
+        $this->end_cmd();
         return $this;
     }
 
@@ -747,6 +774,14 @@ class Modyllic_Generator_ModyllicSQL {
             $this->extend("DROP KEY %id", $index->name);
         }
         return $this;
+    }
+
+    function foreign_key_only_filter($index) {
+        return $index instanceOf Modyllic_Schema_Index_Foreign;
+    }
+
+    function not_foreign_key_filter($index) {
+        return ! $this->foreign_key_only_filter($index);
     }
 
     function active_index_filter($index) {
