@@ -767,9 +767,10 @@ class Modyllic_Parser {
         // characteristic:
         //   | [NOT] DETERMINISTIC
         //   | { CONTAINS SQL | NO SQL | READS SQL DATA | MODIFIES SQL DATA }
-        while ( $this->peek_next()->token() != 'BEGIN' and
-                $this->peek_next()->token() != 'RETURN' and
-                $this->peek_next()->token() != 'CALL' ) {
+        while ( true ) {
+            if (in_array($this->peek_next()->token(),array('BEGIN','RETURN','CALL','SELECT','INSERT','UPDATE','DELETE'))) {
+                break;
+            }
             switch ($this->get_reserved()) {
                 case 'CONTAINS SQL':
                 case 'NO SQL':
@@ -795,14 +796,10 @@ class Modyllic_Parser {
                 case 'COMMENT':
                     $this->get_string();
                     break;
-                case 'BEGIN';
-                    break;
-                case 'RETURN';
-                    break;
-                case 'CALL';
-                    break;
                 default:
                     $this->warning("Unknown characteristic in routine declaration: ".$this->cur()->debug());
+                    $this->tok->inject($this->cur());
+                    break 2;
             }
         }
         $routine->body = trim($this->rest());
