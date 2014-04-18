@@ -1,3 +1,5 @@
-* Defer creating foreign keys until as late as possible
-  This solves some issues with foreign key constraints and static tables
-* Fix modyllic-apply's eating of "general errors" when we try to fetch result sets
+* Resume disabling foreign key checks until such time as we add PREPARE WITH syntax to constraints
+* Stop trying to emit PRIMARY KEY and UNIQUE as field attributes
+* If we're dropping a table, don't try to add/remove constraints from it
+* Move all index/constraint changes to after other table changes, including static data
+* If we're making a table static, truncate before we make any changes to it
