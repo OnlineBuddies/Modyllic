@@ -530,6 +530,9 @@ class Modyllic_Generator_ModyllicSQL {
 
     function alter_table( $table ) {
         if ( ! isset($this->what['meta']) and $table instanceOf Modyllic_Schema_MetaTable ) { return; }
+        if ( isset($table->static) and $table->static and ! $table->from->static ) {
+            $this->truncate_table($table);
+        }
         if ( $table->has_schema_changes() ) {
             $this->clear_queue();
             if ($table->options->has_changes()) {
@@ -564,9 +567,6 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function alter_table_data($table) {
-        if ( isset($table->static) and $table->static and ! $table->from->static ) {
-            $this->truncate_table($table);
-        }
         foreach ($table->remove['data'] as $row ) {
             $this->begin_cmd();
             $this->partial( "DELETE FROM %id WHERE ", $table->name);
