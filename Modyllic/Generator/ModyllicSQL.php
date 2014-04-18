@@ -457,7 +457,7 @@ class Modyllic_Generator_ModyllicSQL {
         $completed = 0;
         ksort($indexes);
         foreach ( $indexes as $index ) {
-            $this->create_index( $index );
+            $this->add_index( $index );
             if ( ++$completed < $entries ) {
                 $this->add(",");
             }
