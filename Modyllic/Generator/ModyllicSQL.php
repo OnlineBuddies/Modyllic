@@ -458,9 +458,6 @@ class Modyllic_Generator_ModyllicSQL {
         ksort($indexes);
         foreach ( $indexes as $index ) {
             $this->add_index( $index );
-            if ( ++$completed < $entries ) {
-                $this->add(",");
-            }
         }
         $this->end_alter_table($table);
         return $this;
