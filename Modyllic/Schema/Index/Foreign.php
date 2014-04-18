@@ -26,6 +26,10 @@ class Modyllic_Schema_Index_Foreign extends Modyllic_Schema_Index {
         return "~".$this->cname;
     }
 
+    function isConstraint() {
+        return true;
+    }
+
     function equal_to(Modyllic_Schema_Index $other, array $fromnames=null) {
         if ( ! parent::equal_to($other) )               { return false; }
         if ( $this->references != $other->references ) { return false; }
