@@ -418,7 +418,7 @@ class Modyllic_Generator_ModyllicSQL {
         $this->table_docs( $table );
         $this->extend( "CREATE TABLE %id (", $table->name );
         $this->indent();
-        $indexes = array_filter( array_filter( $table->indexes, array($this,"active_index_filter") ), array($this,"not_foreign_key_filter") );
+        $indexes = array_filter( $table->indexes, array($this,"not_foreign_key_filter") );
         $entries = count($table->columns) + count($indexes);
         $completed = 0;
         foreach ( $table->columns as $column ) {
@@ -450,7 +450,7 @@ class Modyllic_Generator_ModyllicSQL {
 
     function create_constraint( Modyllic_Schema_Table $table ) {
         if ( ! isset($this->what['meta']) and $table instanceOf Modyllic_Schema_MetaTable ) { return; }
-        $indexes = array_filter( array_filter( $table->indexes, array($this,"active_index_filter") ), array($this,"foreign_key_only_filter") );
+        $indexes = array_filter( $table->indexes, array($this,"foreign_key_only_filter") );
         $entries = count($indexes);
         if ( ! $entries ) { return; }
         $this->begin_alter_table($table);
@@ -717,26 +717,6 @@ class Modyllic_Generator_ModyllicSQL {
         return $this;
     }
 
-    function column_is_primary( Modyllic_Schema_Column $column ) {
-        return $column->is_primary;
-    }
-    function emit_column_is_primary( Modyllic_Schema_Column $column ) {
-        if ( $this->column_is_primary($column) ) {
-            $this->add( " PRIMARY KEY" );
-        }
-        return $this;
-    }
-
-    function column_unique( Modyllic_Schema_Column $column ) {
-        return $column->unique and ! $column->is_primary;
-    }
-    function emit_column_unique( Modyllic_Schema_Column $column ) {
-        if ( $this->column_unique($column) ) {
-            $this->add( " UNIQUE" );
-        }
-        return $this;
-    }
-
     function create_column( Modyllic_Schema_Column $column, $with_key=true ) {
         $this->extend("%id ", $column->name );
         if ( isset($column->from) ) {
@@ -749,10 +729,6 @@ class Modyllic_Generator_ModyllicSQL {
         $this->emit_column_auto_increment( $column );
         $this->emit_column_default( $column );
         $this->emit_column_on_update( $column );
-        if ( $with_key ) {
-            $this->emit_column_is_primary( $column );
-            $this->emit_column_unique( $column );
-        }
 
         $this->column_aliases($column);
         return $this;
@@ -792,17 +768,8 @@ class Modyllic_Generator_ModyllicSQL {
         return ! $this->foreign_key_only_filter($index);
     }
 
-    function active_index_filter($index) {
-        return ! $this->ignore_index($index);
-    }
-
     function ignore_index(Modyllic_Schema_Index $index ) {
-        if ( $index->column_defined ) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return false;
     }
 
     function create_index( $index, $prefix=null ) {
