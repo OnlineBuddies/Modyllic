@@ -448,14 +448,26 @@ class Modyllic_Generator_ModyllicSQL {
         return $this;
     }
 
+    function prepare_for_constraint($index) {
+        if (! isset($index->prepare)) return;
+        $proc = new Modyllic_Schema_Proc('MODYLLIC_'.(isset($index->cname)?$index->cname:$index->name));
+        $proc->body = $index->prepare;
+        $this->create_procedure($proc);
+        $this->cmd("CALL %id()", $proc->name);
+        $this->drop_procedure($proc);
+    }
+
     function create_constraint( Modyllic_Schema_Table $table ) {
         if ( ! isset($this->what['meta']) and $table instanceOf Modyllic_Schema_MetaTable ) { return; }
         $indexes = array_filter( $table->indexes, array($this,"foreign_key_only_filter") );
         $entries = count($indexes);
         if ( ! $entries ) { return; }
+        ksort($indexes);
+        foreach ( $indexes as $index ) {
+            $this->prepare_for_constraint(index);
+        }
         $this->begin_alter_table($table);
         $completed = 0;
-        ksort($indexes);
         foreach ( $indexes as $index ) {
             $this->add_index( $index );
         }
@@ -556,6 +568,9 @@ class Modyllic_Generator_ModyllicSQL {
         $this->alter_table_data($table);
         if ( $table->has_schema_changes() ) {
             $this->clear_queue();
+            foreach ($table->add['indexes'] as $index) {
+                $this->prepare_for_constraint($index);
+            }
             $this->queue_add_keys($table->add['indexes']);
             $this->queue_add_foreign_keys($table->add['indexes']);
             if (count($this->queue)) {

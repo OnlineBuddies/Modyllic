@@ -46,7 +46,9 @@ class Modyllic_Tokenizer {
      * Set the command delimiter, defaults to ;
      */
     public function set_delimiter($delimiter) {
+        $old = $this->delimiter;
         $this->delimiter = $delimiter;
+        return $old;
     }
 
     /**

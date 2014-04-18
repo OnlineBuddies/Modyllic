@@ -20,6 +20,7 @@ class Modyllic_Schema_Index extends Modyllic_Diffable {
     public $unique   = false;
     public $using;
     public $columns  = array();
+    public $prepare;
 
     /**
      * @param string $name
@@ -30,6 +31,10 @@ class Modyllic_Schema_Index extends Modyllic_Diffable {
 
     function get_name() {
         return $this->name;
+    }
+
+    function isConstraint() {
+        return $this->unique || $this->primary;
     }
 
     /**
