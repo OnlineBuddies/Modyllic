@@ -549,8 +549,6 @@ class Modyllic_Generator_ModyllicSQL {
             foreach ($table->update['columns'] as $column) {
                 $this->queue_change( 'alter_column', array($column) );
             }
-            $this->queue_add_keys($table->add['indexes']);
-            $this->queue_add_foreign_keys($table->add['indexes']);
 
             if (count($this->queue)) {
                 $this->begin_alter_table($table);
@@ -559,6 +557,16 @@ class Modyllic_Generator_ModyllicSQL {
             }
         }
         $this->alter_table_data($table);
+        if ( $table->has_schema_changes() ) {
+            $this->clear_queue();
+            $this->queue_add_keys($table->add['indexes']);
+            $this->queue_add_foreign_keys($table->add['indexes']);
+            if (count($this->queue)) {
+                $this->begin_alter_table($table);
+                $this->execute_queue();
+                $this->end_alter_table($table);
+            }
+        }
         return $this;
     }
 
