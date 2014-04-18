@@ -453,7 +453,7 @@ class Modyllic_Generator_ModyllicSQL {
         $indexes = array_filter( array_filter( $table->indexes, array($this,"active_index_filter") ), array($this,"foreign_key_only_filter") );
         $entries = count($indexes);
         if ( ! $entries ) { return; }
-        $this->begin_cmd( "ALTER TABLE %id", $table->name );
+        $this->begin_alter_table($table);
         $completed = 0;
         ksort($indexes);
         foreach ( $indexes as $index ) {
@@ -462,7 +462,7 @@ class Modyllic_Generator_ModyllicSQL {
                 $this->add(",");
             }
         }
-        $this->end_cmd();
+        $this->end_alter_table($table);
         return $this;
     }
 
