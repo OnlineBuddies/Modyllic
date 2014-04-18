@@ -1,7 +1,13 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.36](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.36) 2014-04-18
 
-Warning: date(): It is not safe to rely on the system's timezone settings. You are *required* to use the date.timezone setting or the date_default_timezone_set() function. In case you used any of those methods and you are still getting this warning, you most likely misspelled the timezone identifier. We selected the timezone 'UTC' for now, but please set date.timezone to select your timezone. in /Users/rebecca/src/modyllic/build-changelog on line 11
+* Resume disabling foreign key checks until such time as we add PREPARE WITH syntax to constraints
+* Stop trying to emit PRIMARY KEY and UNIQUE as field attributes
+* If we're dropping a table, don't try to add/remove constraints from it
+* Move all index/constraint changes to after other table changes, including static data
+* If we're making a table static, truncate before we make any changes to it
+
 [v0.2.35](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.35) 2014-04-17
 
 * Defer creating foreign keys until as late as possible
