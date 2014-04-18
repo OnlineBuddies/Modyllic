@@ -57,7 +57,14 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
     function sql_header() {
         return array(
             $this->_format("SET NAMES %str",array("utf8")),
+            "SET foreign_key_checks = 0"
             );
+    }
+
+    function sql_footer() {
+        return array(
+            "SET foreign_key_checks = 1"
+        );
     }
 
     function table_meta($table) {
