@@ -57,7 +57,14 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
     function sql_header() {
         return array(
             $this->_format("SET NAMES %str",array("utf8")),
+            "SET foreign_key_checks = 0"
             );
+    }
+
+    function sql_footer() {
+        return array(
+            "SET foreign_key_checks = 1"
+        );
     }
 
     function table_meta($table) {
@@ -152,6 +159,7 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
             foreach ( $table->indexes as $index ) {
                 if (! $index instanceOf Modyllic_Schema_Index_Foreign) continue;
                 if (! isset($tables[$table->name]) and ! isset($tables[$index->references['table']])) continue;
+                if (isset($this->source->changeset->remove['tables'][$table->name])) continue;
                 $todrop[] = $index;
             }
             if (count($todrop)) {
@@ -170,15 +178,16 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
 
         // then recreate the constraints we removed
         foreach ( $this->source->to->tables as $table ) {
-            $todrop = array();
+            $toadd = array();
             foreach ( $table->indexes as $index ) {
                 if (! $index instanceOf Modyllic_Schema_Index_Foreign) continue;
                 if (! isset($tables[$table->name]) and ! isset($tables[$index->references['table']])) continue;
-                $todrop[] = $index;
+                if (isset($this->source->changeset->remove['tables'][$table->name])) continue;
+                $toadd[] = $index;
             }
-            if (count($todrop)) {
+            if (count($toadd)) {
                 $this->begin_alter_table($table);
-                foreach ($todrop as $index) {
+                foreach ($toadd as $index) {
                     $this->add_index($index);
                 }
                 $this->end_alter_table($table);
