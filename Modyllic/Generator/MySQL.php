@@ -152,13 +152,18 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
     function queue_remove_foreign_keys($indexes) {}
     function queue_add_foreign_keys($indexes) {}
 
+    private function is_table_schema_changed($tables,$name) {
+        if (! isset($tables[$name])) return false;
+        return $tables[$name]->has_schema_changes();
+    }
+
     function alter_tables($tables) {
         // Here we disable all of the foreign keys in the tables we're modifying and that reference the tables that we're modifying
         foreach ( $this->source->from->tables as $table ) {
             $todrop = array();
             foreach ( $table->indexes as $index ) {
                 if (! $index instanceOf Modyllic_Schema_Index_Foreign) continue;
-                if (! isset($tables[$table->name]) and ! isset($tables[$index->references['table']])) continue;
+                if (! $this->is_table_schema_changed($tables,$table->name) and ! $this->is_table_schema_changed($tables,$index->references['table'])) continue;
                 if (isset($this->source->changeset->remove['tables'][$table->name])) continue;
                 $todrop[] = $index;
             }
@@ -181,7 +186,7 @@ class Modyllic_Generator_MySQL extends Modyllic_Generator_ModyllicSQL {
             $toadd = array();
             foreach ( $table->indexes as $index ) {
                 if (! $index instanceOf Modyllic_Schema_Index_Foreign) continue;
-                if (! isset($tables[$table->name]) and ! isset($tables[$index->references['table']])) continue;
+                if (! $this->is_table_schema_changed($tables,$table->name) and ! $this->is_table_schema_changed($tables,$index->references['table'])) continue;
                 if (isset($this->source->changeset->remove['tables'][$table->name])) continue;
                 $toadd[] = $index;
             }
