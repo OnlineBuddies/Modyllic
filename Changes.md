@@ -1,5 +1,14 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.37](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.37) 2014-05-05
+
+* Fix PEAR URL to match what Github has forced (github.com->github.io)
+* Stop emitting the foreign key dance on static data only changes
+* Support a full suite of DML as proc bodies (previously we only supported BEGIN and CALL)
+* Add experimental support for PREPARE WITH blocks that can be attached to any foreign key or unique constraint.
+  PREPARE WITH blocks will be executed prior to adding that new contstraint
+  and should modify the table such that the constraint will pass.
+
 [v0.2.36](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.36) 2014-04-18
 
 * Resume disabling foreign key checks until such time as we add PREPARE WITH syntax to constraints
