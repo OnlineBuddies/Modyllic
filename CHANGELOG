@@ -1,5 +1,6 @@
-* Resume disabling foreign key checks until such time as we add PREPARE WITH syntax to constraints
-* Stop trying to emit PRIMARY KEY and UNIQUE as field attributes
-* If we're dropping a table, don't try to add/remove constraints from it
-* Move all index/constraint changes to after other table changes, including static data
-* If we're making a table static, truncate before we make any changes to it
+* Fix PEAR URL to match what Github has forced (github.com->github.io)
+* Stop emitting the foreign key dance on static data only changes
+* Support a full suite of DML as proc bodies (previously we only supported BEGIN and CALL)
+* Add experimental support for PREPARE WITH blocks that can be attached to any foreign key or unique constraint.
+  PREPARE WITH blocks will be executed prior to adding that new contstraint
+  and should modify the table such that the constraint will pass.
