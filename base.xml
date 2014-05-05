@@ -3,7 +3,7 @@
     http://pear.php.net/dtd/package-2.0
     http://pear.php.net/dtd/package-2.0.xsd">
  <name>Modyllic</name>
- <channel>onlinebuddies.github.com/pear</channel>
+ <channel>onlinebuddies.github.io/pear</channel>
  <summary>Schema management and DDL diff</summary>
  <description>Modyllic, PHP SQL Parser and schema management tool</description>
  <lead>
