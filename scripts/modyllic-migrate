@@ -125,7 +125,16 @@ try {
     Modyllic_Status::$source_index = 1;
     foreach ($gen->sql_commands() as $cmd) {
         Modyllic_Status::status( ++$ii, $cmds );
-        $dbh->exec($cmd);
+        $sth = $dbh->query($cmd);
+        // Do the full iteration over the result sets to un-cover any errors.
+        try {
+            do {
+                if ($sth->rowCount()) while ($sth->fetch(PDO::FETCH_NUM) != false);
+            } while($sth->nextRowset());
+          }
+        catch (PDOException $e) {
+            if (strpos($e->getMessage(), 'SQLSTATE[HY000]: General error') === false) throw $e;
+        }
     }
 }
 catch (PDOException $e) {

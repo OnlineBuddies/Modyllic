@@ -112,7 +112,7 @@ function apply_cmd($dbh,$cmd,$dsntoapply,$filename,$skip=null) {
             // Do the full iteration over the result sets to un-cover any errors.
             try {
                 do {
-                    if ($sth->rowCount()) foreach ($sth as $row) $row;
+                    if ($sth->rowCount()) while ($sth->fetch(PDO::FETCH_NUM) !== false);
                 } while($sth->nextRowset());
             }
             catch (PDOException $e) {
