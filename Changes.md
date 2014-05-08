@@ -1,5 +1,11 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.38](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.38) 2014-05-08
+
+* Fix bug in new PREPARE-WITH feature
+* Make modyllic-migrate able to handle mult-result responses as these
+  are now possible now that we call code from PREPARE-WITH blocks.
+
 [v0.2.37](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.37) 2014-05-05
 
 * Fix PEAR URL to match what Github has forced (github.com->github.io)
