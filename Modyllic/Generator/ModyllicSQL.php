@@ -464,7 +464,7 @@ class Modyllic_Generator_ModyllicSQL {
         if ( ! $entries ) { return; }
         ksort($indexes);
         foreach ( $indexes as $index ) {
-            $this->prepare_for_constraint(index);
+            $this->prepare_for_constraint($index);
         }
         $this->begin_alter_table($table);
         $completed = 0;
