@@ -1,6 +1,3 @@
-* Fix PEAR URL to match what Github has forced (github.com->github.io)
-* Stop emitting the foreign key dance on static data only changes
-* Support a full suite of DML as proc bodies (previously we only supported BEGIN and CALL)
-* Add experimental support for PREPARE WITH blocks that can be attached to any foreign key or unique constraint.
-  PREPARE WITH blocks will be executed prior to adding that new contstraint
-  and should modify the table such that the constraint will pass.
+* Fix bug in new PREPARE-WITH feature
+* Make modyllic-migrate able to handle mult-result responses as these
+  are now possible now that we call code from PREPARE-WITH blocks.
