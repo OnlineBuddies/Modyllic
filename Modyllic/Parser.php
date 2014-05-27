@@ -1423,12 +1423,24 @@ class Modyllic_Parser {
             foreach ( $this->ctx->indexes as &$other_key ) {
                 if ( $other_key instanceOf Modyllic_Schema_Index_Foreign ) { continue; }
                 if ( count($key->columns) <= count($other_key->columns) ) {
+                    $idx = 0;
                     $matched = true;
-                    foreach ( $key->columns as $idx=>&$colname ) {
-                        if ( !isset($other_key->columns[$idx]) or $colname != $other_key->columns[$idx] ) {
+                    foreach ( $key->columns as $colname=>$truncate ) {
+                        if ( !isset($other_key->columns[$colname]) or $truncate != $other_key->columns[$idx] ) {
                             $matched = false;
                             break;
                         }
+                        $otheridx = 0;
+                        foreach ($other_key->columns as $othercolname=>$othertruncate) {
+                            if ($othercolname == $colname && $otheridx == $idx) {
+                                break;
+                            }
+                            if (++$otheridx > $idx) {
+                                $matched = false;
+                                break 2;
+                            }
+                        }
+                        ++$idx;
                     }
                     if ($matched) { break; }
                 }
