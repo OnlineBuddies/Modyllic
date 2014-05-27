@@ -1,3 +1,2 @@
-* Fix bug in new PREPARE-WITH feature
-* Make modyllic-migrate able to handle mult-result responses as these
-  are now possible now that we call code from PREPARE-WITH blocks.
+* Raise memory_limit for commandline use of Modyllic (Aria Stewart)
+* The schema columns representation changed a while ago but the foreign key add code wasn't updated to match (Rebecca Turner)
