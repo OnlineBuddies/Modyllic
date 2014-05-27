@@ -6,6 +6,7 @@
  * @author bturner@online-buddies.com
  */
 
+ini_set('memory_limit', -1);
 require_once "Modyllic/AutoLoader.php";
 Modyllic_AutoLoader::install();
 Modyllic_ErrorHandler::install();
