@@ -1,5 +1,10 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.39](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.39) 2014-05-27
+
+* Raise memory_limit for commandline use of Modyllic (Aria Stewart)
+* The schema columns representation changed a while ago but the foreign key add code wasn't updated to match (Rebecca Turner)
+
 [v0.2.38](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.38) 2014-05-08
 
 * Fix bug in new PREPARE-WITH feature
