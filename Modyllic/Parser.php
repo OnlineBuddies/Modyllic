@@ -1426,7 +1426,7 @@ class Modyllic_Parser {
                     $idx = 0;
                     $matched = true;
                     foreach ( $key->columns as $colname=>$truncate ) {
-                        if ( !isset($other_key->columns[$colname]) or $truncate != $other_key->columns[$idx] ) {
+                        if ( !isset($other_key->columns[$colname]) or $truncate != $other_key->columns[$colname] ) {
                             $matched = false;
                             break;
                         }
