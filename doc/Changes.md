@@ -1,5 +1,11 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.40](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.40) 2014-05-28
+
+* Provide better error messages when the user has insufficient privs to see proc bodies
+* Fix invalid index in column lookup when adding implicit indexes for foreign keys
+* Serials should be equivalent to the type of BIGINT they generate
+
 [v0.2.39](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.39) 2014-05-27
 
 * Raise memory_limit for commandline use of Modyllic (Aria Stewart)
