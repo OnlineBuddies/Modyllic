@@ -110,6 +110,9 @@ class Modyllic_Loader_DB_MySQL {
             else {
                 throw new Exception("Unknown routine type ".$routine['ROUTINE_TYPE']." for ".$routine['ROUTINE_NAME']);
             }
+            if (! isset($routines[$routine['ROUTINE_NAME']]) ) {
+                throw new Exception("Could not find a {$routine['ROUTINE_TYPE']} body for {$routine['ROUTINE_NAME']}, the MySQL user probably lacks sufficient privileges");
+            }
         }
 
         foreach ($tables as $table_name=>$table_sql) {
