@@ -137,16 +137,17 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
         if ( ! $this->static and ! $this instanceOf Modyllic_Schema_MetaTable ) {
             $this->errors[] = "Adding data to a non-static table is meaningless-- call TRUNCATE first";
         }
+        $newrow = array();
         foreach ($row as $col_name=>&$value) {
             if ( ! isset($this->columns[$col_name]) ) {
                 $this->errors[] = "INSERT references $col_name in ".$this->name." but $col_name doesn't exist";
                 continue;
             }
-            $row[$col_name] = Modyllic_Expression::create($value);
+            $newrow[$col_name] = Modyllic_Expression::create($value);
         }
-        if (! count($row)) return;
-        $pk = $this->get_row_primary_key($row);
-        $this->data[$pk] = new Modyllic_Schema_Table_Row($row);
+        if (! count($newrow)) return;
+        $pk = $this->get_row_primary_key($newrow);
+        $this->data[$pk] = new Modyllic_Schema_Table_Row($newrow);
     }
 
     /**
