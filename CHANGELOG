@@ -1,3 +1,2 @@
-* Provide better error messages when the user has insufficient privs to see proc bodies
-* Fix invalid index in column lookup when adding implicit indexes for foreign keys
-* Serials should be equivalent to the type of BIGINT they generate
+* Fix bug: Crashes when generating output from an INSERT statement that
+  references an unknown column.
