@@ -1,5 +1,10 @@
 [Release History](https://github.com/OnlineBuddies/Modyllic/releases) for PHP module Modyllic
 
+[v0.2.41](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.41) 2014-05-29
+
+* Fix bug: Crashes when generating output from an INSERT statement that
+  references an unknown column.
+
 [v0.2.40](https://github.com/OnlineBuddies/Modyllic/releases/tag/v0.2.40) 2014-05-28
 
 * Provide better error messages when the user has insufficient privs to see proc bodies
