@@ -128,7 +128,7 @@ function apply_cmd($dbh,$cmd,$dsntoapply,$filename,$skip=null) {
             }
             else {
                 echo "To continue from after this statement, run:\n";
-                echo "modyllic apply -d $dsntoapply -s $filename -k $stmt\n";
+                echo "modyllic apply -d ".escapeshellarg($dsntoapply)." -s ".escapeshellarg($filename)." -k ".escapeshellarg($stmt)."\n";
             }
             exit(1);
         }
