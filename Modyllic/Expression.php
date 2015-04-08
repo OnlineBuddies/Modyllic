@@ -14,10 +14,10 @@ abstract class Modyllic_Expression {
     function equal_to($exp,$type,$length=null) {
         if (! $this instanceOf $exp) return false;
         if (isset($length) and $length and $length <= Modyllic_Expression::MAX_SUBSTR_LENGTH) {
-            return (mb_substr($this->normalize($type),0,$length,'UTF-8') == mb_substr($exp->normalize($type),0,$length,'UTF-8'));
+            return 0 == strcmp(mb_substr($this->normalize($type),0,$length,'UTF-8'), mb_substr($exp->normalize($type),0,$length,'UTF-8'));
         }
         else {
-            return ($this->normalize($type) == $exp->normalize($type));
+            return 0 == strcmp($this->normalize($type), $exp->normalize($type));
         }
     }
     static function create($a1,$a2=null,$a3=null) {
