@@ -18,7 +18,7 @@ class Modyllic_Schema extends Modyllic_Diffable {
     const DEFAULT_NAME = "database";
     public $name = self::DEFAULT_NAME;
     public $name_is_default = true;
-    const DEFAULT_CHARSET = "utf8";
+    const DEFAULT_CHARSET = "utf8mb4";
     public $charset = self::DEFAULT_CHARSET;
     const DEFAULT_COLLATE = "utf8_general_ci";
     public $collate = self::DEFAULT_COLLATE;

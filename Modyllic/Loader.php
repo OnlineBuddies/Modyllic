@@ -37,20 +37,28 @@ class Modyllic_Loader {
         if ( !isset($schema) ) {
             $schema = new Modyllic_Schema();
         }
+
+
         Modyllic_Status::$source_count += count($sources);
+
         foreach ($sources as $source) {
             // Strip trailing slashes from directory names
             if ( substr($source,-1) == "/" ) {
                 $source = substr($source,0,-1);
             }
+
             Modyllic_Status::$source_name = $source;
             Modyllic_Status::$source_index ++;
             list($source,$loader,$loader_name) = self::determine_loader($source);
             $schema->source = $loader_name;
+
             if ( isset($loader) ) {
+
+
                 call_user_func(array($loader,'load'),$source,$schema);
             }
             else {
+
                 throw new Modyllic_Loader_Exception("Could not load $source, file or directory not found");
             }
 
@@ -62,5 +70,6 @@ class Modyllic_Loader {
             $schema->source = "aggregate";
         }
         return $schema;
+
     }
 }

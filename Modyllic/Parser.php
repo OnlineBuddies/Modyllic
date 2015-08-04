@@ -554,13 +554,19 @@ class Modyllic_Parser {
             $attr = $this->get_reserved(array("DEFAULT", "CHARACTER SET", "CHARSET", "COLLATE"));
             if ( $attr == "DEFAULT" ) {
                 $attr = $this->get_reserved(array("CHARACTER SET", "CHARSET", "COLLATE"));
+              //  echo'<pre>'.'+++++++++++++++++++++++++default++++++++++++++++++++++++';
+                //print_r($attr);
             }
             $this->maybe('=');
             $value = $this->get_ident();
             if ( $attr == "COLLATE" ) {
+             //   echo'<pre>'.'+++++++++++++++++++++++++collate++++++++++++++++++++++++';
+            //    print_r($attr);
                 $this->schema->collate = $value;
             }
             else { // It must be the character set
+              //  echo'<pre>'.'+++++++++++++++++++++++++charset++++++++++++++++++++++++';
+               // print_r($attr);
                 $this->schema->collate = $this->updated_collate( $this->schema->charset, $value, $this->schema->collate );
                 $this->schema->charset = $value;
             }
@@ -901,11 +907,13 @@ class Modyllic_Parser {
                 $this->get_reserved();
                 $new = $this->get_ident();
                 if ( isset($type->charset) and isset($type->collate) ) {
+                 //   echo'-------------------------------HERE---------------------------';
                     $type->collate = $this->updated_collate( $type->charset, $new, $type->collate );
                 }
                 $type->charset( $new );
             }
             else if ( $this->peek_next()->token() == 'COLLATE' ) {
+             //   echo'-----------------------------------------------collate here-------------------------------';
                 $this->get_reserved();
                 $type->collate( $this->get_ident() );
             }
@@ -974,6 +982,8 @@ class Modyllic_Parser {
         //   | [AUTO_INCREMENT=number]
         //   | [COMMENT=string]
         $table = $this->get_ident();
+
+
         if ( isset($this->schema->views[$table]) ) {
             throw $this->error("Can't create TABLE $table when a view of that name already exists");
         }
@@ -985,6 +995,7 @@ class Modyllic_Parser {
         $this->ctx->docs = $this->cmddocs;
 
         $last_was = $this->ctx;
+
         // Load tablespec
         while (! $this->next() instanceOf Modyllic_Token_EOC ) {
 
@@ -1029,6 +1040,7 @@ class Modyllic_Parser {
         // Load table flags
         while ( ! $this->peek_next() instanceOf Modyllic_Token_EOC ) {
             $this->next();
+
             if ( $this->maybe_table_option() ) { }
             else {
                 throw $this->error("Unknown table flag ".$this->cur()->debug().", expected ENGINE, ROW_FORMAT, CHARSET or COLLATE");
@@ -1050,7 +1062,10 @@ class Modyllic_Parser {
 
     function maybe_table_option() {
         if ( $this->cur()->token() == 'DEFAULT' ) {
+
+          //  echo'hello123';
             $this->get_reserved(array( 'CHARSET', 'CHARACTER SET', 'COLLATE' ));
+         //   print_r($z);
         }
         if ( $this->cur()->token() == 'ENGINE' ) {
             $this->maybe( '=' );
@@ -1063,10 +1078,12 @@ class Modyllic_Parser {
             $this->ctx->row_format = $this->cur()->value();
         }
         else if ( $this->cur()->token() == 'CHARSET' or $this->cur()->token() == 'CHARACTER SET' ) {
+           // echo'-------------------------------------KING-----------------------------------------------';
             $this->maybe( '=' );
             $new = $this->get_ident();
-            $this->ctx->collate = $this->updated_collate( $this->ctx->charset, $new, $this->ctx->collate );
-            $this->ctx->charset = $new;
+           $this->ctx->collate = $this->updated_collate( $this->ctx->charset, $new, $this->ctx->collate );
+           $this->ctx->charset = $new;
+
         }
         else if ( $this->cur()->token() == 'COLLATE' ) {
             $this->maybe( '=' );
@@ -1080,6 +1097,16 @@ class Modyllic_Parser {
         else if ( $this->cur()->token() == 'COMMENT' ) {
             $this->maybe( '=' );
             $this->get_string();
+        }
+        else if ( $this->cur()->token() == 'PARTITION' ) {
+            //$this->maybe('=');
+            $partition= $this->get_statement();
+           // echo $this->get_statement(")",false);
+            $this->ctx->partition =$partition;
+            //$this->ctx->partition="Rajesh";
+           // echo'<pre>'.'-----ctx------';
+          //  print_r($last_was);
+            //echo'</pre>';
         }
         else if ( $this->cur()->token() == 'PACK_KEYS' ) {
             $this->maybe( '=' );

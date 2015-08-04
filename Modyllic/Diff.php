@@ -38,6 +38,7 @@ class Modyllic_Diff {
         $this->changeset->schema->from = $this->from;
         $this->changeset->schema->to   = $this->to;
         if ( $this->from->charset != $this->to->charset ) {
+
             $this->changeset->schema->charset = $this->to->charset;
         }
         if ( $this->from->collate != $this->to->collate ) {
@@ -58,14 +59,64 @@ class Modyllic_Diff {
 
         # Find new and updated routines
         foreach ($this->to->routines as $name=>$routine) {
+            $from=array();
+            $to=array();
             if ( ! isset($this->from->routines[$name]) ) {
                 $this->changeset->add_routine($routine);
+            }elseif($routine instanceOf Modyllic_Schema_Func){
+            if($to=$routine->args != $from=$this->from->routines[$name]->args){//args comparison
+
+                    $other = $this->from->routines[$name];
+                    $routine->from = $this->from->routines[$name];
+                    $this->changeset->update_routine($routine);
+
+
+                }elseif($to=$routine->args_type != $from=$this->from->routines[$name]->args_type){
+                    $other = $this->from->routines[$name];
+                    $routine->from = $this->from->routines[$name];
+                    $this->changeset->update_routine($routine);
+                }
+                elseif($to=$routine->deterministic != $from=$this->from->routines[$name]->deterministic){
+                    $other = $this->from->routines[$name];
+                    $routine->from = $this->from->routines[$name];
+                    $this->changeset->update_routine($routine);
+                }elseif($to=$routine->access != $from=$this->from->routines[$name]->access){
+                    $other = $this->from->routines[$name];
+                    $routine->from = $this->from->routines[$name];
+                    $this->changeset->update_routine($routine);
+                }elseif($to=$routine->txns != $from=$this->from->routines[$name]->txns){
+                    $other = $this->from->routines[$name];
+                    $routine->from = $this->from->routines[$name];
+                    $this->changeset->update_routine($routine);
+                }elseif($to=$routine->docs != $from=$this->from->routines[$name]->docs){
+                    $other = $this->from->routines[$name];
+                    $routine->from = $this->from->routines[$name];
+                    $this->changeset->update_routine($routine);
+                }elseif($to=$routine->body != $from=$this->from->routines[$name]->body){
+                    $other = $this->from->routines[$name];
+                    $routine->from = $this->from->routines[$name];
+                    $this->changeset->update_routine($routine);
+                }elseif($to=$routine->from != $from=$this->from->routines[$name]->from){
+                    $other = $this->from->routines[$name];
+                    $routine->from = $this->from->routines[$name];
+                    $this->changeset->update_routine($routine);
+                }
             }
-            else if ( ! $routine->equal_to($this->from->routines[$name]) ) {
+            elseif($routine instanceOf Modyllic_Schema_Proc){
+                if ( ! $routine->equal_to($this->from->routines[$name]) ) {
                 $other = $this->from->routines[$name];
                 $routine->from = $this->from->routines[$name];
                 $this->changeset->update_routine($routine);
+                }
             }
+
+            /*else if ( ! $routine->equal_to($this->from->routines[$name]) ) {
+                $other = $this->from->routines[$name];
+                $routine->from = $this->from->routines[$name];
+                echo'<pre>';
+                print_r($this->from->routines[$name]);
+                $this->changeset->update_routine($routine);
+            }*/
         }
 
         # New and updated events
@@ -173,7 +224,10 @@ class Modyllic_Diff {
             $tablediff->from = $fromtable;
             $tablediff->to   = $totable;
 
+
+
             if ( $fromtable->static != $totable->static ) {
+                echo'-------------static-----------------';
                 $tablediff->static = $totable->static;
             }
 
@@ -185,11 +239,35 @@ class Modyllic_Diff {
                 $tablediff->update_option( 'row_format', $totable->row_format );
             }
             if ( $totable->charset != $fromtable->charset ) {
+
                 $tablediff->update_option( 'charset', $totable->charset );
             }
             if ( $totable->collate != $fromtable->collate ) {
+
                 $tablediff->update_option( 'collate', $totable->collate );
             }
+            if(isset($fromtable->partition)&&isset($totable->partition)){
+
+            if ( $totable->partition != $fromtable->partition ) {
+                $tablediff->update_partition( 'partition', $fromtable->partition,$totable->partition );
+            }}
+            elseif(isset($fromtable->partition)&& !isset($totable->partition)){
+
+               $tablediff->remove_partition( 'partition', $fromtable->partition );
+
+            }elseif(!isset($fromtable->partition)&&isset($totable->partition)){
+
+                $tablediff->add_partition( 'partition', $totable->partition );
+            }
+
+
+            /*partition changes rajesh
+            if ( $totable->partition != $fromtable->partition ) {
+                $tablediff->update_option( 'partition', $totable->partition );
+            }
+                till here
+             echo'<pre>'.'diff table from and to ';print_r($fromtable);echo'<br>';print_r($totable);echo'</pre>';
+            */
 
             # First let's build some column maps:
             $tonames = array();
@@ -222,8 +300,9 @@ class Modyllic_Diff {
                     }
                 }
             }
-
+         //   echo'<pre>'.'table diffences'.'table differences';print_r($tablediff->options);echo'</pre>';
             # Find new and updated columns
+         //   echo'<pre>'.'totable columns';print_r($totable->columns);echo'</pre>';
             foreach ( $totable->columns as $name=>$tocolumn ) {
                 if ( isset( $tonames[$name] ) ) {
                     $fromname = $tonames[$name];
@@ -323,6 +402,7 @@ class Modyllic_Diff {
                 $this->changeset->update_table( $tablediff );
             }
         }
+
 
     }
 }

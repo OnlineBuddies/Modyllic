@@ -87,7 +87,28 @@ class Modyllic_Changeset_Table {
      * @param string $value
      */
     function update_option($option,$value) {
+
+         $this->options->$option = $value;
+
+    }
+    function update_partition($option,$fromvalue,$tovalue) {
+
+        $this->options->$option->remove = $fromvalue;
+        $this->options->$option->add = $tovalue;
+        $this->options->action="update";
+
+    }
+    function add_partition($option,$value) {
+
+         $this->options->$option = $value;
+         $this->options->action="add";
+
+    }
+    function remove_partition($option,$value) {
+
         $this->options->$option = $value;
+        $this->options->action="remove";
+
     }
 
     /**
