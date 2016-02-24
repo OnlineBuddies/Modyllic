@@ -21,7 +21,7 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
     public $engine = 'InnoDB';
     const ROW_FORMAT_DEFAULT = 'DEFAULT';
     public $row_format = self::ROW_FORMAT_DEFAULT;
-    public $charset = 'utf8';
+    public $charset = 'utf8mb4';
     public $collate = 'utf8_general_ci';
     public $docs = "";
     public $errors = array();
@@ -50,6 +50,8 @@ class Modyllic_Schema_Table extends Modyllic_Diffable {
      * @param Modyllic_Schema_Index $index
      */
     function add_index(Modyllic_Schema_Index $index) {
+
+
         $name = $index->get_name();
         if ( isset($this->indexes[$name]) ) {
             throw new Exception("In table ".$this->name."- duplicate key name ".$name);

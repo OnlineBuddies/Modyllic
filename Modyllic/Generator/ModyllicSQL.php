@@ -491,6 +491,7 @@ class Modyllic_Generator_ModyllicSQL {
     }
     function execute_queue() {
         foreach ($this->queue as $todo) {
+           // echo'<pre>';print_r($todo);echo'</pre>';
             list($method, $args) = $todo;
             call_user_func_array(array($this,$method),$args);
         }
@@ -529,6 +530,7 @@ class Modyllic_Generator_ModyllicSQL {
     }
 
     function begin_alter_table($table) {
+
         $this->begin_cmd( "ALTER TABLE %id ", $table->name );
         $this->begin_list();
     }
@@ -544,27 +546,72 @@ class Modyllic_Generator_ModyllicSQL {
         }
         if ( $table->has_schema_changes() ) {
             $this->clear_queue();
+          //  echo'<pre>'.$table->name;print_r($table->options);echo'</pre>';
             if ($table->options->has_changes()) {
-                $this->queue_change( 'table_options', array($table->options) );
+                   $this->queue_change( 'table_options', array($table->options) );
             }
+           //here
             $this->queue_remove_foreign_keys($table->remove['indexes']);
             $this->queue_remove_keys($table->remove['indexes']);
             foreach (array_reverse($table->add['columns']) as $column) {
                 $this->queue_change( 'add_column', array( $column ) );
+
             }
             foreach ($table->remove['columns'] as $column) {
                 $this->queue_change( 'drop_column', array($column) );
             }
             foreach ($table->update['columns'] as $column) {
                 $this->queue_change( 'alter_column', array($column) );
+
             }
 
             if (count($this->queue)) {
-                $this->begin_alter_table($table);
+               $this->begin_alter_table($table);
+
                 $this->execute_queue();
+
                 $this->end_alter_table($table);
             }
         }
+      //  echo'<pre>'.'table options';print_r($this->queue_change);echo'</pre>';
+        if(isset($table->options->partition)){
+            $this->clear_queue();
+            if($table->options->action=="add"){
+                $this->queue_change( 'add_partition', array($table->options->partition) );
+            }elseif($table->options->action=="remove"){
+                $this->queue_change( 'remove_partition', array($table->options->partition) );
+            }
+            if (count($this->queue)) {
+                $this->begin_alter_table($table);
+
+                $this->execute_queue();
+
+                $this->end_alter_table($table);
+            }
+            $this->clear_queue();
+        }
+        if(isset($table->options->partition)){
+        if($table->options->action=="update"){
+            $this->clear_queue();
+                $this->queue_change( 'remove_partition', array($table->options->partition->remove) );
+            $this->begin_alter_table($table);
+
+            $this->execute_queue();
+
+            $this->end_alter_table($table);
+            $this->clear_queue();
+
+                $this->queue_change( 'add_partition', array( $table->options->partition->add) );
+            $this->begin_alter_table($table);
+
+            $this->execute_queue();
+
+            $this->end_alter_table($table);
+            $this->clear_queue();
+
+            }
+        }
+
         $this->alter_table_data($table);
         if ( $table->has_schema_changes() ) {
             $this->clear_queue();
@@ -574,14 +621,31 @@ class Modyllic_Generator_ModyllicSQL {
             $this->queue_add_keys($table->add['indexes']);
             $this->queue_add_foreign_keys($table->add['indexes']);
             if (count($this->queue)) {
-                $this->begin_alter_table($table);
+               $x= $this->begin_alter_table($table);
+
                 $this->execute_queue();
+
                 $this->end_alter_table($table);
             }
         }
         return $this;
     }
+    function add_partition( $value ) {
+            $this->add( "\n PARTITION ".$value );
 
+        return $this;
+    }
+    function remove_partition( $value ) {
+        $this->add( "\n REMOVE PARTITIONING ".$value );
+
+        return $this;
+    }
+    function update_partition( $fromvalue,$tovalue ) {
+        $this->add("\n REMOVE PARTITIONING ".$fromvalue.",\n");
+        //$this->add( "ALTER PARTITION ".$tovalue );
+
+        return $this;
+    }
     function truncate_table($table) {
         $this->cmd("TRUNCATE %id", $table->name);
     }

@@ -200,6 +200,7 @@ class Modyllic_SQL {
             "GRANT" => true,
             "GROUP" => true,
             "HAVING" => true,
+
             "HIGH_PRIORITY" => true,
             "HOUR_MICROSECOND" => true,
             "HOUR_MINUTE" => true,

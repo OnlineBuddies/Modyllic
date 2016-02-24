@@ -7,7 +7,7 @@
  */
 
 abstract class Modyllic_Type_String extends Modyllic_Type {
-    protected $default_charset = "utf8";
+    protected $default_charset = "utf8mb4";
     protected $default_collate = "utf8_general_ci";
     private $charset;
     private $collate;
@@ -22,9 +22,11 @@ abstract class Modyllic_Type_String extends Modyllic_Type {
     function charset($value=null) {
         $args = func_num_args();
         if ( $args ) {
+
             $this->charset = $value;
         }
         else {
+
             return isset($this->charset) ? $this->charset : $this->default_charset;
         }
     }
@@ -91,6 +93,7 @@ abstract class Modyllic_Type_String extends Modyllic_Type {
         }
         $sql = "";
         if ( $diff_charset ) {
+
             $sql .= " CHARACTER SET ".$this->charset();
         }
         if ( $diff_collate ) {

@@ -34,6 +34,7 @@ class Modyllic_CommandLine {
     }
 
     static function get_args( $arg_spec ) {
+
         global $argv;
         if ( in_array("--version",$argv) ) {
             fputs(STDERR,"Modyllic Version: @VERSION@ @STATE@\n");
@@ -99,6 +100,9 @@ class Modyllic_CommandLine {
     }
 
     static function schema( array $load ) {
+
+
+
         Modyllic_Tokenizer::on_advance( array( "Modyllic_Status", "status" ) );
         try {
             $schema = Modyllic_Loader::load( $load );
