@@ -1,0 +1,13 @@
+{
+    "name": "onlinebuddies/modyllic",
+    "description": "MySQL database migrations, schema comparison, stored proc management made easy",
+    "type": "project",
+    "license": "BSD-2-Clause",
+    "authors": [
+        {
+            "name": "Rebecca Turner",
+            "email": "me@re-becca.org"
+        }
+    ],
+    "require": {}
+}
