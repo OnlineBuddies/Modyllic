@@ -3,6 +3,19 @@
     "version": "0.2.41",
     "description": "MySQL database migrations, schema comparison, stored proc management made easy",
     "license": "BSD-2-Clause",
+    "bin": [
+        "scripts/modyllic",
+        "scripts/modyllic-apply",
+        "scripts/modyllic-colorize",
+        "scripts/modyllic-diff",
+        "scripts/modyllic-drop",
+        "scripts/modyllic-dump",
+        "scripts/modyllic-help",
+        "scripts/modyllic-migrate",
+        "scripts/modyllic-preparse",
+        "scripts/modyllic-procstophp",
+        "scripts/modyllic-profile"
+    ],
     "authors": [
         {
             "name": "Rebecca Turner",
