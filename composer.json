@@ -1,5 +1,6 @@
 {
     "name": "onlinebuddies/modyllic",
+    "version": "0.2.41",
     "description": "MySQL database migrations, schema comparison, stored proc management made easy",
     "license": "BSD-2-Clause",
     "authors": [
