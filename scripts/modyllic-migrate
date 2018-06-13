@@ -9,7 +9,11 @@
 
 if ($lib_path = getenv("MODYLLIC_LIB_PATH")) set_include_path($lib_path.":".get_include_path());
 
-require_once "Modyllic/CommandLine.php";
+// Load composer autoloader if we were installed that way
+if (file_exists(__DIR__ . '/../../../autoload.php')) include_once __DIR__ . '/../../../autoload.php'; 
+if (file_exists('vendor/autoload.php')) include_once 'vendor/autoload.php';
+
+include_once "Modyllic/CommandLine.php";
 
 $args = Modyllic_CommandLine::get_args(array(
     'description' => 'Migrate a database to match a schema',
