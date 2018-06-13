@@ -8,3 +8,5 @@ pear.php
 test.php
 PEAR*.tgz
 package.xml
+
+/vendor/
