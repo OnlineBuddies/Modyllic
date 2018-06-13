@@ -21,5 +21,8 @@
             "name": "Rebecca Turner",
             "email": "me@re-becca.org"
         }
-    ]
+    ],
+    "require": {
+        "pear/console_commandline": "*"
+    }
 }
