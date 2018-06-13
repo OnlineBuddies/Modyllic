@@ -7,6 +7,11 @@
  */
 
 ini_set('memory_limit', -1);
+
+// Load composer autoloader if we were installed that way
+if (file_exists(__DIR__ . '/../../../autoload.php')) include_once __DIR__ . '/../../../autoload.php'; 
+if (file_exists('vendor/autoload.php')) include_once 'vendor/autoload.php';
+
 require_once "Modyllic/AutoLoader.php";
 Modyllic_AutoLoader::install();
 Modyllic_ErrorHandler::install();
